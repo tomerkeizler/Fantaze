@@ -9,8 +9,6 @@ def get_players():
     collection = db["Players_data"]
     x = collection.find_one()
 
-
-
     return json_util.dumps(x)
     #return Response(json_util.dumps(x), mimetype='application/json')
 
