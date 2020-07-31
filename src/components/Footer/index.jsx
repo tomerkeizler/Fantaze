@@ -7,9 +7,9 @@ const Footer = () => {
       <div className="container-fluid">
         <div className="row justify-content-around">
           <div className="col-8 col-md-5">
-            <h5 className={styles.title}>myApp3</h5>
+            <h5 className={styles.title}>Fantasy Planner</h5>
             <p className={styles.description}>
-              This is placeholder text. Your web app description goes here.
+             The ultimate app for UEFA Champions Legaue Fantasy gamblers
             </p>
           </div>
           <div className="col-2">

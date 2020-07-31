@@ -16,7 +16,7 @@ CONSTANTS.ERROR_MESSAGE.MASTERDETAIL_GET = "Request to get master detail text fa
 CONSTANTS.ENDPOINT = {};
 CONSTANTS.ENDPOINT.TRY = "/api/try";
 CONSTANTS.ENDPOINT.LIST = "/api/list";
-CONSTANTS.ENDPOINT.GRID = "/api/grid";
+CONSTANTS.ENDPOINT.MY_TEAM = "/api/my_team";
 CONSTANTS.ENDPOINT.MASTERDETAIL = "/api/masterdetail";
 
 export default CONSTANTS;

@@ -18,8 +18,8 @@ const NavBar = () => {
           <Link className="nav-item nav-link active" to="">
             About us
           </Link>
-          <Link className="nav-item nav-link active" to="Grid">
-            My team
+          <Link className="nav-item nav-link active" to="My_Team">
+          My Team
           </Link>
           <Link className="nav-item nav-link active" to="List">
             List
