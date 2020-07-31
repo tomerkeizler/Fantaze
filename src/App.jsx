@@ -5,7 +5,7 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 
 import Blank from "./components/Blank/Blank";
-import Grid from "./components/Grid/Grid";
+import My_Team from "./components/My_Team/My_Team";
 import List from "./components/List/List";
 import Master_Detail from "./components/Master_Detail/Master_Detail";
 
@@ -16,7 +16,7 @@ const App = () => {
         <NavBar />
         <Switch>
           <Route exact path = "/" component = { Blank } />
-          <Route path = "/Grid" component = { Grid } />
+          <Route path = "/My_Team" component = { My_Team } />
           <Route path = "/List" component = { List } />
           <Route path = "/Master_Detail" component = { Master_Detail } />
         </Switch>

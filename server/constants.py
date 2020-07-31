@@ -11,6 +11,6 @@ CONSTANTS = {
         'TRY': '/api/try',
         'MASTER_DETAIL': '/api/masterdetail',
         'LIST': '/api/list',
-        'GRID': '/api/grid',
+        'MY_TEAM': '/api/my_team',
     }
 }
