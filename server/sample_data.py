@@ -1,7 +1,7 @@
 import datetime
 
-long_lorem_ipsum = ''
-short_lorem_ipsum = ''
+long_lorem_ipsum = 'I am long'
+short_lorem_ipsum = 'I am short'
 
 sample_data = {}
 

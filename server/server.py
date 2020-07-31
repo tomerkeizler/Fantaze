@@ -1,23 +1,17 @@
 from pymongo import MongoClient
 import collections
-from mongo import HEY
 
 from flask import Flask, jsonify, make_response, send_from_directory
 from flask import request
 import os
 from os.path import exists, join
 
+import mongo
 from constants import CONSTANTS
 from sample_data import sample_data
 
-
 app = Flask(__name__, static_folder='build')
 
-# try
-@app.route(CONSTANTS['ENDPOINT']['TRY'])
-def get_try():
-    return HEY()
-    #return jsonify()
 
 # MasterDetail Page Endpoint
 @app.route(CONSTANTS['ENDPOINT']['MASTER_DETAIL'])
@@ -50,10 +44,10 @@ def delete_list_item(id):
     sample_data['list_text_assets']['list_items'] = [list_item for list_item in sample_data['list_text_assets']['list_items'] if list_item['_id'] != id]
     return jsonify({'_id': id, 'text': 'This comment was deleted'})
 
-# Grid Page Endpoint
-@app.route(CONSTANTS['ENDPOINT']['GRID'])
-def get_grid():
-    return jsonify(sample_data['text_assets'])
+# My Team Page Endpoint
+@app.route(CONSTANTS['ENDPOINT']['MY_TEAM'])
+def get_final_team():
+    return mongo.get_final_team()
 
 # Catching all routes
 # This route is used to serve all the routes in the frontend application after deployment.
