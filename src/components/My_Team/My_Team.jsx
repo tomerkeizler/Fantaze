@@ -1,14 +1,14 @@
 ﻿import React, { useState } from "react";
 import WarningMessage from "../WarningMessage";
 import CONSTANTS from "../../constants";
-import GridItem from "./GridItem";
+import PlayerTile from "./PlayerTile";
 
-const Grid = () => {
+const My_Team = () => {
   const [items, setItems] = useState([]);
   const [warningMessage, setWarningMessage] = useState({warningMessageOpen: false, warningMessageText: ""});
 
   const getItems = () => {
-    const promiseItems = fetch(CONSTANTS.ENDPOINT.GRID)
+    const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM)
     .then(response => {
       if (!response.ok) {
         throw Error(response.statusText);
@@ -42,13 +42,13 @@ const Grid = () => {
 
       <div className="container">
         <div className="row justify-content-center mt-5 p-0">
-          <h3>Grid</h3>
+          <h3>My Ultimate Team</h3>
         </div>
 
         <div className="row justify-content-around text-center pb-5">
           {items.map(item => (
-            <GridItem
-            key={item.id}
+            <PlayerTile
+            key={item._id}
             item={item}
             />
           ))}
@@ -63,4 +63,4 @@ const Grid = () => {
   );
 }
 
-export default Grid;
+export default My_Team;
