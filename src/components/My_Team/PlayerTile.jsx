@@ -2,10 +2,10 @@
 import ImgGreyBox from "../../images/GreyBox.svg"
 import PropTypes from "prop-types";
 
-const PlayerTile = ({ item }) => {
+const PlayerTile = ({ item, teamShirtImage}) => {
   return (
     <div className="col-md-4 col-sm-12 p-5">
-      <img src="https://www.sport5.co.il/files/7/122477.png" alt="Default Grey Box" className="mb-3" />
+      <img src={teamShirtImage} alt={item.team_name} className="mb-3" />
       <h3>{item.player_name}</h3>
       <p>
         <b>Role:</b> {item.position}
