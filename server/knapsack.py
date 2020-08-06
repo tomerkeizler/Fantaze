@@ -16,10 +16,9 @@ def dynamic_program_knapsack(W, players, count):
                     matrix[i][j][k] = matrix[i-1][j][k]
                 else:
                     matrix[i][j][k] = max(matrix[i-1][j][k], players[keys[i]].performance + matrix[i-1][j-players[keys[i]].price][k-1])
-    
     return matrix
 
-def get_used_items(W, players, count ,matrix):
+def get_used_indexes(W, players, count ,matrix):
     itemIndex = len(players) - 1
     currentCost = -1
     currentCount = -1
@@ -45,34 +44,20 @@ def get_used_items(W, players, count ,matrix):
     
     return marked
 
-players = mongo.create_player_avg_performance_map()
-values_list = list(players.values())
-final_matrix = dynamic_program_knapsack(100, players, 11)
-elements = get_used_items(100, players, 11, final_matrix)
-fantasy_league = []
+def get_players_map():
+    players = mongo.create_player_avg_performance_map()
+    return players
 
-for i in range(len(elements)):
-    if elements[i] == 1:
-        fantasy_league.append(values_list[i])
+def get_used_players():
+    players = get_players_map()
+    values_list = list(players.values())
+    final_matrix = dynamic_program_knapsack(100, players, 11)
+    used_indexes = get_used_indexes(100, players, 11, final_matrix)
+    fantasy_league = []
+    for i in range(len(used_indexes)):
+        if used_indexes[i] == 1:
+            fantasy_league.append(values_list[i])
+    return fantasy_league
 
-
-
-
-
-
-
-
-
-# classic knapsack: (we probabbly don't gonna use this)
-def knapsack(W, weights, values, numOfItems):
-    k = [[0 for i in range(W + 1)] for j in range(numOfItems + 1)] # init matrix to zero
-    for i in range (numOfItems + 1):
-        for w in range(W + 1):
-            if i == 0 or w == 0:
-                k[i][w] = 0
-            elif weights[i - 1] <= w:
-                k[i][w] = max(values[i-1] + k[i-1][w-weights[i-1]], k[i-1][w])
-            else:
-                k[i][w] = k[i-1][w]
-
-    return k[numOfItems][W]
+#league = get_used_players()
+#blablabla
