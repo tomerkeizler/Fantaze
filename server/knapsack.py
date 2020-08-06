@@ -1,28 +1,30 @@
 import mongo
-#from __future__ import print_function
-#from ortools.algorithms import pywrapknapsack_solver
 import numpy
 
 leagues132 = []
 
-# fixed_quantity:   num_items=numOfItems, items=values&weights, max_cost=W, count=count
-def dynamic_program_knapsack(W, weights, values, numOfItems, count):
+# fixed_quantity:
+#  W = Capacity, players = dict of id->player, count = how many elements to collect
+def dynamic_program_knapsack(W, players, count):
+    numOfItems = len(players)
     matrix = numpy.zeros((numOfItems,W + 1,count+1))
+    keys = list(players.keys())
     for i in range(numOfItems):
         for j in range(W+1):
             for k in range(count+1):
-                if weights[i] > j or 1 > k:
+                if players[keys[i]].price > j or 1 > k:
                     matrix[i][j][k] = matrix[i-1][j][k]
                 else:
-                    matrix[i][j][k] = max(matrix[i-1][j][k], values[i] + matrix[i-1][j-weights[i]][k-1])
+                    matrix[i][j][k] = max(matrix[i-1][j][k], players[keys[i]].performance + matrix[i-1][j-players[keys[i]].price][k-1])
     
     return matrix
 
-def get_used_items(W, weights, values, numOfItems, count ,matrix):
-    itemIndex = len(weights) - 1
+def get_used_items(W, players, count ,matrix):
+    itemIndex = len(players) - 1
     currentCost = -1
     currentCount = -1
     marked = [0] * len(matrix)
+    keys = list(players.keys())
 
     #Locate the cell with the maximun value:
     bestValue = -1
@@ -37,19 +39,25 @@ def get_used_items(W, weights, values, numOfItems, count ,matrix):
     while itemIndex >= 0 and currentCost >= 0 and currentCount >= 0:
         if (itemIndex == 0 and matrix[itemIndex][currentCost][currentCount] > 0) or (matrix[itemIndex][currentCost][currentCount] != matrix[itemIndex-1][currentCost][currentCount]):
             marked[itemIndex] = 1
-            currentCost -= weights[itemIndex]
+            currentCost -= players[keys[itemIndex]].price
             currentCount -= 1
         itemIndex -= 1
     
     return marked
 
+players = mongo.create_player_avg_performance_map()
+values_list = list(players.values())
+final_matrix = dynamic_program_knapsack(100, players, 11)
+elements = get_used_items(100, players, 11, final_matrix)
+fantasy_league = []
+
+for i in range(len(elements)):
+    if elements[i] == 1:
+        fantasy_league.append(values_list[i])
 
 
-weights = [4, 3, 5, 7, 7]
-values = [6, 4, 5, 3, 7]
-final_matrix = dynamic_program_knapsack(15, weights, values, 5, 3)
-elements = get_used_items(15, weights, values, 5, 3, final_matrix)
-print(elements)
+
+
 
 
 
@@ -68,19 +76,3 @@ def knapsack(W, weights, values, numOfItems):
                 k[i][w] = k[i-1][w]
 
     return k[numOfItems][W]
-
-# players = mongo.get_random_team()
-# weights = []
-# values = []
-
-# def update_weight():
-#     for player in players:
-#         weights.append(player['price'])
-
-# def update_value():
-#     for i in range(1,29):
-#         values.append(i)
-
-# update_weight()
-# update_value()
-# knapsack(100, weights, values, len(values))

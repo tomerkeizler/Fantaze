@@ -3,6 +3,7 @@ from pymongo import UpdateOne
 import collections
 from flask import jsonify, Response
 from bson import json_util
+import math
 
 class Player:
     def __init__(self, player_id, price, performance, team_name):
@@ -21,7 +22,6 @@ player_performances_collection = db["Player_performances"]
 
 def get_final_team():
     single_player = players_collection.find_one()
-    
     team_players = []
     for i in range(0,11):
         team_players.append(single_player)
@@ -46,13 +46,13 @@ def create_players_performance_map():
     for i in range(len(all_performances)):
         if all_performances[i]["event_id"] in fixtures:
             current_player = list(players_data_collection.find({"player_id" : all_performances[i]["player_id"]}))
-            if(len(current_player) != 0):
-                player_id = current_player[0]["player_id"]
+            if(len(current_player) != 0) and current_player[0]["price"] != 0:
+                player_id = int(current_player[0]["player_id"])
                 performances = []
                 if player_id in players_performances:
                     performances = (players_performances.get(player_id)).performance
                 performances.append(all_performances[i]["performance"])
-                players_performances[player_id] = Player(player_id, current_player[0]["price"], performances, all_performances[i]["team_name"])
+                players_performances[player_id] = Player(player_id, int(current_player[0]["price"]), performances, all_performances[i]["team_name"])
     return players_performances
 
 def create_player_avg_performance_map():
@@ -61,8 +61,9 @@ def create_player_avg_performance_map():
         sum = 0
         for score in player.performance:
             sum += score
-        avg = sum / len(player.performance)
+        avg = int(math.floor(sum / len(player.performance)))
         player.performance = avg
     return player_performances
 
-players = create_player_avg_performance_map()
+# players = create_player_avg_performance_map()
+# print("done")
