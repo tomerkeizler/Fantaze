@@ -1,6 +1,8 @@
 import mongo
 import numpy
 import jsonpickle
+import json
+from flask import jsonify
 
 leagues132 = []
 
@@ -13,10 +15,10 @@ def dynamic_program_knapsack(W, players, count):
     for i in range(numOfItems):
         for j in range(W+1):
             for k in range(count+1):
-                if players[keys[i]].price > j or 1 > k:
+                if players[keys[i]]["price"] > j or 1 > k:
                     matrix[i][j][k] = matrix[i-1][j][k]
                 else:
-                    matrix[i][j][k] = max(matrix[i-1][j][k], players[keys[i]].performance + matrix[i-1][j-players[keys[i]].price][k-1])
+                    matrix[i][j][k] = max(matrix[i-1][j][k], players[keys[i]]["performance"] + matrix[i-1][j-players[keys[i]]["price"]][k-1])
     return matrix
 
 def get_used_indexes(W, players, count ,matrix):
@@ -39,7 +41,7 @@ def get_used_indexes(W, players, count ,matrix):
     while itemIndex >= 0 and currentCost >= 0 and currentCount >= 0:
         if (itemIndex == 0 and matrix[itemIndex][currentCost][currentCount] > 0) or (matrix[itemIndex][currentCost][currentCount] != matrix[itemIndex-1][currentCost][currentCount]):
             marked[itemIndex] = 1
-            currentCost -= players[keys[itemIndex]].price
+            currentCost -= players[keys[itemIndex]]["price"]
             currentCount -= 1
         itemIndex -= 1
     
@@ -60,3 +62,8 @@ def get_used_players():
             fantasy_league.append(values_list[i])
     print("after fantasy league")
     return jsonpickle.encode(fantasy_league)
+
+# players = get_used_players()
+# jsonPlayers = json.dumps(players)
+# jsonifyPlayers = jsonify(players)
+# print(jsonPlayers)
