@@ -35,17 +35,31 @@ def create_players_performance_map():
     players_performances = {}
     fixtures = get_2018_19_fixtures_id()
     all_performances = list(player_performances_collection.find({})) # few seconds
+    players_map = create_players_map()
     # relevant_performances = get_relevant(all_performances, fixtures)
     for i in range(len(all_performances)):
-        if all_performances[i]["event_id"] in fixtures:
-            current_player = list(players_data_collection.find({"player_id" : all_performances[i]["player_id"]}))
-            if(len(current_player) != 0) and current_player[0]["price"] != 0:
-                player_id = int(current_player[0]["player_id"])
+        if all_performances[i]["event_id"] in fixtures and all_performances[i]["player_id"] in players_map:
+            current_player = players_map[all_performances[i]["player_id"]]
+            # current_player = list(players_data_collection.find({"player_id" : all_performances[i]["player_id"]}))
+            # if(len(current_player) != 0) and current_player[0]["price"] != 0:
+            if current_player["price"] != 0:
+                player_id = int(current_player["player_id"])
+                # player_id = int(current_player[0]["player_id"])
                 performances = []
                 if player_id in players_performances:
-                    performances = (players_performances.get(player_id)).performance
+                    performances = (players_performances.get(player_id))["performance"]
+                    # performances = (players_performances.get(player_id)).performance
                 performances.append(all_performances[i]["performance"])
-                players_performances[player_id] = Player(player_id, current_player[0]["player_name"], int(current_player[0]["price"]), performances, current_player[0]["position"], int(all_performances[i]["team_id"]), all_performances[i]["team_name"])
+                # players_performances[player_id] = Player(player_id, current_player[0]["player_name"], int(current_player[0]["price"]), performances, current_player[0]["position"], int(all_performances[i]["team_id"]), all_performances[i]["team_name"])
+                players_performances[player_id] = {
+                                                    "player_id" : player_id,
+                                                    "player_name" : current_player["player_name"],
+                                                    "price" : int(current_player["price"]),
+                                                    "performance" : performances,
+                                                    "position" : current_player["position"],
+                                                    "team_id" : int(all_performances[i]["team_id"]),
+                                                    "team_name" : all_performances[i]["team_name"]
+                                                  }
     return players_performances
 
 
@@ -53,11 +67,21 @@ def create_player_avg_performance_map():
     player_performances = create_players_performance_map()
     for player_id, player in player_performances.items():
         sum = 0
-        for score in player.performance:
+        # for score in player.performance:
+        for score in player["performance"]:
             sum += score
-        avg = int(math.floor(sum / len(player.performance)))
-        player.performance = avg
+        # avg = int(math.floor(sum / len(player.performance)))
+        avg = int(math.floor(sum / len(player["performance"])))
+        player["performance"] = avg
+        # player.performance = avg
     return player_performances
+
+def create_players_map():
+    players_map = {}
+    players = get_players()
+    for player in players:
+        players_map[int(player["player_id"])] = player
+    return players_map
 
 
 def get_fixtuers_by_time(month, year):

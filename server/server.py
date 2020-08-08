@@ -48,7 +48,7 @@ def delete_list_item(id):
 # My Team Page Endpoint
 @app.route(CONSTANTS['ENDPOINT']['MY_TEAM'])
 def get_final_team():
-    return knapsack.get_used_players()
+    return jsonify(knapsack.get_used_players())
 
 # Catching all routes
 # This route is used to serve all the routes in the frontend application after deployment.
