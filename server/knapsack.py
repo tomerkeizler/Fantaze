@@ -1,5 +1,6 @@
 import mongo
 import numpy
+import jsonpickle
 
 leagues132 = []
 
@@ -57,7 +58,5 @@ def get_used_players():
     for i in range(len(used_indexes)):
         if used_indexes[i] == 1:
             fantasy_league.append(values_list[i])
-    return fantasy_league
-
-#league = get_used_players()
-#blablabla
+    print("after fantasy league")
+    return jsonpickle.encode(fantasy_league)

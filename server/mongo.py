@@ -59,7 +59,6 @@ def create_player_avg_performance_map():
         player.performance = avg
     return player_performances
 
-create_player_avg_performance_map()
 
 def get_fixtuers_by_time(month, year):
     switcher = {
@@ -72,4 +71,3 @@ def get_fixtuers_by_time(month, year):
     # fixtures = fixtures_collection.find({"league": {"$gt": leagues[0] })
 
 # get_fixtuers_by_time(2, 2019)
-print("bye")
