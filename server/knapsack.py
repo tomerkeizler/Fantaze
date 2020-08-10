@@ -1,6 +1,5 @@
 import mongo
 import numpy
-import jsonpickle
 import json
 from flask import jsonify
 
@@ -60,10 +59,4 @@ def get_used_players():
     for i in range(len(used_indexes)):
         if used_indexes[i] == 1:
             fantasy_league.append(values_list[i])
-    print("after fantasy league")
-    return jsonpickle.encode(fantasy_league)
-
-# players = get_used_players()
-# jsonPlayers = json.dumps(players)
-# jsonifyPlayers = jsonify(players)
-# print(jsonPlayers)
+    return fantasy_league

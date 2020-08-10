@@ -20,7 +20,8 @@ yarn-error.log*
 
 # production
 /server/build
-
+/server/__pycache__/
 
 # dependencies
 /node_modules
+server/__pycache__/mongo.cpython-38.pyc
