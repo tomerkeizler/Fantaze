@@ -3,13 +3,30 @@ from pymongo import UpdateOne
 import collections
 from flask import jsonify, Response
 from bson import json_util
+from enum import Enum
 import math
 
 client = MongoClient("mongodb+srv://Wolfson:Noy123123@fantasy-9amla.mongodb.net/test?retryWrites=true&w=majority")  ## USER AND PASS
 db = client["Fantasy"]
 fixtures_collection = db["Fixtures_id"]
+data_fixtures_collection = db["Data_per_fixture"]
 players_data_collection = db["Players_data"]
 player_performances_collection = db["Player_performances"]
+
+class Round(Enum):
+    GROUPSTAGE1 = "Group Stage - 1"
+    GROUPSTAGE2 = "Group Stage - 2"
+    GROUPSTAGE3 = "Group Stage - 3"
+    GROUPSTAGE4 = "Group Stage - 4"
+    GROUPSTAGE5 = "Group Stage - 5"
+    GROUPSTAGE6 = "Group Stage - 6"
+    EIGHTHFINAL ="8th Finals"
+    QUARTERFINANS = "Quarter-finals"
+    SEMIFINALS = "Semi-finals"
+    FINAL = "Final"
+
+
+years_dict = {"2018-19": 132, "2019-20": 530}
 
 def get_2018_19_fixtures_id() -> list:
     fixtures = fixtures_collection.find({"league": 132})
@@ -19,9 +36,9 @@ def get_players() -> list:
     all_players = list(players_data_collection.find({}))
     return all_players
 
-def create_players_performance_map():
+def create_players_performance_map(year, round):
     players_performances = {}
-    fixtures = get_2018_19_fixtures_id()
+    fixtures = get_fixtures(year, round)
     all_performances = list(player_performances_collection.find({}))
     players_map = create_players_map()
     for i in range(len(all_performances)):
@@ -44,9 +61,8 @@ def create_players_performance_map():
                                                   }
     return players_performances
 
-
-def create_player_avg_performance_map():
-    player_performances = create_players_performance_map()
+def create_player_avg_performance_map(year, round):
+    player_performances = create_players_performance_map(year, round)
     for player_id, player in player_performances.items():
         sum = 0
         for score in player["performance"]:
@@ -62,15 +78,39 @@ def create_players_map():
         players_map[int(player["player_id"])] = player
     return players_map
 
-
-def get_fixtuers_by_time(month, year):
+def get_possible_rounds(round):
+    rounds = []
+    for level in Round:
+        rounds.append(level.value)
+    
     switcher = {
-        2017: [52, 31],    #also games from 2016-17(52) && 2017-18(31) are here 
-        2018: [31, 132],    #also games from 2017-2018(31) && 2018-19(132) are here
-        2019: [132, 530],    #also games from 2018-2019(132)  && 2019-2020(530) are here
-        2020: [530, 530]    #also games from 2019-2020(530) are here
+        "Group Stage - 1" : 0,
+        "Group Stage - 2" : 1,
+        "Group Stage - 3" : 2,
+        "Group Stage - 4" : 3,
+        "Group Stage - 5" : 4,
+        "Group Stage - 6" : 5,
+        "8th Finals" : 6,
+        "Quarter-finals" : 7,
+        "Semi-finals" : 8,
+        "Final" : 9
     }
-    leagues = switcher.get(year)
-    # fixtures = fixtures_collection.find({"league": {"$gt": leagues[0] })
 
-# get_fixtuers_by_time(2, 2019)
+    level = switcher.get(round)
+    possible_rounds = rounds[:level]
+    return possible_rounds
+
+def get_fixtures(year, round):
+    league_id = years_dict[year]
+    fixtures = []
+    possible_round = get_possible_rounds(round)
+    fixtures_data = list(data_fixtures_collection.find({"league_id": league_id, "round": { '$in' : possible_round } }))
+    for fixture_data in fixtures_data:
+        fixtures.append(fixture_data["fixture_id"])
+
+    if year == "2019-20":
+        fixtures.extend(get_2018_19_fixtures_id())
+    return fixtures
+
+# fixtures = get_fixtures("2019-20", "Group Stage - 5")
+
