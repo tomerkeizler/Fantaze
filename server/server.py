@@ -46,9 +46,10 @@ def delete_list_item(id):
     return jsonify({'_id': id, 'text': 'This comment was deleted'})
 
 # My Team Page Endpoint
-@app.route(CONSTANTS['ENDPOINT']['MY_TEAM'])
+@app.route(CONSTANTS['ENDPOINT']['MY_TEAM'], method = ['POST'])
 def get_final_team():
-    return jsonify(knapsack.get_used_players())
+    data = request.get_json()
+    return jsonify(knapsack.get_used_players(data['year'], data['round']))
 
 # Catching all routes
 # This route is used to serve all the routes in the frontend application after deployment.

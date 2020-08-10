@@ -1,6 +1,5 @@
 import mongo
 import numpy
-import jsonpickle
 import json
 from flask import jsonify
 
@@ -47,12 +46,12 @@ def get_used_indexes(W, players, count ,matrix):
     
     return marked
 
-def get_players_map():
-    players = mongo.create_player_avg_performance_map()
+def get_players_map(year, round):
+    players = mongo.create_player_avg_performance_map(year, round)
     return players
 
-def get_used_players():
-    players = get_players_map()
+def get_used_players(year, round):
+    players = get_players_map(year, round)
     values_list = list(players.values())
     final_matrix = dynamic_program_knapsack(100, players, 11)
     used_indexes = get_used_indexes(100, players, 11, final_matrix)
@@ -60,10 +59,4 @@ def get_used_players():
     for i in range(len(used_indexes)):
         if used_indexes[i] == 1:
             fantasy_league.append(values_list[i])
-    print("after fantasy league")
-    return jsonpickle.encode(fantasy_league)
-
-# players = get_used_players()
-# jsonPlayers = json.dumps(players)
-# jsonifyPlayers = jsonify(players)
-# print(jsonPlayers)
+    return fantasy_league
