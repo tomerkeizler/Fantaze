@@ -3,7 +3,7 @@ from pymongo import UpdateOne
 import collections
 from flask import jsonify, Response
 from bson import json_util
-from enum import Enum
+from collections import OrderedDict 
 import math
 
 client = MongoClient("mongodb+srv://Wolfson:Noy123123@fantasy-9amla.mongodb.net/test?retryWrites=true&w=majority")  ## USER AND PASS
@@ -13,24 +13,12 @@ data_fixtures_collection = db["Data_per_fixture"]
 players_data_collection = db["Players_data"]
 player_performances_collection = db["Player_performances"]
 
-class Round(Enum):
-    GROUPSTAGE1 = "Group Stage - 1"
-    GROUPSTAGE2 = "Group Stage - 2"
-    GROUPSTAGE3 = "Group Stage - 3"
-    GROUPSTAGE4 = "Group Stage - 4"
-    GROUPSTAGE5 = "Group Stage - 5"
-    GROUPSTAGE6 = "Group Stage - 6"
-    EIGHTHFINAL ="8th Finals"
-    QUARTERFINANS = "Quarter-finals"
-    SEMIFINALS = "Semi-finals"
-    FINAL = "Final"
-
-
-years_dict = {"2018-19": 132, "2019-20": 530}
-
-def get_2018_19_fixtures_id() -> list:
-    fixtures = fixtures_collection.find({"league": 132})
-    return fixtures[0]['fixtures_id']
+def get_fixtures_id_by_league(league) -> list:
+    fixtures = []
+    result = list(fixtures_collection.find({"league": {'$in': league } } ))
+    for i in range(len(result)):
+        fixtures.extend(result[i]["fixtures_id"])
+    return fixtures
 
 def get_players() -> list:
     all_players = list(players_data_collection.find({}))
@@ -80,37 +68,51 @@ def create_players_map():
 
 def get_possible_rounds(round):
     rounds = []
-    for level in Round:
-        rounds.append(level.value)
-    
-    switcher = {
-        "Group Stage - 1" : 0,
-        "Group Stage - 2" : 1,
-        "Group Stage - 3" : 2,
-        "Group Stage - 4" : 3,
-        "Group Stage - 5" : 4,
-        "Group Stage - 6" : 5,
-        "8th Finals" : 6,
-        "Quarter-finals" : 7,
-        "Semi-finals" : 8,
-        "Final" : 9
-    }
+    switcher = OrderedDict([ 
+        ("Group Stage - 1" , 0),
+        ("Group Stage - 2" , 1),
+        ("Group Stage - 3" , 2),
+        ("Group Stage - 4" , 3),
+        ("Group Stage - 5" , 4),
+        ("Group Stage - 6" , 5),
+        ("8th Finals" , 6),
+        ("Quarter-finals" , 7),
+        ("Semi-finals" , 8),
+        ("Final" , 9)
+    ])
+
+    for level in switcher:
+        rounds.append(level)
 
     level = switcher.get(round)
     possible_rounds = rounds[:level]
     return possible_rounds
 
+def get_leagues(year):
+    leagues = []
+    switcher = OrderedDict([ 
+        ("2018-19" , 132),
+        ("2019-20" , 530)
+    ])
+
+    for league in switcher.values():
+        leagues.append(league)
+
+    league = switcher.get(year)
+    seasons = leagues.index(league) + 1
+    relevant_leagues = leagues[:seasons]
+    return relevant_leagues
+
 def get_fixtures(year, round):
-    league_id = years_dict[year]
     fixtures = []
+    leagues_id = get_leagues(year)
     possible_round = get_possible_rounds(round)
-    fixtures_data = list(data_fixtures_collection.find({"league_id": league_id, "round": { '$in' : possible_round } }))
+    fixtures_data = list(data_fixtures_collection.find({"league_id": leagues_id[-1], "round": { '$in' : possible_round } }))
     for fixture_data in fixtures_data:
         fixtures.append(fixture_data["fixture_id"])
-
-    if year == "2019-20":
-        fixtures.extend(get_2018_19_fixtures_id())
+    prev_years_fixtures = get_fixtures_id_by_league(leagues_id[:len(leagues_id)-1])
+    fixtures.extend(prev_years_fixtures)
     return fixtures
 
-# fixtures = get_fixtures("2019-20", "Group Stage - 5")
-
+# fixtures = get_fixtures("2018-19", "Group Stage - 5")
+# print("2019-20")
