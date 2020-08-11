@@ -3,7 +3,7 @@ from pymongo import UpdateOne
 import collections
 from flask import jsonify, Response
 from bson import json_util
-from enum import Enum
+from collections import OrderedDict 
 import math
 
 client = MongoClient("mongodb+srv://Wolfson:Noy123123@fantasy-9amla.mongodb.net/test?retryWrites=true&w=majority")  ## USER AND PASS
@@ -12,19 +12,6 @@ fixtures_collection = db["Fixtures_id"]
 data_fixtures_collection = db["Data_per_fixture"]
 players_data_collection = db["Players_data"]
 player_performances_collection = db["Player_performances"]
-
-class Round(Enum):
-    GROUPSTAGE1 = "Group Stage - 1"
-    GROUPSTAGE2 = "Group Stage - 2"
-    GROUPSTAGE3 = "Group Stage - 3"
-    GROUPSTAGE4 = "Group Stage - 4"
-    GROUPSTAGE5 = "Group Stage - 5"
-    GROUPSTAGE6 = "Group Stage - 6"
-    EIGHTHFINAL ="8th Finals"
-    QUARTERFINANS = "Quarter-finals"
-    SEMIFINALS = "Semi-finals"
-    FINAL = "Final"
-
 
 years_dict = {"2018-19": 132, "2019-20": 530}
 
@@ -80,21 +67,21 @@ def create_players_map():
 
 def get_possible_rounds(round):
     rounds = []
-    for level in Round:
-        rounds.append(level.value)
-    
-    switcher = {
-        "Group Stage - 1" : 0,
-        "Group Stage - 2" : 1,
-        "Group Stage - 3" : 2,
-        "Group Stage - 4" : 3,
-        "Group Stage - 5" : 4,
-        "Group Stage - 6" : 5,
-        "8th Finals" : 6,
-        "Quarter-finals" : 7,
-        "Semi-finals" : 8,
-        "Final" : 9
-    }
+    switcher = OrderedDict([ 
+        ("Group Stage - 1" , 0),
+        ("Group Stage - 2" , 1),
+        ("Group Stage - 3" , 2),
+        ("Group Stage - 4" , 3),
+        ("Group Stage - 5" , 4),
+        ("Group Stage - 6" , 5),
+        ("8th Finals" , 6),
+        ("Quarter-finals" , 7),
+        ("Semi-finals" , 8),
+        ("Final" , 9)
+    ])
+
+    for level in switcher:
+        rounds.append(level)
 
     level = switcher.get(round)
     possible_rounds = rounds[:level]
@@ -113,4 +100,3 @@ def get_fixtures(year, round):
     return fixtures
 
 # fixtures = get_fixtures("2019-20", "Group Stage - 5")
-
