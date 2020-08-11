@@ -13,11 +13,12 @@ data_fixtures_collection = db["Data_per_fixture"]
 players_data_collection = db["Players_data"]
 player_performances_collection = db["Player_performances"]
 
-years_dict = {"2018-19": 132, "2019-20": 530}
-
-def get_2018_19_fixtures_id() -> list:
-    fixtures = fixtures_collection.find({"league": 132})
-    return fixtures[0]['fixtures_id']
+def get_fixtures_id_by_league(league) -> list:
+    fixtures = []
+    result = list(fixtures_collection.find({"league": {'$in': league } } ))
+    for i in range(len(result)):
+        fixtures.extend(result[i]["fixtures_id"])
+    return fixtures
 
 def get_players() -> list:
     all_players = list(players_data_collection.find({}))
@@ -87,16 +88,31 @@ def get_possible_rounds(round):
     possible_rounds = rounds[:level]
     return possible_rounds
 
+def get_leagues(year):
+    leagues = []
+    switcher = OrderedDict([ 
+        ("2018-19" , 132),
+        ("2019-20" , 530)
+    ])
+
+    for league in switcher.values():
+        leagues.append(league)
+
+    league = switcher.get(year)
+    seasons = leagues.index(league) + 1
+    relevant_leagues = leagues[:seasons]
+    return relevant_leagues
+
 def get_fixtures(year, round):
-    league_id = years_dict[year]
     fixtures = []
+    leagues_id = get_leagues(year)
     possible_round = get_possible_rounds(round)
-    fixtures_data = list(data_fixtures_collection.find({"league_id": league_id, "round": { '$in' : possible_round } }))
+    fixtures_data = list(data_fixtures_collection.find({"league_id": leagues_id[-1], "round": { '$in' : possible_round } }))
     for fixture_data in fixtures_data:
         fixtures.append(fixture_data["fixture_id"])
-
-    if year == "2019-20":
-        fixtures.extend(get_2018_19_fixtures_id())
+    prev_years_fixtures = get_fixtures_id_by_league(leagues_id[:len(leagues_id)-1])
+    fixtures.extend(prev_years_fixtures)
     return fixtures
 
-# fixtures = get_fixtures("2019-20", "Group Stage - 5")
+# fixtures = get_fixtures("2018-19", "Group Stage - 5")
+# print("2019-20")
