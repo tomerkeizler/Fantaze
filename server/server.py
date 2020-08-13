@@ -1,13 +1,9 @@
-from pymongo import MongoClient
-import collections
-
 from flask import Flask, jsonify, make_response, send_from_directory
 from flask import request
-import os
 from os.path import exists, join
 
 import mongo
-import knapsack
+from create_team import create_team
 from constants import CONSTANTS
 from sample_data import sample_data
 
@@ -46,10 +42,11 @@ def delete_list_item(id):
     return jsonify({'_id': id, 'text': 'This comment was deleted'})
 
 # My Team Page Endpoint
-@app.route(CONSTANTS['ENDPOINT']['MY_TEAM'], method = ['POST'])
+@app.route(CONSTANTS['ENDPOINT']['MY_TEAM'], methods = ['POST'])
 def get_final_team():
     data = request.get_json()
-    return jsonify(knapsack.get_used_players(data['year'], data['round']))
+    return jsonify(create_team.get_used_players(data['year'], data['round']))
+    # return jsonify(create_team.get_used_players("2019/20", "Group Stage - 1"))
 
 # Catching all routes
 # This route is used to serve all the routes in the frontend application after deployment.
