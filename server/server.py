@@ -46,7 +46,6 @@ def delete_list_item(id):
 def get_final_team():
     data = request.get_json()
     return jsonify(create_team.get_used_players(data['year'], data['round']))
-    # return jsonify(create_team.get_used_players("2019/20", "Group Stage - 1"))
 
 # Catching all routes
 # This route is used to serve all the routes in the frontend application after deployment.
@@ -61,6 +60,7 @@ def catch_all(path):
 def page_not_found(error):
     json_response = jsonify({'error': 'Page not found'})
     return make_response(json_response, CONSTANTS['HTTP_STATUS']['404_NOT_FOUND'])
+
 
 if __name__ == '__main__':
     app.run(port=CONSTANTS['PORT'])

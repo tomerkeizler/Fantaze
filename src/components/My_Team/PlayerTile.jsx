@@ -8,7 +8,7 @@ const PlayerTile = ({ item, teamShirtImage}) => {
       <img src={teamShirtImage} alt={item.team_name} className="mb-3" />
       <h3>{item.player_name}</h3>
       <p>
-        <b>Role:</b> {item.position}
+        <b>Role:</b> {item.player_id}
         <br/>
         <b>Team:</b> {item.team_name}
       </p>
