@@ -9,8 +9,12 @@ CONSTANTS = {
     },
     'ENDPOINT': {
         'TRY': '/api/try',
-        'MASTER_DETAIL': '/api/masterdetail',
         'LIST': '/api/list',
+        'MASTER_DETAIL': '/api/masterdetail',
+
         'MY_TEAM': '/api/my_team',
+        
+        'TEAM_FILTER': '/api/team_filter',
+        'PLAYER_FILTER': '/api/player_filter'
     }
 }
