@@ -8,9 +8,7 @@ from create_team import create_team
 from constants import CONSTANTS
 from sample_data import sample_data
 
-
 app = Flask(__name__, static_folder='build')
-
 
 # MasterDetail Page Endpoint
 @app.route(CONSTANTS['ENDPOINT']['MASTER_DETAIL'])
@@ -36,6 +34,7 @@ def add_list_item():
 
 @app.route(CONSTANTS['ENDPOINT']['LIST'] + '/<int:id>', methods=['DELETE'])
 def delete_list_item(id):
+    x = 2
     list_items_to_remove = [list_item for list_item in sample_data['list_text_assets']['list_items'] if list_item['_id'] == id]
     if not list_items_to_remove:
         json_response = jsonify({'error': 'Could not find an item with the given id'})
