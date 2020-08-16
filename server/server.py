@@ -62,7 +62,7 @@ def get_all_teams():
 @app.route(CONSTANTS['ENDPOINT']['PLAYER_FILTER'], methods = ['POST'])
 def get_squad_by_team():
     data = request.get_json()
-    players_by_team = jsonify(mongo.find_from_collection(mongo.players_data_collection, {'team_id': data['team_id']}))
+    players_by_team = mongo.find_from_collection(mongo.players_data_collection, {'team_id': data['team_id']})
     return dumps(players_by_team)
 
 

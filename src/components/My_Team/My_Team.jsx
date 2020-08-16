@@ -13,12 +13,20 @@ const My_Team = () => {
 
 
   const getItems = () => {
-    const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM, {
+    // const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM, {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({
+    //     year: yearRound['year'],
+    //     round: yearRound['round']
+    //   })
+    // })
+
+    const promiseItems = fetch(CONSTANTS.ENDPOINT.PLAYER_FILTER, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        year: yearRound['year'],
-        round: yearRound['round']
+        team_id: "529",
       })
     })
       .then(response => {
@@ -58,7 +66,7 @@ const My_Team = () => {
   }
 
   React.useEffect(() => {
-    setTeamShirtByIdMap(getTeamShirtByIdMap());  
+    setTeamShirtByIdMap(getTeamShirtByIdMap());
   }, []);
 
   return (
