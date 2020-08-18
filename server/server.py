@@ -8,9 +8,7 @@ from create_team import create_team
 from constants import CONSTANTS
 from sample_data import sample_data
 
-
 app = Flask(__name__, static_folder='build')
-
 
 # MasterDetail Page Endpoint
 @app.route(CONSTANTS['ENDPOINT']['MASTER_DETAIL'])
@@ -51,7 +49,7 @@ def delete_list_item(id):
 @app.route(CONSTANTS['ENDPOINT']['MY_TEAM'], methods = ['POST'])
 def get_final_team():
     data = request.get_json()
-    return jsonify(create_team.get_used_players(data['year'], data['round']))
+    return jsonify(create_team.get_used_players(data['year'], data['round'], [154, 157]))
 
 
 @app.route(CONSTANTS['ENDPOINT']['TEAM_FILTER'])

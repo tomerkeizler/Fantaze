@@ -13,20 +13,12 @@ const My_Team = () => {
 
 
   const getItems = () => {
-    // const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({
-    //     year: yearRound['year'],
-    //     round: yearRound['round']
-    //   })
-    // })
-
-    const promiseItems = fetch(CONSTANTS.ENDPOINT.PLAYER_FILTER, {
+    const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        team_id: "529",
+        year: yearRound['year'],
+        round: yearRound['round']
       })
     })
       .then(response => {
