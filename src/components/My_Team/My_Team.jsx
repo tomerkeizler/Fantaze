@@ -46,22 +46,26 @@ const My_Team = () => {
     const newStateYearRound = yearRound;
     newStateYearRound[e.target.id] = e.target.value;
     setYearRound(newStateYearRound);
+    updateTeam();
+  }
 
+  const updateTeam = (e) => {
     getItems()
-      .then(newItems => {
-        setItems(newItems)
-        setIsLoading(false);
+    .then(newItems => {
+      setItems(newItems)
+      setIsLoading(false);
+    })
+    .catch(error =>
+      setWarningMessage({
+        warningMessageOpen: true,
+        warningMessageText: `Request to get grid text failed: ${error}`
       })
-      .catch(error =>
-        setWarningMessage({
-          warningMessageOpen: true,
-          warningMessageText: `Request to get grid text failed: ${error}`
-        })
-      );
+    );
   }
 
   React.useEffect(() => {
     setTeamShirtByIdMap(getTeamShirtByIdMap());
+    updateTeam();
   }, []);
 
   return (

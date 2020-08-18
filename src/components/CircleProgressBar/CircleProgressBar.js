@@ -53,7 +53,7 @@ CircleProgressBar.propTypes = {
 CircleProgressBar.defaultProps = {
   textColor: 'black',
   strokeColor: 'blueviolet',
-  maxSize: '40vh'
+  maxSize: '30vh'
 };
 
 export default CircleProgressBar;
