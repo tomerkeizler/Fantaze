@@ -34,7 +34,6 @@ def add_list_item():
 
 @app.route(CONSTANTS['ENDPOINT']['LIST'] + '/<int:id>', methods=['DELETE'])
 def delete_list_item(id):
-    x = 2
     list_items_to_remove = [list_item for list_item in sample_data['list_text_assets']['list_items'] if list_item['_id'] == id]
     if not list_items_to_remove:
         json_response = jsonify({'error': 'Could not find an item with the given id'})
@@ -50,7 +49,7 @@ def delete_list_item(id):
 @app.route(CONSTANTS['ENDPOINT']['MY_TEAM'], methods = ['POST'])
 def get_final_team():
     data = request.get_json()
-    return jsonify(create_team.get_used_players(data['year'], data['round']))
+    return jsonify(create_team.get_used_players(data['year'], data['round'], [154, 157]))
 
 
 @app.route(CONSTANTS['ENDPOINT']['TEAM_FILTER'])

@@ -27,9 +27,13 @@ def update_id_playersData_map(id_playersData_map, player_id, current_player, per
                                     }
     return id_playersData_map
 
+def get_all_players():
+    all_players = mongo.find_from_collection(mongo.players_data_collection, {})
+    return all_players
+
 def create_id_players_map():
     players_map = {}
-    all_players = mongo.find_from_collection(mongo.players_data_collection, {})
+    all_players = get_all_players()
     for player in all_players:
         players_map[int(player["player_id"])] = player
     return players_map
@@ -115,13 +119,35 @@ def get_id_player_map(year, round):
     players = create_id_playerDataAvg_map(year, round)
     return players
 
-def get_used_players(year, round):
+def get_price_of_choosen_players(playersId_players_map, choosen_players_id_list):
+    price = 0
+    for id in choosen_players_id_list:
+        player = playersId_players_map.get(id)
+        price += player["price"]
+    return price
+
+def get_choosen_players(playersId_players_map, choosen_players_id_list):
+    choosen_players = []
+    for id in choosen_players_id_list:
+        choosen_players.append(playersId_players_map.get(id))
+    return choosen_players
+
+def delete_choosen_players(playersId_players_map, choosen_players_id_list):
+    for id in choosen_players_id_list:
+        del playersId_players_map[id]
+    return playersId_players_map
+
+def get_used_players(year, round, choosen_players_id_list):
     playersId_players_map = get_id_player_map(year, round)
+    choosen_players_price = get_price_of_choosen_players(playersId_players_map, choosen_players_id_list)
+    choosen_players = get_choosen_players(playersId_players_map, choosen_players_id_list)
+    playersId_players_map = delete_choosen_players(playersId_players_map, choosen_players_id_list)
     players = list(playersId_players_map.values())
-    final_matrix = create_team.knapsack.dynamic_program_knapsack(100, playersId_players_map, 11)
-    used_indexes = create_team.knapsack.get_used_indexes(100, playersId_players_map, 11, final_matrix)
+    final_matrix = create_team.knapsack.dynamic_program_knapsack(100 - choosen_players_price, playersId_players_map, 11 - len(choosen_players_id_list))
+    used_indexes = create_team.knapsack.get_used_indexes(100 - choosen_players_price, playersId_players_map, 11 - len(choosen_players_id_list), final_matrix)
     fantasy_league = []
     for i in range(len(used_indexes)):
         if used_indexes[i] == 1:
             fantasy_league.append(players[i])
+    fantasy_league.extend(choosen_players)
     return fantasy_league

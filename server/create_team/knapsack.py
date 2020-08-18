@@ -3,8 +3,6 @@ import numpy
 import json
 from flask import jsonify
 
-leagues132 = []
-
 # fixed_quantity:
 #  W = Capacity, players = dict of id->player, count = how many elements to collect
 def dynamic_program_knapsack(W, players, count):
