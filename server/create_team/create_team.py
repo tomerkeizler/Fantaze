@@ -19,7 +19,7 @@ def update_id_playersData_map(id_playersData_map, player_id, current_player, per
     id_playersData_map[player_id] = {
                                     "player_id" : player_id,
                                     "player_name" : current_player["player_name"],
-                                    "price" : int(current_player["price"]),
+                                    "price" : current_player["price"],
                                     "performance" : performances,
                                     "position" : current_player["position"],
                                     "team_id" : int(current_performance["team_id"]),
@@ -35,9 +35,9 @@ def create_id_players_map():
     players_map = {}
     all_players = get_all_players()
     for player in all_players:
-        players_map[int(player["player_id"])] = player
+        players_map[player["player_id"]] = player
     return players_map
-
+    
 def get_fixtures_id_by_league(league) -> list:
     fixtures = []
     result = list(mongo.find_from_collection(mongo.fixtures_collection, {"league": {'$in': league } } ))
@@ -102,7 +102,7 @@ def create_id_playerData_map(year, round):
         if all_performances[i]["event_id"] in fixtures and all_performances[i]["player_id"] in players_map:
             current_player = players_map[all_performances[i]["player_id"]]
             if current_player["price"] != 0:
-                player_id = int(current_player["player_id"])
+                player_id = current_player["player_id"]
                 performances = []
                 if player_id in id_playersData_map:
                     performances = (id_playersData_map.get(player_id))["performance"]
