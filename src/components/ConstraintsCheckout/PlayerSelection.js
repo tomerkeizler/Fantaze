@@ -116,6 +116,12 @@ export default function PlayerSelection() {
     }
     setCheckedPositions(newCheckedPositions);
     // console.log(checkedPositions);
+
+
+
+
+
+
   }
 
   const numberOfCheckedPositions = (items) => intersection(checkedPositions, items).length;
@@ -272,7 +278,6 @@ export default function PlayerSelection() {
   return (
     <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
 
-
       <Grid container justify="center">
         <Grid container direction="row" alignItems="center" justify="center">
 
@@ -303,6 +308,7 @@ export default function PlayerSelection() {
         <Grid item>{CustomSelectionList(false, 'Position', 150, 300, handleToggleAllPositions, numberOfCheckedPositions, positions, handleTogglePosition, checkedPositions)}</Grid>
         <Grid item>{CustomSelectionList(true, 'Available players', 350, 300, null, numberOfCheckedPlayers, availablePlayers, handleTogglePlayer, checkedAvailablePlayers)}</Grid>
         <Grid item>{CustomSelectionList(false, 'Selected players', 300, 300, handleToggleAllPlayers, numberOfCheckedPlayers, selectedPlayers, handleTogglePlayer, checkedSelectedPlayers)}</Grid>
+    
     </Grid>
   );
 }

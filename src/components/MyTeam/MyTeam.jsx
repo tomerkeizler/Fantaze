@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 
 
-const My_Team = () => {
+const MyTeam = () => {
   const [items, setItems] = useState([]);
   const [yearRound, setYearRound] = useState({ year: "2019/20", round: "Group Stage - 1" });
   const [isLoading, setIsLoading] = useState(true);
@@ -127,4 +127,4 @@ const My_Team = () => {
   );
 }
 
-export default My_Team;
+export default MyTeam;
