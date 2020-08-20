@@ -5,7 +5,7 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 
 import AboutUs from "./components/AboutUs/AboutUs";
-import MyTeam  from "./components/MyTeam/MyTeam";
+import MyTeam  from "./components/My_Team/My_Team";
 import ConstraintsCheckout from "./components/ConstraintsCheckout/ConstraintsCheckout";
 import List from "./components/List/List";
 import Master_Detail from "./components/Master_Detail/Master_Detail";
