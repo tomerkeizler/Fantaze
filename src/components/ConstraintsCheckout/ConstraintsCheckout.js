@@ -1,5 +1,7 @@
 ﻿import React from 'react';
+import FormationPicking from './FormationPicking';
 import PlayerSelection from './PlayerSelection'
+import AdvancedConstraints from './AdvancedConstraints';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -10,9 +12,6 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
-import AddressForm from './AddressForm';
-import PaymentForm from './PaymentForm';
-import Review from './Review';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -21,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(2),
     [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-      width: 600,
+      width: 1200,
       marginLeft: 'auto',
       marginRight: 'auto',
     },
@@ -54,11 +53,11 @@ const steps = ['Formation picking', 'Players selection', 'Advanced constraints']
 function getStepContent(step) {
   switch (step) {
     case 0:
-      return <AddressForm />;
+      return <FormationPicking />;
     case 1:
       return <PlayerSelection />;
     case 2:
-      return <Review />;
+      return <AdvancedConstraints />;
     default:
       throw new Error('Unknown step');
   }
@@ -94,11 +93,10 @@ export default function ConstraintsCheckout() {
             {activeStep === steps.length ? (
               <React.Fragment>
                 <Typography variant="h5" gutterBottom>
-                  Thank you for your order.
+                  Thank you for setting your team constraints.
                 </Typography>
                 <Typography variant="subtitle1">
-                  Your order number is #2001539. We have emailed your order confirmation, and will
-                  send you an update when your order has shipped.
+                  Your ultimate team of UEFA Champions League Fantasy is ready!
                 </Typography>
               </React.Fragment>
             ) : (
@@ -116,7 +114,7 @@ export default function ConstraintsCheckout() {
                     onClick={handleNext}
                     className={classes.button}
                   >
-                    {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                   </Button>
                 </div>
               </React.Fragment>

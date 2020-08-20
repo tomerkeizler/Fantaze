@@ -11,6 +11,7 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
+import Typography from '@material-ui/core/Typography';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -276,39 +277,43 @@ export default function PlayerSelection() {
   // ---- The entire Player selection component ----
   // -----------------------------------------------
   return (
-    <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
+    <React.Fragment>
+      <Typography variant="h5"><b>
+      Select your favorite players.
+        </b></Typography>
+      <Typography variant="h6">
+      Those players will be included in your ultimate team!
+      </Typography>
 
-      <Grid container justify="center">
-        <Grid container direction="row" alignItems="center" justify="center">
-
-          <Button
-            variant="outlined"
-            size="small"
-            className={classes.button}
-            onClick={handleCheckedRight}
-            disabled={checkedAvailablePlayers.length === 0}
-            aria-label="move selected right">
-            Add player
+      <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
+        <Grid container justify="center">
+          <Grid container direction="row" alignItems="center" justify="center">
+            <Button
+              variant="outlined"
+              size="small"
+              className={classes.button}
+              onClick={handleCheckedRight}
+              disabled={checkedAvailablePlayers.length === 0}
+              aria-label="move selected right">
+              Add player
           </Button>
-
-          <Button
-            variant="outlined"
-            size="small"
-            className={classes.button}
-            onClick={handleCheckedLeft}
-            disabled={checkedSelectedPlayers.length === 0}
-            aria-label="move selected left">
-            Remove player
+            <Button
+              variant="outlined"
+              size="small"
+              className={classes.button}
+              onClick={handleCheckedLeft}
+              disabled={checkedSelectedPlayers.length === 0}
+              aria-label="move selected left">
+              Remove player
           </Button>
-
+          </Grid>
         </Grid>
-      </Grid>
 
         <Grid item>{CustomSelectionList(false, 'Teams', 200, 300, null, numberOfCheckedTeams, teams, handleToggleTeam, checkedTeams)}</Grid>
         <Grid item>{CustomSelectionList(false, 'Position', 150, 300, handleToggleAllPositions, numberOfCheckedPositions, positions, handleTogglePosition, checkedPositions)}</Grid>
         <Grid item>{CustomSelectionList(true, 'Available players', 350, 300, null, numberOfCheckedPlayers, availablePlayers, handleTogglePlayer, checkedAvailablePlayers)}</Grid>
         <Grid item>{CustomSelectionList(false, 'Selected players', 300, 300, handleToggleAllPlayers, numberOfCheckedPlayers, selectedPlayers, handleTogglePlayer, checkedSelectedPlayers)}</Grid>
-    
-    </Grid>
+      </Grid>
+    </React.Fragment>
   );
 }
