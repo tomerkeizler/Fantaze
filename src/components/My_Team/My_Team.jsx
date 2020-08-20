@@ -3,12 +3,14 @@ import WarningMessage from "../WarningMessage";
 import CONSTANTS from "../../constants";
 import PlayerTile from "./PlayerTile";
 import { getTeamShirtByIdMap } from '../../images/Team_Shirts'
-import CircleProgressBar from '../CircleProgressBar';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 
 
 const My_Team = () => {
   const [items, setItems] = useState([]);
-  const [yearRound, setYearRound] = useState({year: "2019/20", round: "Group Stage - 1"});
+  const [yearRound, setYearRound] = useState({ year: "2019/20", round: "Group Stage - 1" });
   const [isLoading, setIsLoading] = useState(true);
   const [teamShirtByIdMap, setTeamShirtByIdMap] = useState({ myMap: {} });
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
@@ -39,8 +41,8 @@ const My_Team = () => {
       warningMessageText: ""
     });
   }
-  
-  
+
+
   const handleYearRoundChange = (e) => {
     setIsLoading(true);
     const newStateYearRound = yearRound;
@@ -51,16 +53,16 @@ const My_Team = () => {
 
   const updateTeam = (e) => {
     getItems()
-    .then(newItems => {
-      setItems(newItems)
-      setIsLoading(false);
-    })
-    .catch(error =>
-      setWarningMessage({
-        warningMessageOpen: true,
-        warningMessageText: `Request to get grid text failed: ${error}`
+      .then(newItems => {
+        setItems(newItems)
+        setIsLoading(false);
       })
-    );
+      .catch(error =>
+        setWarningMessage({
+          warningMessageOpen: true,
+          warningMessageText: `Request to get grid text failed: ${error}`
+        })
+      );
   }
 
   React.useEffect(() => {
@@ -98,14 +100,12 @@ const My_Team = () => {
         </select>
 
         {isLoading ? (
-          <center>
-            <CircleProgressBar
-              trailStrokeColor="gray"
-              strokeColor="blue"
-              percentage={100}
-              innerText="Loading..."
-            />
-          </center>
+          <Grid container direction="column" justify="center" alignItems="center">
+            <CircularProgress size={100} thickness={2} />
+            <Typography gutterBottom variant ="h5" color="textSecondary">
+              Loading team...
+          </Typography>
+          </Grid>
         ) :
           (<div className="row justify-content-around text-center pb-5">
             {items.map(item => (
