@@ -4,8 +4,9 @@ import "./App.css";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 
-import Blank from "./components/Blank/Blank";
-import My_Team from "./components/My_Team/My_Team";
+import AboutUs from "./components/AboutUs/AboutUs";
+import MyTeam  from "./components/MyTeam/MyTeam";
+import ConstraintsCheckout from "./components/ConstraintsCheckout/ConstraintsCheckout";
 import List from "./components/List/List";
 import Master_Detail from "./components/Master_Detail/Master_Detail";
 
@@ -15,8 +16,9 @@ const App = () => {
       <React.Fragment>
         <NavBar />
         <Switch>
-          <Route exact path = "/" component = { Blank } />
-          <Route path = "/My_Team" component = { My_Team } />
+          <Route exact path = "/" component = { AboutUs } />
+          <Route path = "/My_Team" component = { MyTeam } />
+          <Route exact path = "/Constraints_Checkout" component = { ConstraintsCheckout } />
           <Route path = "/List" component = { List } />
           <Route path = "/Master_Detail" component = { Master_Detail } />
         </Switch>

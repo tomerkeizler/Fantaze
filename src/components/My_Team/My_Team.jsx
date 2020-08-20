@@ -3,10 +3,14 @@ import WarningMessage from "../WarningMessage";
 import CONSTANTS from "../../constants";
 import PlayerTile from "./PlayerTile";
 import { getTeamShirtByIdMap } from '../../images/Team_Shirts'
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 
-const My_Team = () => {
+
+const MyTeam = () => {
   const [items, setItems] = useState([]);
-  const [yearRound, setYearRound] = useState({year: "2019/20", round: "Group Stage - 1"});
+  const [yearRound, setYearRound] = useState({ year: "2019/20", round: "Group Stage - 1" });
   const [isLoading, setIsLoading] = useState(true);
   const [teamShirtByIdMap, setTeamShirtByIdMap] = useState({ myMap: {} });
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
@@ -37,13 +41,17 @@ const My_Team = () => {
       warningMessageText: ""
     });
   }
-  
-  
+
+
   const handleYearRoundChange = (e) => {
+    setIsLoading(true);
     const newStateYearRound = yearRound;
     newStateYearRound[e.target.id] = e.target.value;
     setYearRound(newStateYearRound);
+    updateTeam();
+  }
 
+  const updateTeam = (e) => {
     getItems()
       .then(newItems => {
         setItems(newItems)
@@ -59,6 +67,7 @@ const My_Team = () => {
 
   React.useEffect(() => {
     setTeamShirtByIdMap(getTeamShirtByIdMap());
+    updateTeam();
   }, []);
 
   return (
@@ -90,7 +99,14 @@ const My_Team = () => {
           </optgroup>
         </select>
 
-        {isLoading ? (<h5>LOADING...</h5>) :
+        {isLoading ? (
+          <Grid container direction="column" justify="center" alignItems="center">
+            <CircularProgress size={100} thickness={2} />
+            <Typography gutterBottom variant ="h5" color="textSecondary">
+              Loading team...
+          </Typography>
+          </Grid>
+        ) :
           (<div className="row justify-content-around text-center pb-5">
             {items.map(item => (
               <PlayerTile
@@ -111,4 +127,4 @@ const My_Team = () => {
   );
 }
 
-export default My_Team;
+export default MyTeam;

@@ -3,14 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
     "bootstrap": "4.4.1",
     "classnames": "2.2.6",
     "flask": "^0.2.10",
     "fs-extra": "9.0.0",
+    "lodash.groupby": "^4.6.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-router-dom": "5.1.2",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "styled-components": "^5.1.1"
   },
   "eslintConfig": {
     "extends": "react-app"
