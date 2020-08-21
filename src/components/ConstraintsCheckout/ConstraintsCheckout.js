@@ -85,7 +85,7 @@ export default function ConstraintsCheckout() {
           <Stepper activeStep={activeStep} className={classes.stepper}>
             {steps.map((label) => (
               <Step key={label}>
-                <StepLabel>{label}</StepLabel>
+                <StepLabel><h4><b>{label}</b></h4></StepLabel>
               </Step>
             ))}
           </Stepper>

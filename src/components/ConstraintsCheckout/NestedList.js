@@ -8,8 +8,8 @@ import Collapse from '@material-ui/core/Collapse';
 import Divider from '@material-ui/core/Divider';
 import Checkbox from '@material-ui/core/Checkbox';
 
-// import ExpandLess from '@material-ui/icons/ExpandLess';
-// import ExpandMore from '@material-ui/icons/ExpandMore';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -65,7 +65,7 @@ export default function NestedList(props) {
           <>
             <ListItem selected key={position} button onClick={() => handleClick(position)}>
               <ListItemText primary={`${position}s`} />
-              {/* {open ? <ExpandLess /> : <ExpandMore />} */}
+              {areGroupsOpen[position] ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
             <Divider />
 
