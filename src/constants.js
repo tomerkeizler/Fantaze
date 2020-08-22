@@ -15,14 +15,15 @@ CONSTANTS.ERROR_MESSAGE.MASTERDETAIL_GET = "Request to get master detail text fa
 
 CONSTANTS.ENDPOINT = {};
 
-CONSTANTS.ENDPOINT.TRY = "/api/try";
-CONSTANTS.ENDPOINT.LIST = "/api/list";
-CONSTANTS.ENDPOINT.MASTERDETAIL = "/api/masterdetail";
-
 CONSTANTS.ENDPOINT.MY_TEAM = "/api/my_team";
 
-CONSTANTS.ENDPOINT.TEAM_FILTER = "/api/team_filter"
-CONSTANTS.ENDPOINT.PLAYER_FILTER = "/api/player_filter"
+CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS = {};
+CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.FORMATION_PICK = "/api/team_constraints/formation_pick"
+CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION = "/api/team_constraints/player_selection"
+CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.TEAM_FILTER = "/api/team_constraints/team_filter"
+CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_FILTER = "/api/team_constraints/player_filter"
+        
+CONSTANTS.ENDPOINT.MASTERDETAIL = "/api/masterdetail";
 
 
 export default CONSTANTS;

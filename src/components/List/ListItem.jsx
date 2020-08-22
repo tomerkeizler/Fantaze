@@ -6,7 +6,7 @@ const ListItem = ({ item, deleteItem }) => {
     <div className="col-12 mb-3 border">
       <div className="row">
         <div className="col-11">
-          <p className="mt-3">{item.text}</p>
+          <p className="mt-3">{item.player_name}</p>
         </div>
         <div className="col-1">
           <button
