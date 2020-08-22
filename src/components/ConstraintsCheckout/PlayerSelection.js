@@ -46,7 +46,7 @@ function union(a, b) {
 // -----------------------------------------------
 // ---- The entire Player selection component ----
 // -----------------------------------------------
-export default function PlayerSelection() {
+export default function PlayerSelection(props) {
   const classes = useStyles();
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
 
@@ -181,7 +181,7 @@ export default function PlayerSelection() {
   // ---- Fetching data  ----
   // ------------------------
   const getTeams = () => {
-    let teamList = fetch(CONSTANTS.ENDPOINT.TEAM_FILTER)
+    let teamList = fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.TEAM_FILTER)
       .then(response => {
         if (!response.ok) {
           throw Error(response.statusText);
@@ -193,7 +193,7 @@ export default function PlayerSelection() {
 
 
   const getPlayersByTeam = (teams_id_checked) => {
-    const playerList = fetch(CONSTANTS.ENDPOINT.PLAYER_FILTER, {
+    const playerList = fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_FILTER, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -303,7 +303,7 @@ export default function PlayerSelection() {
               color="primary"
               size="small"
               className={classes.button}
-              onClick={handleCheckedRight}
+              onClick={() => {handleCheckedRight(); props.onChange(selectedPlayers)}}
               disabled={checkedAvailablePlayers.length === 0}
               aria-label="move selected right">
               Add &gt;&gt;
@@ -313,7 +313,7 @@ export default function PlayerSelection() {
               color="secondary"
               size="small"
               className={classes.button}
-              onClick={handleCheckedLeft}
+              onClick={() => {handleCheckedLeft(); props.onChange(selectedPlayers)}}
               disabled={checkedSelectedPlayers.length === 0}
               aria-label="move selected left">
               &lt;&lt; Remove

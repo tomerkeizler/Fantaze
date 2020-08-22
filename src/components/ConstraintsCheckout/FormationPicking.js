@@ -184,14 +184,15 @@ export default function FormationPicking() {
                 onChange={handleChange}
                 indicatorColor="primary"
                 textColor="primary"
-                variant="fullwidth"
+                variant="fullWidth"
                 className={classes.tabs}
                 classes={{ indicator: classes.bigIndicator }}>
-                {formationsData.map((formationItem, i) =>
+                {formationsData.map((formationItem, index) =>
                   <Tab
+                    key={index}
                     className={classes.tabRoot}
                     classes={{ selected: classes.tabSelected }}
-                    label={formationItem.formation} {...a11yProps(i)} />)}
+                    label={formationItem.formation} {...a11yProps(index)} />)}
               </Tabs>
             </AppBar>
           </Grid>
@@ -202,7 +203,7 @@ export default function FormationPicking() {
               index={value}
               onChangeIndex={handleChangeIndex}>
               {formationsData.map((formationItem, index) =>
-                <TabPanel formationItem={formationItem} value={value} index={index} dir={theme.direction} />)}
+                <TabPanel formationItem={formationItem} value={value} key={index} index={index} dir={theme.direction} />)}
             </SwipeableViews>
           </Grid>
 
