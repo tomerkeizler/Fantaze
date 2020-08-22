@@ -15,7 +15,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 const useStyles = makeStyles((theme) => ({
   list: {
     backgroundColor: theme.palette.background.paper,
-    overflow: 'auto',
+    overflow: 'scroll',
     width: 200,
     height: 300,
     maxHeight: 300,
@@ -23,6 +23,15 @@ const useStyles = makeStyles((theme) => ({
   nested: {
     paddingLeft: theme.spacing(5),
   },
+  root: {
+    '&$selected': {
+      backgroundColor: '#9fa8da',
+      '&:hover': {
+        backgroundColor: '#797ff0',
+      }
+    },
+  },
+  selected: {},
 }));
 
 export default function NestedList(props) {
@@ -63,7 +72,9 @@ export default function NestedList(props) {
       {Object.keys(playersGroupedByPosition).map((position) => {
         return (
           <>
-            <ListItem selected key={position} button onClick={() => handleClick(position)}>
+            <ListItem button selected divider
+              classes={{ root: classes.root, selected: classes.selected }}
+              key={position} button onClick={() => handleClick(position)}>
               <ListItemText primary={`${position}s`} />
               {areGroupsOpen[position] ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
@@ -73,9 +84,12 @@ export default function NestedList(props) {
               <List component="div" disablePadding>
                 {playersGroupedByPosition[position].map((player) => {
                   return (
-                    <ListItem key={player.id} role="listitem" button onClick={props.handleToggle(player)}>
+                    <ListItem disableGutters
+                      selected={props.checkedItems.findIndex(obj => obj.id === player.id) !== -1}
+                      key={player.id} role="listitem" button onClick={props.handleToggle(player)}>
                       <ListItemIcon>
                         <Checkbox
+                          color="primary"
                           checked={props.checkedItems.findIndex(obj => obj.id === player.id) !== -1}
                           tabIndex={-1}
                           disableRipple
