@@ -11,7 +11,7 @@ export default function AdvancedConstraints() {
       <Typography variant="h5"><b>
       Select your additional preferences.
         </b></Typography>
-      <Typography variant="h6">
+      <Typography variant="h6" gutterBottom>
       Description...
       </Typography>
 

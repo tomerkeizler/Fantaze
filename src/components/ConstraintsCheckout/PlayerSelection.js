@@ -46,7 +46,7 @@ function union(a, b) {
 // -----------------------------------------------
 // ---- The entire Player selection component ----
 // -----------------------------------------------
-export default function PlayerSelection() {
+export default function PlayerSelection(props) {
   const classes = useStyles();
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
 
@@ -181,7 +181,7 @@ export default function PlayerSelection() {
   // ---- Fetching data  ----
   // ------------------------
   const getTeams = () => {
-    let teamList = fetch(CONSTANTS.ENDPOINT.TEAM_FILTER)
+    let teamList = fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.TEAM_FILTER)
       .then(response => {
         if (!response.ok) {
           throw Error(response.statusText);
@@ -193,7 +193,7 @@ export default function PlayerSelection() {
 
 
   const getPlayersByTeam = (teams_id_checked) => {
-    const playerList = fetch(CONSTANTS.ENDPOINT.PLAYER_FILTER, {
+    const playerList = fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_FILTER, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -235,11 +235,15 @@ export default function PlayerSelection() {
   const CustomSelectionList = (isNested, title, listWidth, listHeight, handleToggleAll, numberOfCheckedItems, items, handleToggle, checkedItems) => (
     <Card>
       <CardHeader
+        style={(title === 'Available players') ? { backgroundColor: "#797ff0" } :
+          (title === 'Selected players') ? { backgroundColor: "#ff7961" } :
+            { backgroundColor: "#cfd8dc" }}
         className={classes.cardHeader}
         avatar=
         {handleToggleAll !== null ?
           (<Checkbox
             onClick={handleToggleAll(items)}
+            color={title === 'Selected players' ? 'secondary' : 'default'}
             checked={numberOfCheckedItems(items) === items.length && items.length !== 0}
             indeterminate={numberOfCheckedItems(items) !== items.length && numberOfCheckedItems(items) !== 0}
             disabled={items.length === 0}
@@ -247,7 +251,9 @@ export default function PlayerSelection() {
           />)
           : ('')}
         title={title}
+        titleTypographyProps={{ variant: 'h5' }}
         subheader={`${numberOfCheckedItems(items)}/${items.length} selected`}
+        subheaderTypographyProps={{ variant: 'h6' }}
       />
       <Divider />
 
@@ -261,6 +267,7 @@ export default function PlayerSelection() {
         />
       ) : (
           <StandardList
+            title={title}
             listWidth={listWidth}
             listHeight={listHeight}
             items={items}
@@ -279,39 +286,40 @@ export default function PlayerSelection() {
   return (
     <React.Fragment>
       <Typography variant="h5"><b>
-      Select your favorite players.
+        Select your favorite players.
         </b></Typography>
-      <Typography variant="h6">
-      Those players will be included in your ultimate team!
+      <Typography variant="h6" gutterBottom>
+        Those players will be included in your ultimate team!
       </Typography>
 
-      <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
-        <Grid container justify="center">
-          <Grid container direction="row" alignItems="center" justify="center">
+      <Grid container spacing={1} justify="center" alignItems="center" justify="center" className={classes.root}>
+        <Grid item>{CustomSelectionList(false, 'Teams', 200, 300, null, numberOfCheckedTeams, teams, handleToggleTeam, checkedTeams)}</Grid>
+        <Grid item>{CustomSelectionList(false, 'Position', 200, 300, handleToggleAllPositions, numberOfCheckedPositions, positions, handleTogglePosition, checkedPositions)}</Grid>
+        <Grid item>{CustomSelectionList(true, 'Available players', 300, 300, null, numberOfCheckedPlayers, availablePlayers, handleTogglePlayer, checkedAvailablePlayers)}</Grid>
+        <Grid item>
+          <Grid container direction="column" alignItems="center" justify="center">
             <Button
-              variant="outlined"
+              variant="contained"
+              color="primary"
               size="small"
               className={classes.button}
-              onClick={handleCheckedRight}
+              onClick={() => {handleCheckedRight(); props.onChange(selectedPlayers)}}
               disabled={checkedAvailablePlayers.length === 0}
               aria-label="move selected right">
-              Add player
+              Add &gt;&gt;
           </Button>
             <Button
-              variant="outlined"
+              variant="contained"
+              color="secondary"
               size="small"
               className={classes.button}
-              onClick={handleCheckedLeft}
+              onClick={() => {handleCheckedLeft(); props.onChange(selectedPlayers)}}
               disabled={checkedSelectedPlayers.length === 0}
               aria-label="move selected left">
-              Remove player
+              &lt;&lt; Remove
           </Button>
           </Grid>
         </Grid>
-
-        <Grid item>{CustomSelectionList(false, 'Teams', 200, 300, null, numberOfCheckedTeams, teams, handleToggleTeam, checkedTeams)}</Grid>
-        <Grid item>{CustomSelectionList(false, 'Position', 150, 300, handleToggleAllPositions, numberOfCheckedPositions, positions, handleTogglePosition, checkedPositions)}</Grid>
-        <Grid item>{CustomSelectionList(true, 'Available players', 350, 300, null, numberOfCheckedPlayers, availablePlayers, handleTogglePlayer, checkedAvailablePlayers)}</Grid>
         <Grid item>{CustomSelectionList(false, 'Selected players', 300, 300, handleToggleAllPlayers, numberOfCheckedPlayers, selectedPlayers, handleTogglePlayer, checkedSelectedPlayers)}</Grid>
       </Grid>
     </React.Fragment>

@@ -1,21 +1,43 @@
 import datetime
 
+#######################################
+####### DATA - TEAM CONSTRAINTS #######
+#######################################
+
+team_constraints = {}
+
+team_constraints['player_selection'] = { 'player_list': [] }
+team_constraints['formation_pick'] = {'formation': '4-3-3' }
+team_constraints['advanced_constraints'] = { }
+
+# ansuFati = { 'player_id': 135775,
+# 'player_name': "Ansu Fati",
+# 'position': "Attacker",
+# 'price': 5,
+# 'team_id': "529",
+# 'team_name': "Barcelona"
+# }
+
+# team_constraints['player_selection']['player_list'].insert(0, ansuFati)
+
+
+########################
+####### OLD DATA #######
+########################
+
 long_lorem_ipsum = 'I am long'
 short_lorem_ipsum = 'I am short'
 
 sample_data = {}
 
 sample_data['list_text_assets'] = {
-    'list_id': 3,
+    'list_id': 2,
     'list_items': [
         {
             '_id': 1,
             'text': short_lorem_ipsum
         },
-        {
-            '_id': 2,
-            'text': short_lorem_ipsum
-        }
+
     ],
 }
 

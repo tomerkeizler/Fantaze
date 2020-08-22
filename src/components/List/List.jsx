@@ -3,28 +3,27 @@ import ListItem from "./ListItem";
 import Form from "./Form";
 import WarningMessage from "../WarningMessage";
 import CONSTANTS from "../../constants";
-import MyFirstComponent from "./MyFirstComponent"
 
 
 const List = () => {
   const [items, setItems] = useState([]);
-  const [warningMessage, setWarningMessage] = useState({warningMessageOpen: false, warningMessageText: ""});
+  const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
 
-  const getItems = () => {
-    let promiseList = fetch(CONSTANTS.ENDPOINT.LIST)
+  async function getItems() {
+    let promiseList = await fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION)
       .then(response => {
         if (!response.ok) {
           throw Error(response.statusText);
         }
         return response.json();
+
       })
     return promiseList;
   }
 
 
-  
   const deleteItem = (item) => {
-    fetch(`${CONSTANTS.ENDPOINT.LIST}/${item._id}`, { method: "DELETE" })
+    fetch(`${CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION}/${item._id}`, { method: "DELETE" })
       .then(response => {
         if (!response.ok) {
           throw Error(response.statusText);
@@ -52,7 +51,7 @@ const List = () => {
       return;
     }
 
-    fetch(CONSTANTS.ENDPOINT.LIST, {
+    fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -65,7 +64,7 @@ const List = () => {
         }
         return response.json();
       })
-      .then(itemAdded =>{
+      .then(itemAdded => {
         setItems([itemAdded, ...items]);
       })
       .catch(error =>
@@ -85,7 +84,7 @@ const List = () => {
 
   React.useEffect(() => {
     getItems()
-      .then(list => {setItems(list)})
+      .then(list => { setItems(list) })
       .catch(error =>
         setWarningMessage({
           warningMessageOpen: true,
@@ -101,15 +100,18 @@ const List = () => {
       </div>
       <div className="row">
         <div className="col-12 p-0">
-          <Form addItem={addItem}/>
+          <Form addItem={addItem} />
         </div>
         {items.map(listItem => (
           <ListItem
-            key={listItem._id}
+            key={listItem.player_id}
             item={listItem}
             deleteItem={deleteItem}
           />
-        ))}
+          ))}
+
+          {/* {items.map(p=>console.log(p.player_data))} */}
+
         <WarningMessage
           open={warningMessage.warningMessageOpen}
           text={warningMessage.warningMessageText}

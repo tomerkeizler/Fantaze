@@ -19,18 +19,21 @@ const useStyles = makeStyles((theme) => ({
 
 export default function StandardList(props) {
   const classes = useStyles();
- 
+
 
   return (
     <List className={classes.list} dense component="div" role="list"
-    style={{width: props.listWidth}}>
+      style={{ width: props.listWidth }}>
       {props.items.map((item) => {
         const labelId = `transfer-list-all-item-${item}-label`;
 
         return (
-          <ListItem key={item.id} role="listitem" button onClick={props.handleToggle(item)}>
+          <ListItem
+          selected={props.checkedItems.findIndex(obj => obj.id === item.id) !== -1}
+          key={item.id} role="listitem" button onClick={props.handleToggle(item)}>
             <ListItemIcon>
               <Checkbox
+                color={props.title === 'Selected players' ? 'secondary' : 'default'}
                 checked={props.checkedItems.findIndex(obj => obj.id === item.id) !== -1}
                 tabIndex={-1}
                 disableRipple
