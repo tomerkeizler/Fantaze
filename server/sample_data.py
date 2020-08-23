@@ -14,7 +14,7 @@ team_constraints['advanced_constraints'] = { }
 # 'player_name': "Ansu Fati",
 # 'position': "Attacker",
 # 'price': 5,
-# 'team_id': "529",
+# 'team_id': 529,
 # 'team_name': "Barcelona"
 # }
 

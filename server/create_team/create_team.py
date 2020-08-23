@@ -23,7 +23,7 @@ def update_id_playersData_map(id_playersData_map, current_player, performances):
                                     "price" : current_player["price"],
                                     "performance" : performances,
                                     "position" : current_player["position"],
-                                    "team_id" : int(current_player["team_id"]),
+                                    "team_id" : current_player["team_id"],
                                     "team_name" : current_player["team_name"]
                                     }
     return id_playersData_map
