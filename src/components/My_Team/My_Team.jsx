@@ -16,13 +16,13 @@ const MyTeam = () => {
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
 
 
-  const getItems = (filterDetails) => {
+  const getItems = (newSeason, newRound) => {
     const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        year: filterDetails.season,
-        round: filterDetails.round
+        year: newSeason,
+        round: newRound
       })
     })
       .then(response => {
@@ -42,17 +42,13 @@ const MyTeam = () => {
     });
   }
 
-  const handleSeasonRoundSubmit = (filterDetails) => {
+  const handleSeasonRoundSubmit = (newSeason, newRound) => {
     setIsLoading(true);
-
-    console.log(filterDetails.season)
-    console.log(filterDetails.round)
-
-    updateTeam(filterDetails);
+    updateTeam(newSeason, newRound);
   }
 
-  const updateTeam = (filterDetails) => {
-    getItems(filterDetails)
+  const updateTeam = (newSeason, newRound) => {
+    getItems(newSeason, newRound)
       .then(newItems => {
         setItems(newItems)
         setIsLoading(false);
