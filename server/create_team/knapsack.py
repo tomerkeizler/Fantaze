@@ -2,6 +2,7 @@ import mongo
 import numpy
 import json
 from flask import jsonify
+import math
 
 # fixed_quantity:
 #  W = Capacity, players = dict of id->player, count = how many elements to collect
@@ -16,6 +17,10 @@ def dynamic_program_knapsack(W, players, count):
                     matrix[i][j][k] = matrix[i-1][j][k]
                 else:
                     matrix[i][j][k] = max(matrix[i-1][j][k], players[keys[i]]["performance"] + matrix[i-1][j-players[keys[i]]["price"]][k-1])
+                    # current_value = matrix[i-1][j-players[keys[i]]["price"]][k-1]
+                    # player_value = players[keys[i]]["performance"]
+                    # sum_value = player_value + math.sqrt(current_value)
+                    # matrix[i][j][k] = max(matrix[i-1][j][k], math.pow(sum_value, 2))
     return matrix
 
 def get_used_indexes(W, players, count ,matrix):
@@ -35,6 +40,7 @@ def get_used_indexes(W, players, count ,matrix):
                 currentCount = k
                 bestValue = value
             
+    print(bestValue)
     while itemIndex >= 0 and currentCost >= 0 and currentCount >= 0:
         if (itemIndex == 0 and matrix[itemIndex][currentCost][currentCount] > 0) or (matrix[itemIndex][currentCost][currentCount] != matrix[itemIndex-1][currentCost][currentCount]):
             marked[itemIndex] = 1

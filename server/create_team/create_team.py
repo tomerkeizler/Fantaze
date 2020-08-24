@@ -2,6 +2,7 @@
 # sys.path.insert(1, 'C:\\Users\\Noy Wolfson\\Dev\\Fantasy\\server')
 #sys.path.insert(1, 'C:\\Users\\Noy Wolfson\\Dev\\Fantasy\\server\\create_team')
 from server import mongo
+import sample_data
 from create_team import knapsack, create_team
 from collections import OrderedDict 
 import math
@@ -120,43 +121,71 @@ def get_id_player_map(year, round):
     players = create_id_playerDataAvg_map(year, round)
     return players
 
-def get_price_of_choosen_players(choosen_players_id_list):
+def get_price_of_choosen_players(choosen_players):
     price = 0
-    all_players_map =  create_id_players_map()
-    for id in choosen_players_id_list:
-        player = all_players_map.get(id)
+    for player in choosen_players['choosen']:
+        # player = all_players_map.get(id)
         price += player["price"]
     return price
 
-def get_choosen_players(playersId_players_map, choosen_players_id_list):
-    choosen_players = []
+def is_knockout(round):
+    perv_rounds = get_possible_rounds(round)
+    return len(perv_rounds) > 5
+
+def get_choosen_players(year, round, playersId_players_map, choosen_players_id_list):
+    choosen_players = {
+        'choosen': [],
+        'defeated': [] 
+    }
     all_players_map =  create_id_players_map()
     for id in choosen_players_id_list:
         player = playersId_players_map.get(id)
         if player is None:
             update_id_playersData_map(all_players_map, all_players_map.get(id), 0)
             player = all_players_map.get(id)
-        choosen_players.append(player)
-    
+        if is_knockout(round):
+            relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
+            if player["team_id"] not in relevant_teams: 
+                choosen_players['defeated'].append(player)
+            else:
+                choosen_players['choosen'].append(player)
+        else:
+            choosen_players['choosen'].append(player)
     return choosen_players
 
-def delete_choosen_players(playersId_players_map, choosen_players_id_list):
-    for id in choosen_players_id_list:
-        playersId_players_map.pop(id, None)
+def delete_choosen_players(playersId_players_map, choosen_players):
+    for player in choosen_players['choosen']:
+        playersId_players_map.pop(player['player_id'], None)
+    return playersId_players_map
+
+def delete_defeated_teams(year, round, playersId_players_map):
+    if(is_knockout(round)):
+        relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
+        for playerId in list(playersId_players_map):
+            if playersId_players_map[playerId]["team_id"] not in relevant_teams:
+                del playersId_players_map[playerId]
+
     return playersId_players_map
 
 def get_used_players(year, round, choosen_players_id_list):
     playersId_players_map = get_id_player_map(year, round)
-    choosen_players_price = get_price_of_choosen_players(choosen_players_id_list)
-    choosen_players = get_choosen_players(playersId_players_map, choosen_players_id_list)
-    playersId_players_map = delete_choosen_players(playersId_players_map, choosen_players_id_list)
+    playersId_players_map = delete_defeated_teams(year, round, playersId_players_map)
+    
+    choosen_players = get_choosen_players(year, round, playersId_players_map, choosen_players_id_list)
+    choosen_players_price = get_price_of_choosen_players(choosen_players)
+    playersId_players_map = delete_choosen_players(playersId_players_map, choosen_players)
+
     players = list(playersId_players_map.values())
-    final_matrix = create_team.knapsack.dynamic_program_knapsack(100 - choosen_players_price, playersId_players_map, 11 - len(choosen_players_id_list))
-    used_indexes = create_team.knapsack.get_used_indexes(100 - choosen_players_price, playersId_players_map, 11 - len(choosen_players_id_list), final_matrix)
+    final_matrix = create_team.knapsack.dynamic_program_knapsack(100 - choosen_players_price, playersId_players_map, 11 - len(choosen_players['choosen']))
+    used_indexes = create_team.knapsack.get_used_indexes(100 - choosen_players_price, playersId_players_map, 11 - len(choosen_players['choosen']), final_matrix)
     fantasy_league = []
     for i in range(len(used_indexes)):
         if used_indexes[i] == 1:
             fantasy_league.append(players[i])
-    fantasy_league.extend(choosen_players)
-    return fantasy_league
+    fantasy_league.extend(choosen_players['choosen'])
+    fantasy_league_and_defeated_players = {
+        'choosen': fantasy_league,
+        'defeated': choosen_players['defeated']
+    }
+    return fantasy_league_and_defeated_players
     
