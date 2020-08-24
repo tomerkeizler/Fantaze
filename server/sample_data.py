@@ -10,15 +10,26 @@ team_constraints['player_selection'] = { 'player_list': [] }
 team_constraints['formation_pick'] = {'formation': '4-3-3' }
 team_constraints['advanced_constraints'] = { }
 
-# ansuFati = { 'player_id': 135775,
-# 'player_name': "Ansu Fati",
-# 'position': "Attacker",
-# 'price': 5,
-# 'team_id': 529,
-# 'team_name': "Barcelona"
-# }
 
-# team_constraints['player_selection']['player_list'].insert(0, ansuFati)
+#########################################################
+####### DATA - TEAMS QUALIFIED TO KNOCKOUT PHASES #######
+#########################################################
+
+qualified_teams_id_by_year_round = {}
+
+qualified_teams_id_by_year_round['2018/19'] = {
+  '8th Finals': [47, 40, 194, 529, 496, 50, 212, 33, 174, 530, 85, 165, 80, 497, 157, 541],
+  'Quarter-finals': [47, 40, 194, 529, 496, 50, 212, 33],
+  'Semi-finals': [47, 40, 194, 529],
+  'Final': [47, 40]
+}
+
+qualified_teams_id_by_year_round['2019/20'] = {
+  '8th Finals': [85, 157, 80, 173, 530, 499, 529, 50, 165, 541, 532, 40, 49, 496, 47, 492],
+  'Quarter-finals': [85, 157, 80, 173, 530, 499, 529, 50],
+  'Semi-finals': [85, 157, 80, 173],
+  'Final': [85, 157]
+}
 
 
 ########################
