@@ -44,10 +44,6 @@ const MyTeam = () => {
 
   const handleSeasonRoundSubmit = (newSeason, newRound) => {
     setIsLoading(true);
-
-    console.log(newSeason);
-    console.log(newRound);
-
     updateTeam(newSeason, newRound);
   }
 
