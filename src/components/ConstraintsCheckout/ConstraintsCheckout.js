@@ -75,14 +75,14 @@ export default function ConstraintsCheckout() {
   }
 
   const updatePlayerSelectionConstraint = () => {
-    // Warning Pop Up if the user submits an empty message
-    if (!selectedPlayers) {
-      setWarningMessage({
-        warningMessageOpen: true,
-        warningMessageText: CONSTANTS.ERROR_MESSAGE.LIST_EMPTY_MESSAGE
-      });
-      return;
-    }
+    // // Warning Pop Up if the user submits an empty message
+    // if (!selectedPlayers) {
+    //   setWarningMessage({
+    //     warningMessageOpen: true,
+    //     warningMessageText: CONSTANTS.ERROR_MESSAGE.LIST_EMPTY_MESSAGE
+    //   });
+    //   return;
+    // }
 
     fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION, {
       method: "POST",

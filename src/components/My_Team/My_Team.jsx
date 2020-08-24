@@ -6,23 +6,23 @@ import { getTeamShirtByIdMap } from '../../images/Team_Shirts'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import FilterTeamBySeasonRound from './FilterTeamBySeasonRound'
 
 
 const MyTeam = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [items, setItems] = useState([]);
-  const [yearRound, setYearRound] = useState({ year: "2019/20", round: "Group Stage - 1" });
-  const [isLoading, setIsLoading] = useState(true);
   const [teamShirtByIdMap, setTeamShirtByIdMap] = useState({ myMap: {} });
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
 
 
-  const getItems = () => {
+  const getItems = (filterDetails) => {
     const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        year: yearRound['year'],
-        round: yearRound['round']
+        year: filterDetails.season,
+        round: filterDetails.round
       })
     })
       .then(response => {
@@ -42,17 +42,17 @@ const MyTeam = () => {
     });
   }
 
-
-  const handleYearRoundChange = (e) => {
+  const handleSeasonRoundSubmit = (filterDetails) => {
     setIsLoading(true);
-    const newStateYearRound = yearRound;
-    newStateYearRound[e.target.id] = e.target.value;
-    setYearRound(newStateYearRound);
-    updateTeam();
+
+    console.log(filterDetails.season)
+    console.log(filterDetails.round)
+
+    updateTeam(filterDetails);
   }
 
-  const updateTeam = (e) => {
-    getItems()
+  const updateTeam = (filterDetails) => {
+    getItems(filterDetails)
       .then(newItems => {
         setItems(newItems)
         setIsLoading(false);
@@ -67,7 +67,7 @@ const MyTeam = () => {
 
   React.useEffect(() => {
     setTeamShirtByIdMap(getTeamShirtByIdMap());
-    updateTeam();
+    // updateTeam();
   }, []);
 
   return (
@@ -77,32 +77,12 @@ const MyTeam = () => {
           <h3>My Ultimate Team</h3>
         </div>
 
-        <select name="year" id="year" defaultValue="2019/20" onChange={handleYearRoundChange}>
-          <option value="2018/19">2018/19</option>
-          <option value="2019/20">2019/20</option>
-        </select>
-
-        <select name="round" id="round" defaultValue="Group Stage - 1" onChange={handleYearRoundChange}>
-          <optgroup label="Group Stage">
-            <option value="Group Stage - 1">Fixture 1</option>
-            <option value="Group Stage - 2">Fixture 2</option>
-            <option value="Group Stage - 3">Fixture 3</option>
-            <option value="Group Stage - 4">Fixture 4</option>
-            <option value="Group Stage - 5">Fixture 5</option>
-            <option value="Group Stage - 6">Fixture 6</option>
-          </optgroup>
-          <optgroup label="Knockout phase">
-            <option value="8th Finals">8th Finals</option>
-            <option value="Quarter-finals">Quarter finals</option>
-            <option value="Semi-finals">Semi finals</option>
-            <option value="Final">Final</option>
-          </optgroup>
-        </select>
+        <FilterTeamBySeasonRound handleSubmit={handleSeasonRoundSubmit} />
 
         {isLoading ? (
           <Grid container direction="column" justify="center" alignItems="center">
             <CircularProgress size={100} thickness={2} />
-            <Typography gutterBottom variant ="h5" color="textSecondary">
+            <Typography gutterBottom variant="h5" color="textSecondary">
               Loading team...
           </Typography>
           </Grid>
