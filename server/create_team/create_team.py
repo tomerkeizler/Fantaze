@@ -15,15 +15,16 @@ def convert_performances_list_to_avg(id_playerData_map):
         player["performance"] = avg
     return id_playerData_map
 
-def update_id_playersData_map(id_playersData_map, player_id, current_player, performances, current_performance):
+def update_id_playersData_map(id_playersData_map, current_player, performances):
+    player_id = current_player["player_id"]
     id_playersData_map[player_id] = {
                                     "player_id" : player_id,
                                     "player_name" : current_player["player_name"],
                                     "price" : current_player["price"],
                                     "performance" : performances,
                                     "position" : current_player["position"],
-                                    "team_id" : int(current_performance["team_id"]),
-                                    "team_name" : current_performance["team_name"]
+                                    "team_id" : current_player["team_id"],
+                                    "team_name" : current_player["team_name"]
                                     }
     return id_playersData_map
 
@@ -107,7 +108,7 @@ def create_id_playerData_map(year, round):
                 if player_id in id_playersData_map:
                     performances = (id_playersData_map.get(player_id))["performance"]
                 performances.append(all_performances[i]["performance"])
-                update_id_playersData_map(id_playersData_map, player_id, current_player, performances, all_performances[i])
+                update_id_playersData_map(id_playersData_map, current_player, performances)
     return id_playersData_map
 
 def create_id_playerDataAvg_map(year, round):
@@ -119,27 +120,34 @@ def get_id_player_map(year, round):
     players = create_id_playerDataAvg_map(year, round)
     return players
 
-def get_price_of_choosen_players(playersId_players_map, choosen_players_id_list):
+def get_price_of_choosen_players(choosen_players_id_list):
     price = 0
+    all_players_map =  create_id_players_map()
     for id in choosen_players_id_list:
-        player = playersId_players_map.get(id)
+        player = all_players_map.get(id)
         price += player["price"]
     return price
 
 def get_choosen_players(playersId_players_map, choosen_players_id_list):
     choosen_players = []
+    all_players_map =  create_id_players_map()
     for id in choosen_players_id_list:
-        choosen_players.append(playersId_players_map.get(id))
+        player = playersId_players_map.get(id)
+        if player is None:
+            update_id_playersData_map(all_players_map, all_players_map.get(id), 0)
+            player = all_players_map.get(id)
+        choosen_players.append(player)
+    
     return choosen_players
 
 def delete_choosen_players(playersId_players_map, choosen_players_id_list):
     for id in choosen_players_id_list:
-        del playersId_players_map[id]
+        playersId_players_map.pop(id, None)
     return playersId_players_map
 
 def get_used_players(year, round, choosen_players_id_list):
     playersId_players_map = get_id_player_map(year, round)
-    choosen_players_price = get_price_of_choosen_players(playersId_players_map, choosen_players_id_list)
+    choosen_players_price = get_price_of_choosen_players(choosen_players_id_list)
     choosen_players = get_choosen_players(playersId_players_map, choosen_players_id_list)
     playersId_players_map = delete_choosen_players(playersId_players_map, choosen_players_id_list)
     players = list(playersId_players_map.values())
@@ -151,3 +159,4 @@ def get_used_players(year, round, choosen_players_id_list):
             fantasy_league.append(players[i])
     fantasy_league.extend(choosen_players)
     return fantasy_league
+    
