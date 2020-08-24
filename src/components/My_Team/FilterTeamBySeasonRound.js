@@ -35,7 +35,8 @@ const useStyles = makeStyles((theme) => ({
 export default function FilterTeamBySeasonRound(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [seasonRound, setSeasonRound] = useState({ season: "2019/20", round: "Group Stage - 1" });
+  const [season, setSeason] = useState('2019/20');
+  const [round, setRound] = useState('Group Stage - 1');
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -45,10 +46,12 @@ export default function FilterTeamBySeasonRound(props) {
     setOpen(false);
   };
 
-  const handleSeasonRoundChange = (e) => {
-    const newStateSeasonRound = seasonRound;
-    newStateSeasonRound[e.target.name] = e.target.value;
-    setSeasonRound(newStateSeasonRound);
+  const handleSeasonChange = (e) => {
+    setSeason(e.target.value);
+  }
+
+  const handleRoundChange = (e) => {
+    setRound(e.target.value);
   }
 
   return (
@@ -73,8 +76,8 @@ export default function FilterTeamBySeasonRound(props) {
                 labelId="demo-dialog-select-label"
                 id="season"
                 name="season"
-                value={seasonRound.season}
-                onChange={handleSeasonRoundChange}
+                value={season}
+                onChange={handleSeasonChange}
                 input={<Input />}
               >
                 <MenuItem value="2018/19">2018/19</MenuItem>
@@ -88,8 +91,8 @@ export default function FilterTeamBySeasonRound(props) {
                 labelId="demo-dialog-select-label"
                 id="round"
                 name="round"
-                value={seasonRound.round}
-                onChange={handleSeasonRoundChange}
+                value={round}
+                onChange={handleRoundChange}
                 input={<Input />}
               >
                 <ListSubheader>Group stage</ListSubheader>
@@ -120,7 +123,7 @@ export default function FilterTeamBySeasonRound(props) {
           <Button variant="contained" color="primary"
             className={classes.button}
             startIcon={<SendIcon />}
-            onClick={() => { handleClose(); props.handleSubmit(seasonRound) }}>
+            onClick={() => { handleClose(); props.handleSubmit(season, round) }}>
             Get your team!
       </Button>
         </DialogActions>
