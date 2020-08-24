@@ -10,9 +10,10 @@ team_constraints['player_selection'] = { 'player_list': [] }
 team_constraints['formation_pick'] = {'formation': '4-3-3' }
 team_constraints['advanced_constraints'] = { }
 
-#######################################
-####### DATA - TEAM CONSTRAINTS #######
-#######################################
+
+#########################################################
+####### DATA - TEAMS QUALIFIED TO KNOCKOUT PHASES #######
+#########################################################
 
 qualified_teams_id_by_year_round = {}
 
@@ -29,7 +30,6 @@ qualified_teams_id_by_year_round['2019/20'] = {
   'Semi-finals': [85, 157, 80, 173],
   'Final': [85, 157]
 }
-
 
 
 ########################
