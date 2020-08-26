@@ -4,6 +4,7 @@ import CONSTANTS from "../../constants";
 const TEAMS_NAMES = 0;
 const TOP_SCORERS_PLACE = 1;
 const MOST_ASSISTS_PLACE = 2;
+const BEST_GOALKEEPER_PLACE = 3;
 
 const Players_Statistics = () => {
     const [yearStats, setYearStats] = useState({ year: "2019/20" });
@@ -12,6 +13,7 @@ const Players_Statistics = () => {
     const [allStats, setAllStats] = useState([]);
     const [topScorers, setTopScorers] = useState([]);
     const [mostAssists, setMostAssists] = useState([]);
+    const [bestGoolkeepers, setBestGoolkeepers] = useState([]);
     const [counter, setCounter] = useState(0);
 
 
@@ -20,6 +22,7 @@ const Players_Statistics = () => {
         setTeams(list[TEAMS_NAMES])
         setTopScorers(list[TOP_SCORERS_PLACE].slice(0, 10));
         setMostAssists(list[MOST_ASSISTS_PLACE].slice(0, 10));
+        setBestGoolkeepers(list[BEST_GOALKEEPER_PLACE].slice(0, 10));
     }
 
 
@@ -73,6 +76,7 @@ const Players_Statistics = () => {
             })
             setTopScorers(setStatsForTeam(allStats[TOP_SCORERS_PLACE], id))
             setMostAssists(setStatsForTeam(allStats[MOST_ASSISTS_PLACE], id))
+            setBestGoolkeepers(setStatsForTeam(allStats[BEST_GOALKEEPER_PLACE], id))
         }
     }
 
@@ -102,22 +106,23 @@ const Players_Statistics = () => {
     }, []);
 
     return (
-        <div onLoad={() => getItems}>
-            <h1>Players Statistics</h1>
-            <div className="d-inline-block m-2">
+        <div className="p-3" onLoad={() => getItems}>
+            <h1 className="text-center">Players Statistics</h1>
+            <div className="text-center">
+            <div className="text-center d-inline-block m-2">
                 <h2>Choose Year: </h2>
             </div>
-            <div className="d-inline-block m-2">
+            <div className="d-inline-block m-2 mr-4">
                 <select name="year" id="year" defaultValue="2019/20" onChange={handleStatsYearChange} className="selectpicker">
                     <option value="2018/19">2018/19</option>
                     <option value="2019/20">2019/20</option>
                 </select>
             </div>
-            <div className="d-inline-block m-2">
+            <div className="d-inline-block m-2 ml-4">
                 <h2>Choose Team: </h2>
             </div>
             <div className="d-inline-block m-2">
-                <select name="teamName" id="teamName" defaultValue="All" onChange={handleTeamNameChange} className="selectpicker">
+                <select name="teamName" id="teamName" defaultValue="All" onChange={handleTeamNameChange} className="">
                     <option value="All">All</option>
                     {
                         teams.map(team => (
@@ -125,6 +130,7 @@ const Players_Statistics = () => {
                         ))
                     }
                 </select>
+            </div>
             </div>
             <div className="row">
                 <div className="col-md-4">
@@ -163,10 +169,35 @@ const Players_Statistics = () => {
                             {
                                 mostAssists.map(player => (
                                     <tr>
-
                                         <th>{player.place}</th>
                                         <td>{player.name}</td>
                                         <td>{player.score}</td>
+                                    </tr>
+                                ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="col-md-4">
+                    <h3>Best Goolkeepers</h3>
+                    <table className="table table-sm table-bordered">
+                        <thead className="thead-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Player Name</th>
+                                <th>Goals Conceded</th>
+                                <th>Games Played</th>
+                                <th>Goals Conceded Per Game</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                bestGoolkeepers.map(player => (
+                                    <tr>
+                                        <th>{player.place}</th>
+                                        <td>{player.name}</td>
+                                        <td>{player.score.conceded_goals}</td>
+                                        <td>{player.score.games_played}</td>
+                                        <td>{player.score.goals_per_game}</td>
                                     </tr>
                                 ))}
                         </tbody>

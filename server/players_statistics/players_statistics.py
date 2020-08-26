@@ -9,9 +9,11 @@ def get_players_statistics(year):
     players_statistics.append(get_all_teams_in_season(year))
     players_statistics.append(get_top_scorers(all_players_stats.__copy__()))
     players_statistics.append(get_most_assists(all_players_stats.__copy__()))
+    players_statistics.append(get_best_goolkeapers(all_players_stats.__copy__()))
     return players_statistics
 
-#return list of obj: {team: "Paris Saint Germain", team_id: 85}
+
+# return list of obj: {team: "Paris Saint Germain", team_id: 85}
 def get_all_teams_in_season(year):
     season = 2019
     if year == '2018/19':
@@ -32,6 +34,33 @@ def get_all_teams_in_season(year):
                 break
 
     return teams_in_season
+
+
+def get_best_goolkeapers(all_players_stats):
+    best_goolkeapers = []
+    # min_score = 0
+    for player_stats in all_players_stats:
+        if (player_stats["position"] == "Goalkeeper" and player_stats["games"]["minutes_played"] >= 91):
+            insert_best_goolkeapers_list(best_goolkeapers, player_stats)
+
+    num = 0
+    for player in best_goolkeapers:
+        num = num + 1
+        player['place'] = num
+
+    return best_goolkeapers
+
+
+def insert_best_goolkeapers_list(best_goolkeapers, player_stats):
+    index = 0
+    goolkeaper_goals_conceded_per_match = player_stats["goals"]["conceded"] / player_stats["games"]["appearences"]
+    for player in best_goolkeapers:
+        if player["score"]["goals_per_game"] < goolkeaper_goals_conceded_per_match:
+            index += 1
+
+    new_goolkeapers = {'name': player_stats['player_name'], 'score': {'conceded_goals': player_stats["goals"]["conceded"], 'games_played': player_stats["games"]["appearences"], 'goals_per_game': goolkeaper_goals_conceded_per_match},
+                      'team_id': player_stats["team_id"]}
+    best_goolkeapers.insert(index, new_goolkeapers)
 
 
 def get_most_assists(all_players_stats):
@@ -58,11 +87,9 @@ def insert_most_assists_list(most_assists, player_stats):
         if int(player["score"]) > int(player_stats["goals"]["assists"]):
             index += 1
 
-    new_top_scorer = {'name': player_stats['player_name'], 'score': player_stats["goals"]["assists"],
+    new_assistster = {'name': player_stats['player_name'], 'score': player_stats["goals"]["assists"],
                       'team_id': player_stats["team_id"]}
-    most_assists.insert(index, new_top_scorer)
-    # if len(most_assists) > 10:
-    # most_assists.pop()
+    most_assists.insert(index, new_assistster)
 
 
 def get_all_season_players_stats(season):
