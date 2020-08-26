@@ -14,11 +14,11 @@ def get_players_statistics(year):
 #return list of obj: {team: "Paris Saint Germain", team_id: 85}
 def get_all_teams_in_season(year):
     season = 2019
-    if year == '2018-2019':
+    if year == '2018/19':
         season = 2018
-    if year == '2017-2018':
+    if year == '2017/18':
         season = 2017
-    if year == '2016-2017':
+    if year == '2016/17':
         season = 2016
     # league_info = MongodbWrapper.get_league_info({"season": season})[0]
     league_info = mongo.get_collection(mongo.league_info, {"season": season})[0]

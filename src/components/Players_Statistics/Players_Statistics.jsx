@@ -6,7 +6,7 @@ const TOP_SCORERS_PLACE = 1;
 const MOST_ASSISTS_PLACE = 2;
 
 const Players_Statistics = () => {
-    const [yearStats, setYearStats] = useState({ year: "2019-2020" });
+    const [yearStats, setYearStats] = useState({ year: "2019/20" });
     const [teams, setTeams] = useState([]);
     const [teamName, setTeamName] = useState({ teamName: "All" });
     const [allStats, setAllStats] = useState([]);
@@ -108,9 +108,9 @@ const Players_Statistics = () => {
                 <h2>Choose Year: </h2>
             </div>
             <div className="d-inline-block m-2">
-                <select name="year" id="year" defaultValue="2019-2020" onChange={handleStatsYearChange} className="selectpicker">
-                    <option value="2018-2019">2018/19</option>
-                    <option value="2019-2020">2019/20</option>
+                <select name="year" id="year" defaultValue="2019/20" onChange={handleStatsYearChange} className="selectpicker">
+                    <option value="2018/19">2018/19</option>
+                    <option value="2019/20">2019/20</option>
                 </select>
             </div>
             <div className="d-inline-block m-2">
