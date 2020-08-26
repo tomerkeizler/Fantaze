@@ -8,8 +8,20 @@ from create_team import create_team
 from constants import CONSTANTS
 from sample_data import sample_data
 from sample_data import team_constraints
+from players_statistics import players_statistics
+
 
 app = Flask(__name__, static_folder='build')
+
+
+###############################################################
+####### ENDPOINTS - STATOSTICS #######
+###############################################################
+
+@app.route(CONSTANTS['ENDPOINT']['PLAYER_STATS'], methods=['POST'])
+def get_players_stats():
+    data = request.get_json()
+    return jsonify(players_statistics.get_players_statistics(data['year']))
 
 ########################################
 ####### ENDPOINTS - MY TEAM PAGE #######

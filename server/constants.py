@@ -10,6 +10,9 @@ CONSTANTS = {
 
     'ENDPOINT': {
         'MY_TEAM': '/api/my_team',
+		
+		'PLAYER_STATS': '/api/players_statistics',
+
 
         'TEAM_CONSTRAINTS': {
             'FORMATION_PICK': '/api/team_constraints/formation_pick',

@@ -9,6 +9,8 @@ import MyTeam  from "./components/My_Team/My_Team";
 import ConstraintsCheckout from "./components/ConstraintsCheckout/ConstraintsCheckout";
 import List from "./components/List/List";
 import Master_Detail from "./components/Master_Detail/Master_Detail";
+import Players_Statistics from "./components/Players_Statistics/Players_Statistics"
+
 
 //TODO Web Template Studio: Add routes for your new pages here.
 const App = () => {
@@ -20,7 +22,8 @@ const App = () => {
           <Route path = "/My_Team" component = { MyTeam } />
           <Route exact path = "/Constraints_Checkout" component = { ConstraintsCheckout } />
           <Route path = "/List" component = { List } />
-          <Route path = "/Master_Detail" component = { Master_Detail } />
+          <Route path="/Master_Detail" component={Master_Detail} />
+          <Route path="/Players_Statistics" component={Players_Statistics} />
         </Switch>
         <Footer />
       </React.Fragment>
