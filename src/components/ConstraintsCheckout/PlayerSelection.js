@@ -285,14 +285,17 @@ export default function PlayerSelection(props) {
   // -----------------------------------------------
   return (
     <React.Fragment>
-      <Typography variant="h5"><b>
-        Select your favorite players.
-        </b></Typography>
-      <Typography variant="h6" gutterBottom>
-        Those players will be included in your ultimate team!
-      </Typography>
 
-      <Grid container spacing={1} justify="center" alignItems="center" justify="center" className={classes.root}>
+      <Grid container spacing={2} direction="column" alignItems="center" style={{paddingBottom: 12}}>
+        <Typography variant="h5"><b>
+          Select your favorite players.
+        </b></Typography>
+        <Typography variant="h6" gutterBottom>
+          Those players will be included in your ultimate team!
+      </Typography>
+      </Grid>
+
+      <Grid container spacing={1} alignItems="center" justify="center" className={classes.root}>
         <Grid item>{CustomSelectionList(false, 'Teams', 200, 300, null, numberOfCheckedTeams, teams, handleToggleTeam, checkedTeams)}</Grid>
         <Grid item>{CustomSelectionList(false, 'Position', 200, 300, handleToggleAllPositions, numberOfCheckedPositions, positions, handleTogglePosition, checkedPositions)}</Grid>
         <Grid item>{CustomSelectionList(true, 'Available players', 300, 300, null, numberOfCheckedPlayers, availablePlayers, handleTogglePlayer, checkedAvailablePlayers)}</Grid>
@@ -303,7 +306,7 @@ export default function PlayerSelection(props) {
               color="primary"
               size="small"
               className={classes.button}
-              onClick={() => {handleCheckedRight(); props.onChange(selectedPlayers)}}
+              onClick={() => { handleCheckedRight(); props.onChange(selectedPlayers) }}
               disabled={checkedAvailablePlayers.length === 0}
               aria-label="move selected right">
               Add &gt;&gt;
@@ -313,7 +316,7 @@ export default function PlayerSelection(props) {
               color="secondary"
               size="small"
               className={classes.button}
-              onClick={() => {handleCheckedLeft(); props.onChange(selectedPlayers)}}
+              onClick={() => { handleCheckedLeft(); props.onChange(selectedPlayers) }}
               disabled={checkedSelectedPlayers.length === 0}
               aria-label="move selected left">
               &lt;&lt; Remove
