@@ -11,33 +11,51 @@ from sample_data import team_constraints
 
 app = Flask(__name__, static_folder='build')
 
-########################################
-####### ENDPOINTS - MY TEAM PAGE #######
-########################################
+###################################
+####### ENDPOINTS - MY TEAM #######
+###################################
 
 @app.route(CONSTANTS['ENDPOINT']['MY_TEAM'], methods = ['POST'])
 def get_final_team():
     data = request.get_json()
     list_player_id = []
-    for player in team_constraints['player_selection']['player_list']:
+    for player in team_constraints['player_selection']:
         list_player_id.insert(0, player['player_id'])
     fantasy_league_and_defeated_players = create_team.get_used_players(data['year'], data['round'], list_player_id)
     fantasy_league = fantasy_league_and_defeated_players['choosen']
     # defeated players = fantasy_league_and_defeated_players['defeated']
     return jsonify(fantasy_league)
 
-###############################################################
+#####################################################
+####### ENDPOINTS - UPDATING TEAM CONSTRAINTS #######
+#####################################################
+
+@app.route(CONSTANTS['ENDPOINT']['TEAM_CONSTRAINTS']['UPDATE'], methods = ['POST'])
+def update_constraints_data():
+    data = request.get_json()
+    # formation update
+    team_constraints['formation_pick'] = data['formationPickConstraint']
+    # selected players update
+    team_constraints['player_selection'].clear()
+    for playerSelected in data['playerSelectionConstraintList']:
+        team_constraints['player_selection'].insert(0, playerSelected)
+    return make_response('', CONSTANTS['HTTP_STATUS']['201_CREATED'])
+    
+
+#############################################################
 ####### ENDPOINTS - TEAM CONSTRAINTS - FORMATION PICK #######
-###############################################################
+#############################################################
 
-# @app.route(CONSTANTS['ENDPOINT']['TEAM_CONSTRAINTS']['FORMATION_PICK'])
-# def get_formation_pick_constraint_data():
-#.............
+@app.route(CONSTANTS['ENDPOINT']['TEAM_CONSTRAINTS']['FORMATION_PICK'])
+def get_formation_pick_constraint_data():
+    return jsonify(team_constraints['formation_pick'])
 
 
-# @app.route(CONSTANTS['ENDPOINT']['TEAM_CONSTRAINTS']['FORMATION_PICK'], methods = ['POST'])
-# def update_formation_pick_constraint_data():
-#.............
+@app.route(CONSTANTS['ENDPOINT']['TEAM_CONSTRAINTS']['FORMATION_PICK'] + '/<int:id>', methods=['DELETE'])
+def remove_formation_pick_constraint(id):
+    team_constraints['formation_pick'] = ''
+    json_response = jsonify({'text': 'The formation was deleted'})
+    return make_response(json_response, CONSTANTS['HTTP_STATUS']['200_OK'])
 
 ###############################################################
 ####### ENDPOINTS - TEAM CONSTRAINTS - PLAYER SELECTION #######
@@ -45,16 +63,24 @@ def get_final_team():
 
 @app.route(CONSTANTS['ENDPOINT']['TEAM_CONSTRAINTS']['PLAYER_SELECTION'])
 def get_player_selection_constraint_data():
-    return jsonify(team_constraints['player_selection']['player_list'])
+    return jsonify(team_constraints['player_selection'])
 
 
-@app.route(CONSTANTS['ENDPOINT']['TEAM_CONSTRAINTS']['PLAYER_SELECTION'], methods = ['POST'])
-def update_player_selection_constraint_data():
-    data = request.get_json()
-    team_constraints['player_selection']['player_list'].clear()
-    for playerSelected in data['playerSelectionConstraintList']:
-        team_constraints['player_selection']['player_list'].insert(0, playerSelected)
-    return make_response('', CONSTANTS['HTTP_STATUS']['201_CREATED'])
+@app.route(CONSTANTS['ENDPOINT']['TEAM_CONSTRAINTS']['PLAYER_SELECTION'] + '/<int:id>', methods=['DELETE'])
+def remove_single_player_constraint(id):
+    list_players_to_remove = [player for player in team_constraints['player_selection'] if player['player_id'] == id]
+
+    if not list_players_to_remove:
+        json_response = jsonify({'error': 'Could not find a player with the given id'})
+        return make_response(json_response, CONSTANTS['HTTP_STATUS']['404_NOT_FOUND'])
+
+    if len(list_players_to_remove) > 1:
+        json_response = jsonify({'error': 'More than one player found with the same id'})
+        return make_response(json_response, CONSTANTS['HTTP_STATUS']['500_INTERNAL_SERVER_ERROR'])
+
+    team_constraints['player_selection'] = [player for player in team_constraints['player_selection'] if player['player_id'] != id]
+    json_response = jsonify({'player_id': id, 'text': 'The player was deleted'})
+    return make_response(json_response, CONSTANTS['HTTP_STATUS']['200_OK'])
 
 
 @app.route(CONSTANTS['ENDPOINT']['TEAM_CONSTRAINTS']['TEAM_FILTER'])
@@ -72,19 +98,6 @@ def get_squad_by_team():
 #######################
 ####### GENERAL #######
 #######################
-
-# @app.route(CONSTANTS['ENDPOINT']['LIST'] + '/<int:id>', methods=['DELETE'])
-# def delete_list_item(id):
-#     list_items_to_remove = [list_item for list_item in sample_data['list_text_assets']['list_items'] if list_item['_id'] == id]
-#     if not list_items_to_remove:
-#         json_response = jsonify({'error': 'Could not find an item with the given id'})
-#         return make_response(json_response, CONSTANTS['HTTP_STATUS']['404_NOT_FOUND'])
-#     if len(list_items_to_remove) > 1:
-#         json_response = jsonify({'error': 'More than one list items found with the same id'})
-#         return make_response(json_response, CONSTANTS['HTTP_STATUS']['500_INTERNAL_SERVER_ERROR'])
-#     sample_data['list_text_assets']['list_items'] = [list_item for list_item in sample_data['list_text_assets']['list_items'] if list_item['_id'] != id]
-#     return jsonify({'_id': id, 'text': 'This comment was deleted'})
-
 
 # MasterDetail Page Endpoint
 @app.route(CONSTANTS['ENDPOINT']['MASTER_DETAIL'])

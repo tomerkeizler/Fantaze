@@ -52,19 +52,22 @@ const steps = ['Formation picking', 'Players selection', 'Advanced constraints']
 export default function ConstraintsCheckout() {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
+  const[formation, setFormation] = useState('4-3-3');
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [warningMessage, setWarningMessage] = useState({warningMessageOpen: false, warningMessageText: ""});
 
+  const onFormationChange = newFormation => {
+    setFormation(newFormation);
+  };
+
   const onPlayerSelectionChange = selectedPlayers => {
     setSelectedPlayers(selectedPlayers);
-    console.log("I am Parent component. just got info");
-    console.log(selectedPlayers);
   };
 
   function getStepContent(step) {
     switch (step) {
       case 0:
-        return <FormationPicking />;
+        return <FormationPicking onChange={onFormationChange} />;
       case 1:
         return <PlayerSelection onChange={onPlayerSelectionChange} />;
       case 2:
@@ -74,20 +77,12 @@ export default function ConstraintsCheckout() {
     }
   }
 
-  const updatePlayerSelectionConstraint = () => {
-    // // Warning Pop Up if the user submits an empty message
-    // if (!selectedPlayers) {
-    //   setWarningMessage({
-    //     warningMessageOpen: true,
-    //     warningMessageText: CONSTANTS.ERROR_MESSAGE.LIST_EMPTY_MESSAGE
-    //   });
-    //   return;
-    // }
-
-    fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION, {
+  const updateConstraints = () => {
+    fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.UPDATE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        formationPickConstraint: formation,
         playerSelectionConstraintList: selectedPlayers
       })
     })
@@ -107,7 +102,7 @@ export default function ConstraintsCheckout() {
 
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
-      updatePlayerSelectionConstraint();
+      updateConstraints();
     }
     setActiveStep(activeStep + 1);
   };

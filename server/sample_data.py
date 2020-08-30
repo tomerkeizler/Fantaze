@@ -6,8 +6,8 @@ import datetime
 
 team_constraints = {}
 
-team_constraints['player_selection'] = { 'player_list': [] }
-team_constraints['formation_pick'] = {'formation': '4-3-3' }
+team_constraints['player_selection'] = []
+team_constraints['formation_pick'] = ''
 team_constraints['advanced_constraints'] = { }
 
 

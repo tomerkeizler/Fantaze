@@ -1,37 +1,57 @@
 ﻿import React, { useState } from "react";
-import ListItem from "./ListItem";
-import Form from "./Form";
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import WarningMessage from "../WarningMessage";
 import CONSTANTS from "../../constants";
+import ConstraintCard from "./ConstraintCard"
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+import Zoom from '@material-ui/core/Zoom';
+import { getTeamShirtByIdMap } from '../../images/Team_Shirts'
+
+
+const useStyles = makeStyles((theme) => ({
+  cardGrid: {
+    display: 'flex',
+    paddingTop: theme.spacing(8),
+    paddingBottom: theme.spacing(8),
+  },
+}));
 
 
 const List = () => {
-  const [items, setItems] = useState([]);
+  const classes = useStyles();
+  const [displayed, setDisplayed] = useState(false);
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
+  
+  const [formationConstraint, setFormationConstraint] = useState();
+  const [formationPositions, setFormationPositions] = useState([]);
 
-  async function getItems() {
-    let promiseList = await fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION)
+  const [playersConstraint, setPlayersConstraint] = useState([]);
+  const [teamShirtByIdMap, setTeamShirtByIdMap] = useState({ myMap: {} });
+
+
+  async function fetchConstraint(fetchURL) {
+    let promiseList = await fetch(fetchURL)
       .then(response => {
         if (!response.ok) {
           throw Error(response.statusText);
         }
         return response.json();
-
       })
     return promiseList;
   }
 
-
-  const deleteItem = (item) => {
-    fetch(`${CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION}/${item._id}`, { method: "DELETE" })
+  const removeFormationConstraint = () => {
+    fetch(`${CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.FORMATION_PICK}/1`, { method: "DELETE", })
       .then(response => {
         if (!response.ok) {
           throw Error(response.statusText);
         }
         return response.json();
       })
-      .then(result => {
-        setItems(items.filter(item => item._id !== result._id));
+      .then(() => {
+        setFormationConstraint('');
+        setFormationPositions([]);
       })
       .catch(error => {
         setWarningMessage({
@@ -41,39 +61,24 @@ const List = () => {
       });
   }
 
-  const addItem = (textField) => {
-    // Warning Pop Up if the user submits an empty message
-    if (!textField) {
-      setWarningMessage({
-        warningMessageOpen: true,
-        warningMessageText: CONSTANTS.ERROR_MESSAGE.LIST_EMPTY_MESSAGE
-      });
-      return;
-    }
-
-    fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text: textField
-      })
-    })
+  const removeSinglePlayerConstraint = (playerID) => {
+    fetch(`${CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION}/${playerID}`, { method: "DELETE" })
       .then(response => {
         if (!response.ok) {
           throw Error(response.statusText);
         }
         return response.json();
       })
-      .then(itemAdded => {
-        setItems([itemAdded, ...items]);
+      .then(result => {
+        setPlayersConstraint(playersConstraint.filter(player => player.player_id !== result.player_id));
       })
-      .catch(error =>
+      .catch(error => {
         setWarningMessage({
           warningMessageOpen: true,
-          warningMessageText: `${CONSTANTS.ERROR_MESSAGE.LIST_ADD} ${error}`
-        })
-      );
-  };
+          warningMessageText: `${CONSTANTS.ERROR_MESSAGE.LIST_DELETE} ${error}`
+        });
+      });
+  }
 
   const closeWarningMessage = () => {
     setWarningMessage({
@@ -82,42 +87,106 @@ const List = () => {
     });
   };
 
+  const getFormationImage = (formation) => {
+    switch (formation) {
+      case '4-3-3':
+        return 'https://montreal-mp7static.mlsdigital.net/elfinderimages/1-4-3-3.png';
+      case '4-5-1':
+        return 'https://montreal-mp7static.mlsdigital.net/elfinderimages/1-4-2-3-1.png';
+      case '4-4-2':
+        return 'https://montreal-mp7static.mlsdigital.net/elfinderimages/1-4-4-2%20flat.png';
+      case '3-5-2':
+        return 'https://montreal-mp7static.mlsdigital.net/elfinderimages/1-3-5-2.png';
+      case '3-4-3':
+        return 'https://montreal-mp7static.mlsdigital.net/elfinderimages/1-3-4-3%20diamant.png';
+      default:
+        return 'https://montreal-mp7static.mlsdigital.net/elfinderimages/1-5-3-2.png';
+    }
+  };
+
   React.useEffect(() => {
-    getItems()
-      .then(list => { setItems(list) })
+    setTeamShirtByIdMap(getTeamShirtByIdMap());
+
+    fetchConstraint(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.FORMATION_PICK)
+      .then(formation => {
+        setFormationConstraint(formation)
+        setFormationPositions(formation.split('-', 3));
+      })
       .catch(error =>
         setWarningMessage({
           warningMessageOpen: true,
           warningMessageText: `${CONSTANTS.ERROR_MESSAGE.LIST_GET} ${error}`
         })
       );
+
+    fetchConstraint(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION)
+      .then(players => { setPlayersConstraint(players) })
+      .catch(error =>
+        setWarningMessage({
+          warningMessageOpen: true,
+          warningMessageText: `${CONSTANTS.ERROR_MESSAGE.LIST_GET} ${error}`
+        })
+      );
+
+    setDisplayed(true);
   }, []);
+
 
   return (
     <main id="mainContent" className="container">
       <div className="row justify-content-center py-5">
-        <h3>List</h3>
+        <h2>Team Constraints</h2>
       </div>
-      <div className="row">
-        <div className="col-12 p-0">
-          <Form addItem={addItem} />
-        </div>
-        {items.map(listItem => (
-          <ListItem
-            key={listItem.player_id}
-            item={listItem}
-            deleteItem={deleteItem}
-          />
-          ))}
 
-          {/* {items.map(p=>console.log(p.player_data))} */}
+      {(!formationConstraint & playersConstraint.length == 0) ? (
+        <center><h3>There are no Constraints</h3></center>
+      ) : (
+          <div className="row">
+            <Container className={classes.cardGrid} maxWidth="md">
+              <Grid container spacing={4}>
 
-        <WarningMessage
-          open={warningMessage.warningMessageOpen}
-          text={warningMessage.warningMessageText}
-          onWarningClose={closeWarningMessage}
-        />
-      </div>
+                {/* formation constraint */}
+                {!formationConstraint ? '' : (
+                  <Zoom in={displayed}>
+                    <Grid item key={formationConstraint} xs={12} sm={6} md={6}>
+                      <ConstraintCard
+                        constraintTitle={`Formation: ${formationConstraint}`}
+                        firstDescription={`${formationPositions[0]} Defenders`}
+                        secondDescription={`${formationPositions[1]} Midfielders`}
+                        thirdDescription={`${formationPositions[2]} Attackers`}
+                        deleteConstraint={removeFormationConstraint}
+                        image={getFormationImage(formationConstraint)}
+                        />
+                    </Grid>
+                  </Zoom>
+                )}
+
+                {/* players constraint */}
+                {playersConstraint.map((playerItem, index) => (
+                  <Zoom key={playerItem.player_id} in={displayed} style={{ transitionDelay: displayed ? `${300 * (index + 1)}ms` : '0ms' }}>
+                    <Grid item key={playerItem.player_id} xs={12} sm={6} md={6}>
+                      <ConstraintCard
+                        constraintTitle={playerItem.player_name}
+                        firstDescription={playerItem.position}
+                        secondDescription={playerItem.team_name}
+                        deleteConstraint={() => removeSinglePlayerConstraint(playerItem.player_id)}
+                        image={teamShirtByIdMap.get(playerItem.team_id)}
+                      />
+
+                    </Grid>
+                  </Zoom>
+                ))}
+
+              </Grid>
+            </Container>
+          </div>
+        )}
+
+      <WarningMessage
+        open={warningMessage.warningMessageOpen}
+        text={warningMessage.warningMessageText}
+        onWarningClose={closeWarningMessage}
+      />
     </main>
   );
 }
