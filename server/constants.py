@@ -10,7 +10,10 @@ CONSTANTS = {
     },
 
     'ENDPOINT': {
-        'MY_TEAM': '/api/my_team',
+        'MY_TEAM': {
+        'CHOSEN': '/api/my_team/chosen',
+        'ELIMINATED': '/api/my_team/eliminated',
+        },
 
         'TEAM_CONSTRAINTS': {
             'UPDATE': '/api/team_constraints/update',

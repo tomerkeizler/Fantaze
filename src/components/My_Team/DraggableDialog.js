@@ -39,14 +39,15 @@ export default function DraggableDialog(props) {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        The following players were selected in team constraints but were eliminated before...
-                        
-                        <ul>
-                            {props.data.map(player => (
-                                <li>{player.player_name} ({player.position}, {player.team_name})</li>
-                            ))}
-                        </ul>
+                        <b>
+                            The following players were selected in team constraints but were eliminated before {props.selectedSeason} {props.selectedRound}:
+                        </b>
                     </DialogContentText>
+                    <ul>
+                        {props.data.map(player => (
+                            <li key={player.player_id}>{player.player_name} ({player.position}, {player.team_name})</li>
+                        ))}
+                    </ul>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} variant="contained" color="primary">

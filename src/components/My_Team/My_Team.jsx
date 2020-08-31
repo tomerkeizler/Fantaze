@@ -12,20 +12,30 @@ import DraggableDialog from './DraggableDialog'
 
 const MyTeam = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [season, setSeason] = useState('2019/20');
+  const [round, setRound] = useState('Final');
+
   const [ultimatePlayers, setUltimatePlayers] = useState([]);
   const [eliminatedPlayers, setEliminatedPlayers] = useState([]);
 
   const [teamShirtByIdMap, setTeamShirtByIdMap] = useState({ myMap: {} });
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
 
+  const handleSeasonChange = (e) => {
+    setSeason(e.target.value);
+  }
 
-  const getItems = (newSeason, newRound) => {
-    const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM, {
+  const handleRoundChange = (e) => {
+    setRound(e.target.value);
+  }
+
+  const getItems = () => {
+    const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM.CHOSEN, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        year: newSeason,
-        round: newRound
+        year: season,
+        round: round
       })
     })
       .then(response => {
@@ -45,13 +55,13 @@ const MyTeam = () => {
     });
   }
 
-  const handleSeasonRoundSubmit = (newSeason, newRound) => {
+  const handleSeasonRoundSubmit = () => {
     setIsLoading(true);
-    updateTeam(newSeason, newRound);
+    updateTeam();
   }
 
-  const updateTeam = (newSeason, newRound) => {
-    getItems(newSeason, newRound)
+  const updateTeam = () => {
+    getItems()
       .then(res => {
         setUltimatePlayers(res.choosen);
         setEliminatedPlayers(res.defeated);
@@ -70,6 +80,7 @@ const MyTeam = () => {
     // updateTeam();
   }, []);
 
+
   return (
     <main id="mainContent">
       <div className="container">
@@ -77,9 +88,17 @@ const MyTeam = () => {
           <h3>My Ultimate Team</h3>
         </div>
 
-        <DraggableDialog data={eliminatedPlayers} />
+        <DraggableDialog
+        selectedSeason={season}
+        selectedRound={round}
+        data={eliminatedPlayers}
+        />
 
-        <FilterTeamBySeasonRound handleSubmit={handleSeasonRoundSubmit} />
+        <FilterTeamBySeasonRound
+        onSeasonChange={handleSeasonChange}
+        onRoundChange={handleRoundChange}
+        onSubmit={handleSeasonRoundSubmit}
+        />
 
         {isLoading ? (
           <Grid container direction="column" justify="center" alignItems="center">
