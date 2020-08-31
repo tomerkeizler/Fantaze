@@ -7,11 +7,14 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import FilterTeamBySeasonRound from './FilterTeamBySeasonRound'
+import DraggableDialog from './DraggableDialog'
 
 
 const MyTeam = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [items, setItems] = useState([]);
+  const [ultimatePlayers, setUltimatePlayers] = useState([]);
+  const [eliminatedPlayers, setEliminatedPlayers] = useState([]);
+
   const [teamShirtByIdMap, setTeamShirtByIdMap] = useState({ myMap: {} });
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
 
@@ -49,8 +52,9 @@ const MyTeam = () => {
 
   const updateTeam = (newSeason, newRound) => {
     getItems(newSeason, newRound)
-      .then(newItems => {
-        setItems(newItems)
+      .then(res => {
+        setUltimatePlayers(res.choosen);
+        setEliminatedPlayers(res.defeated);
         setIsLoading(false);
       })
       .catch(error =>
@@ -73,6 +77,8 @@ const MyTeam = () => {
           <h3>My Ultimate Team</h3>
         </div>
 
+        <DraggableDialog data={eliminatedPlayers} />
+
         <FilterTeamBySeasonRound handleSubmit={handleSeasonRoundSubmit} />
 
         {isLoading ? (
@@ -84,7 +90,7 @@ const MyTeam = () => {
           </Grid>
         ) :
           (<div className="row justify-content-around text-center pb-5">
-            {items.map(item => (
+            {ultimatePlayers.map(item => (
               <PlayerTile
                 key={item.player_id}
                 item={item}
@@ -93,12 +99,12 @@ const MyTeam = () => {
             ))}
           </div>)}
 
+        <WarningMessage
+          open={warningMessage.warningMessageOpen}
+          text={warningMessage.warningMessageText}
+          onWarningClose={closeWarningMessage}
+        />
       </div>
-      <WarningMessage
-        open={warningMessage.warningMessageOpen}
-        text={warningMessage.warningMessageText}
-        onWarningClose={closeWarningMessage}
-      />
     </main>
   );
 }

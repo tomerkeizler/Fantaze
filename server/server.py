@@ -22,9 +22,9 @@ def get_final_team():
     for player in team_constraints['player_selection']:
         list_player_id.insert(0, player['player_id'])
     fantasy_league_and_defeated_players = create_team.get_used_players(data['year'], data['round'], list_player_id)
-    fantasy_league = fantasy_league_and_defeated_players['choosen']
+    # fantasy_league = fantasy_league_and_defeated_players['choosen']
     # defeated players = fantasy_league_and_defeated_players['defeated']
-    return jsonify(fantasy_league)
+    return jsonify(fantasy_league_and_defeated_players)
 
 #####################################################
 ####### ENDPOINTS - UPDATING TEAM CONSTRAINTS #######
