@@ -12,13 +12,13 @@ import { getTeamShirtByIdMap } from '../../images/Team_Shirts'
 const useStyles = makeStyles((theme) => ({
   cardGrid: {
     display: 'flex',
-    paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(8),
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(6),
   },
 }));
 
 
-const List = () => {
+const ConstraintsView = () => {
   const classes = useStyles();
   const [displayed, setDisplayed] = useState(false);
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
@@ -134,7 +134,7 @@ const List = () => {
 
   return (
     <main id="mainContent" className="container">
-      <div className="row justify-content-center py-5">
+      <div className="row justify-content-center py-4">
         <h2>Team Constraints</h2>
       </div>
 
@@ -191,4 +191,4 @@ const List = () => {
   );
 }
 
-export default List;
+export default ConstraintsView;
