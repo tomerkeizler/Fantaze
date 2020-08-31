@@ -7,22 +7,35 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import FilterTeamBySeasonRound from './FilterTeamBySeasonRound'
+import DraggableDialog from './DraggableDialog'
 
 
 const MyTeam = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [items, setItems] = useState([]);
+  const [season, setSeason] = useState('2019/20');
+  const [round, setRound] = useState('Final');
+
+  const [ultimatePlayers, setUltimatePlayers] = useState([]);
+  const [eliminatedPlayers, setEliminatedPlayers] = useState([]);
+
   const [teamShirtByIdMap, setTeamShirtByIdMap] = useState({ myMap: {} });
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
 
+  const handleSeasonChange = (e) => {
+    setSeason(e.target.value);
+  }
 
-  const getItems = (newSeason, newRound) => {
-    const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM, {
+  const handleRoundChange = (e) => {
+    setRound(e.target.value);
+  }
+
+  const getItems = () => {
+    const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM.CHOSEN, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        year: newSeason,
-        round: newRound
+        year: season,
+        round: round
       })
     })
       .then(response => {
@@ -42,15 +55,16 @@ const MyTeam = () => {
     });
   }
 
-  const handleSeasonRoundSubmit = (newSeason, newRound) => {
+  const handleSeasonRoundSubmit = () => {
     setIsLoading(true);
-    updateTeam(newSeason, newRound);
+    updateTeam();
   }
 
-  const updateTeam = (newSeason, newRound) => {
-    getItems(newSeason, newRound)
-      .then(newItems => {
-        setItems(newItems)
+  const updateTeam = () => {
+    getItems()
+      .then(res => {
+        setUltimatePlayers(res.choosen);
+        setEliminatedPlayers(res.defeated);
         setIsLoading(false);
       })
       .catch(error =>
@@ -66,6 +80,7 @@ const MyTeam = () => {
     // updateTeam();
   }, []);
 
+
   return (
     <main id="mainContent">
       <div className="container">
@@ -73,7 +88,17 @@ const MyTeam = () => {
           <h3>My Ultimate Team</h3>
         </div>
 
-        <FilterTeamBySeasonRound handleSubmit={handleSeasonRoundSubmit} />
+        <DraggableDialog
+        selectedSeason={season}
+        selectedRound={round}
+        data={eliminatedPlayers}
+        />
+
+        <FilterTeamBySeasonRound
+        onSeasonChange={handleSeasonChange}
+        onRoundChange={handleRoundChange}
+        onSubmit={handleSeasonRoundSubmit}
+        />
 
         {isLoading ? (
           <Grid container direction="column" justify="center" alignItems="center">
@@ -84,7 +109,7 @@ const MyTeam = () => {
           </Grid>
         ) :
           (<div className="row justify-content-around text-center pb-5">
-            {items.map(item => (
+            {ultimatePlayers.map(item => (
               <PlayerTile
                 key={item.player_id}
                 item={item}
@@ -93,12 +118,12 @@ const MyTeam = () => {
             ))}
           </div>)}
 
+        <WarningMessage
+          open={warningMessage.warningMessageOpen}
+          text={warningMessage.warningMessageText}
+          onWarningClose={closeWarningMessage}
+        />
       </div>
-      <WarningMessage
-        open={warningMessage.warningMessageOpen}
-        text={warningMessage.warningMessageText}
-        onWarningClose={closeWarningMessage}
-      />
     </main>
   );
 }

@@ -86,7 +86,7 @@ export default function SideMenu() {
       'icon': <SettingsIcon />,
       'subItems': [
         {
-          'name': 'Team Constraints',
+          'name': 'View Constraints',
           'icon': <DoubleArrowIcon />,
           'link': 'Constraints_View'
         },
@@ -142,10 +142,9 @@ export default function SideMenu() {
 
         if (item.isCategory) {
           return (
-            <>
+            <div key={item.name}>
               <ListItem button selected
                 classes={{ root: classes.root, selected: classes.selected }}
-                key={item}
                 onClick={() => handleClick(item.name)}>
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.name} />
@@ -156,8 +155,8 @@ export default function SideMenu() {
                 <List component="div" disablePadding>
                   {item.subItems.map((subItem) => {
                     return (
-                      <Link to={subItem.link} className= {classes.itemLink}>
-                        <ListItem button key={subItem.name}>
+                      <Link to={subItem.link} className={classes.itemLink} key={subItem.name}>
+                        <ListItem button>
                           <ListItemIcon>{subItem.icon}</ListItemIcon>
                           <ListItemText primary={subItem.name} />
                         </ListItem>
@@ -166,14 +165,14 @@ export default function SideMenu() {
                   })}
                 </List>
               </Collapse>
-            </>
+            </ div>
           )
         }
 
         else {
           return (
-            <Link to={item.link} className= {classes.itemLink}>
-              <ListItem button key={item.name}>
+            <Link to={item.link} className={classes.itemLink} key={item.name}>
+              <ListItem button>
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.name} />
               </ListItem>
