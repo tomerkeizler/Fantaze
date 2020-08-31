@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const List = () => {
+const ConstraintsView = () => {
   const classes = useStyles();
   const [displayed, setDisplayed] = useState(false);
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
@@ -191,4 +191,4 @@ const List = () => {
   );
 }
 
-export default List;
+export default ConstraintsView;
