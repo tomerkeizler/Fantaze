@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2ba3ce4b-e923-4036-8764-8d5a21c30bf1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.vs/Fantasy/v16/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/Fantasy/v16/.suo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/slnx.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/slnx.sqlite" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/Players_Statistics/statsStyle.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/mongo.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/mongo.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/players_statistics/players_statistics.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/players_statistics/players_statistics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Players_Statistics/Players_Statistics.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Players_Statistics/Players_Statistics.jsx" afterDir="false" />
     </list>
@@ -23,7 +24,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/tryNode/learn-react" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -37,5 +38,11 @@
       <updated>1598462412077</updated>
     </task>
     <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1598889662751">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="549" y="167" key="FileChooserDialogImpl/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1598889662751" />
   </component>
 </project>

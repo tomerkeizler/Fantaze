@@ -10,6 +10,7 @@ def get_players_statistics(year):
     players_statistics.append(get_top_scorers(all_players_stats.__copy__()))
     players_statistics.append(get_most_assists(all_players_stats.__copy__()))
     players_statistics.append(get_best_goolkeapers(all_players_stats.__copy__()))
+    players_statistics.append(list(mongo.get_collection(mongo.players_recent_games_performances_collection, {})))
     return players_statistics
 
 
@@ -23,7 +24,7 @@ def get_all_teams_in_season(year):
     if year == '2016/17':
         season = 2016
     # league_info = MongodbWrapper.get_league_info({"season": season})[0]
-    league_info = mongo.get_collection(mongo.league_info, {"season": season})[0]
+    league_info = mongo.get_collection(mongo.league_info_collection, {"season": season})[0]
     # teams_info = MongodbWrapper.get_team_info()
     teams_info = mongo.get_collection(mongo.teams_collection, {})
     teams_in_season = []
@@ -93,7 +94,7 @@ def insert_most_assists_list(most_assists, player_stats):
 
 
 def get_all_season_players_stats(season):
-    all_players_stats = mongo.get_collection(mongo.player_season_performances, {"season": season})
+    all_players_stats = mongo.get_collection(mongo.player_season_performances_collection, {"season": season})
     return all_players_stats
 
 

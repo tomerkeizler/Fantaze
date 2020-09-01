@@ -7,8 +7,9 @@ data_fixtures_collection = db["Data_per_fixture"]
 players_data_collection = db["Players_data"]
 player_performances_collection = db["Player_performances"]
 teams_collection = db["Teams"]
-player_season_performances = db["Player_season_performances"]
-league_info = db["League_info"]
+player_season_performances_collection = db["Player_season_performances"]
+league_info_collection = db["League_info"]
+players_recent_games_performances_collection = db["Players_recent_games_performances"]
 
 
 def find_from_collection(collection_name, query):

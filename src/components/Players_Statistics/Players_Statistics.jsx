@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import CONSTANTS from "../../constants";
+import './statsStyle.css';
 
 const TEAMS_NAMES = 0;
 const TOP_SCORERS_PLACE = 1;
 const MOST_ASSISTS_PLACE = 2;
 const BEST_GOALKEEPER_PLACE = 3;
+const PLAYER_RECENT_GAMES_PREFORMANCES = 4;
+
 
 const Players_Statistics = () => {
     const [yearStats, setYearStats] = useState({ year: "2019/20" });
@@ -14,7 +17,11 @@ const Players_Statistics = () => {
     const [topScorers, setTopScorers] = useState([]);
     const [mostAssists, setMostAssists] = useState([]);
     const [bestGoolkeepers, setBestGoolkeepers] = useState([]);
-    const [counter, setCounter] = useState(0);
+    const [bestRecentPlayers, setBestRecentPlayers] = useState([]);
+    const [recentGamesNum, setRecentGamesNum] = useState(10);
+    //const [recentGamesSortBy, setRecentGamesNum] = useState(10);
+
+
 
 
     const setItems = (list) => {
@@ -23,8 +30,17 @@ const Players_Statistics = () => {
         setTopScorers(list[TOP_SCORERS_PLACE].slice(0, 10));
         setMostAssists(list[MOST_ASSISTS_PLACE].slice(0, 10));
         setBestGoolkeepers(list[BEST_GOALKEEPER_PLACE].slice(0, 10));
+        var theSortedList = setRecetStats(list[PLAYER_RECENT_GAMES_PREFORMANCES], 10, 'average_performance')
+        setBestRecentPlayers(theSortedList)
     }
 
+
+    const handleRecentGamesNumChange = (e) => {
+        console.log(e.target.value)
+        setRecentGamesNum(e.target.value);
+        var theSortedList = setRecetStats(allStats[PLAYER_RECENT_GAMES_PREFORMANCES],e.target.value, 'average_performance')
+        setBestRecentPlayers(theSortedList)
+    }
 
     const handleStatsYearChange = (e) => {
         const newStatsYear = yearStats;
@@ -36,14 +52,63 @@ const Players_Statistics = () => {
                 setItems(list)
             })
     }
-    //.catch(error =>
-    //setWarningMessage({
-    //warningMessageOpen: true,
-    //warningMessageText: `Request to get grid text failed: ${error}`
-    //})
-    // );
-    //}
 
+    const setRecetStats = (playersRecetGamesList, recentGames, sortBy) => {
+    console.log(recentGamesNum)
+        var statsForLastGames = [];
+        for (var i = 0; i < playersRecetGamesList.length; i++) {
+            if(playersRecetGamesList[i].games_performances.length > 0){
+                var newPlayer = {};
+                var goals = 0;
+                var assists = 0;
+                var average_minutes_played_per_game = 0;
+                var shots = 0;
+                var shots_on_target = 0;
+                var passes = 0;
+                var key_passes = 0;
+                var pass_accuracy = 0;
+                var number_of_games = 0;
+                var average_performance = 0;
+                newPlayer['name'] = playersRecetGamesList[i].player_name
+                newPlayer['place'] = statsForLastGames.length + 1
+                playersRecetGamesList[i].games_performances.slice(0,recentGames).forEach(performance =>{
+                    goals = goals + parseInt(performance.goals.total);
+                    assists = assists + parseInt(performance.goals.assists);
+                        average_minutes_played_per_game = average_minutes_played_per_game + parseInt(performance.minutes_played);
+                    shots = shots + parseInt(performance.shots.total);
+                    shots_on_target = shots_on_target + parseInt(performance.shots.on);
+                    passes = passes + parseInt(performance.passes.total);
+                    key_passes = key_passes + parseInt(performance.passes.key);
+                    pass_accuracy = pass_accuracy + parseInt(performance.passes.accuracy);
+                    number_of_games = number_of_games + 1;
+                    average_performance = average_performance + parseInt(performance.performance);
+
+                })
+                newPlayer['goals'] = goals;
+                newPlayer['assists'] = assists;
+                newPlayer['average_minutes_played_per_game'] = Math.round(average_minutes_played_per_game / number_of_games);
+                newPlayer['shots'] = shots;
+                newPlayer['shots_on_target'] = shots_on_target;
+                newPlayer['passes'] = passes;
+                newPlayer['key_passes'] = key_passes;
+                newPlayer['pass_accuracy'] = Math.round(pass_accuracy / number_of_games);
+                newPlayer['number_of_games'] = number_of_games;
+                newPlayer['average_performance'] = Math.round(average_performance / number_of_games);
+                statsForLastGames.push(newPlayer)
+            }
+        }
+        statsForLastGames.sort(
+            function(a,b){
+               return b[sortBy] - a.[sortBy]
+            }
+        )
+        var newPlace = 1;
+        statsForLastGames.forEach(player => {
+        player.place = newPlace;
+        newPlace++;
+        })
+        return statsForLastGames
+    }
 
     const setStatsForTeam = (playersList, team_id) => {
         var justTeamStats = [];
@@ -58,6 +123,20 @@ const Players_Statistics = () => {
             }
         }
         return justTeamStats.slice(0, 10)
+    }
+
+    const printNumOgGames = (numOgGames) => {
+        if(numOgGames < recentGamesNum){
+            return <td className="text-danger">{numOgGames}</td>
+        }
+        else{
+            return <td className="text-success">{numOgGames}</td>
+        }
+    }
+
+    const sortRecent = (sortBy) => {
+       var theSortedList = setRecetStats(allStats[PLAYER_RECENT_GAMES_PREFORMANCES],recentGamesNum, sortBy)
+       setBestRecentPlayers(theSortedList)
     }
 
     const handleTeamNameChange = (e) => {
@@ -107,7 +186,7 @@ const Players_Statistics = () => {
 
     return (
         <div className="p-3" onLoad={() => getItems}>
-            <h1 className="text-center">Players Statistics</h1>
+            <h1 className="text-center">Players Season Statistics</h1>
             <div className="text-center">
             <div className="text-center d-inline-block m-2">
                 <h2>Choose Year: </h2>
@@ -133,7 +212,7 @@ const Players_Statistics = () => {
             </div>
             </div>
             <div className="row">
-                <div className="col-md-4">
+                <div className="col-md-3">
                     <h3>Top goalscorers</h3>
                     <table className="table table-sm table-bordered">
                         <thead className="thead-dark">
@@ -155,7 +234,7 @@ const Players_Statistics = () => {
                         </tbody>
                     </table>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-3">
                     <h3>Most assists</h3>
                     <table className="table table-sm table-bordered">
                         <thead className="thead-dark">
@@ -177,7 +256,7 @@ const Players_Statistics = () => {
                         </tbody>
                     </table>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-6">
                     <h3>Best Goolkeepers</h3>
                     <table className="table table-sm table-bordered">
                         <thead className="thead-dark">
@@ -198,6 +277,62 @@ const Players_Statistics = () => {
                                         <td>{player.score.conceded_goals}</td>
                                         <td>{player.score.games_played}</td>
                                         <td>{player.score.goals_per_game}</td>
+                                    </tr>
+                                ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <h1 className="text-center">Players Recent Statistics</h1>
+            <div className="text-center">
+            <div className="text-center d-inline-block m-2">
+                <h2>Choose Number Of Recent Game To Show Statistics: </h2>
+            </div>
+            <div className="d-inline-block m-2 mr-4">
+                <select name="recent_games" id="recent_games" defaultValue="10" onChange={handleRecentGamesNumChange} className="selectpicker">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+            </div>
+            <div className="row">
+             <div className="col-md-12">
+                    <table className="table table-sm table-bordered">
+                        <thead className="thead-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Player Name</th>
+                                <th className="cursor-pointer" onClick={()=> sortRecent("goals")}>Goals</th>
+                                <th className="cursor-pointer" onClick={()=> sortRecent("assists")}>Assists</th>
+                                <th className="cursor-pointer" onClick={()=> sortRecent("average_minutes_played_per_game")}>Average Minutes Played Per Game</th>
+                                <th className="cursor-pointer" onClick={()=> sortRecent("shots")}>Shots</th>
+                                <th className="cursor-pointer" onClick={()=> sortRecent("shots_on_target")}>Shots On Target</th>
+                                <th className="cursor-pointer" onClick={()=> sortRecent("passes")}>Passes</th>
+                                <th className="cursor-pointer" onClick={()=> sortRecent("key_passes")}>Key Passes</th>
+                                <th className="cursor-pointer" onClick={()=> sortRecent("pass_accuracy")}>Pass Accuracy</th>
+                                <th className="cursor-pointer" onClick={()=> sortRecent("number_of_games")}>Number Of Games</th>
+                                <th className="cursor-pointer" onClick={()=> sortRecent("average_performance")}>Average Performance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                bestRecentPlayers.map(player => (
+                                    <tr>
+                                        <th>{player.place}</th>
+                                        <td>{player.name}</td>
+                                        <td>{player.goals}</td>
+                                        <td>{player.assists}</td>
+                                        <td>{player.average_minutes_played_per_game}</td>
+                                        <td>{player.shots}</td>
+                                        <td>{player.shots_on_target}</td>
+                                        <td>{player.passes}</td>
+                                        <td>{player.key_passes}</td>
+                                        <td>{player.pass_accuracy}%</td>
+                                        {printNumOgGames(player.number_of_games)}
+                                        <td>{player.average_performance}</td>
                                     </tr>
                                 ))}
                         </tbody>
