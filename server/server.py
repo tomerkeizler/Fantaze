@@ -8,6 +8,7 @@ from create_team import create_team
 from constants import CONSTANTS
 from sample_data import sample_data
 from sample_data import team_constraints
+from sample_data import fantasy_team_data
 
 app = Flask(__name__, static_folder='build')
 
@@ -16,22 +17,29 @@ app = Flask(__name__, static_folder='build')
 ###################################
 
 @app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['CHOSEN'], methods = ['POST'])
-def get_final_team():
+def get_team():
+    return jsonify(fantasy_team_data['ultimate_team'])
+
+
+@app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['CALCULATE_TEAM'], methods = ['POST'])
+def calculate_team():
+    fantasy_team_data['ultimate_team'].clear()
     data = request.get_json()
-    list_player_id = []
-    for player in team_constraints['player_selection']:
-        list_player_id.insert(0, player['player_id'])
-    fantasy_league_and_defeated_players = create_team.get_used_players(data['year'], data['round'], list_player_id)
-    # fantasy_league = fantasy_league_and_defeated_players['choosen']
-    # defeated players = fantasy_league_and_defeated_players['defeated']
-    return jsonify(fantasy_league_and_defeated_players)
+    list_player_id = [player['player_id'] for player in team_constraints['player_selection']]
+    # for player in team_constraints['player_selection']:
+    #     list_player_id.insert(0, player['player_id'])
+    fantasy_league = create_team.get_used_players(data['year'], data['round'], list_player_id)
+    fantasy_team_data['ultimate_team'] = fantasy_league
+    return make_response('', CONSTANTS['HTTP_STATUS']['200_OK'])
+    # return jsonify(fantasy_team_data['ultimate_team'])
 
 
 @app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['ELIMINATED'], methods = ['POST'])
 def get_eliminated_players():
     data = request.get_json()
-    defeated_players = []
-    return jsonify(defeated_players)
+    list_player_id = [player['player_id'] for player in team_constraints['player_selection']]
+    fantasy_team_data['eliminated_players'] = create_team.get_eliminated_players(data['year'], data['round'], list_player_id)
+    return jsonify(fantasy_team_data['eliminated_players'])
 
 #####################################################
 ####### ENDPOINTS - UPDATING TEAM CONSTRAINTS #######
