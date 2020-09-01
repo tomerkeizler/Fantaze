@@ -12,6 +12,7 @@ CONSTANTS = {
     'ENDPOINT': {
         'MY_TEAM': {
         'CHOSEN': '/api/my_team/chosen',
+        'CALCULATE_TEAM': '/api/my_team/calculate_team',
         'ELIMINATED': '/api/my_team/eliminated',
         },
 

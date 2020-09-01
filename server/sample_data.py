@@ -4,8 +4,12 @@ import datetime
 ####### DATA - FANTASY TEAM #######
 ###################################
 
-ultimate_fantasy_team = []
-eliminated_players =[]
+fantasy_team_data = {}
+
+fantasy_team_data['season'] = '2019/20'
+fantasy_team_data['round'] = 'Final'
+fantasy_team_data['ultimate_team'] = []
+fantasy_team_data['eliminated_players'] = []
 
 #######################################
 ####### DATA - TEAM CONSTRAINTS #######
