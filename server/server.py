@@ -38,7 +38,7 @@ def calculate_team():
 def get_eliminated_players():
     data = request.get_json()
     list_player_id = [player['player_id'] for player in team_constraints['player_selection']]
-    fantasy_team_data['eliminated_players'] = create_team.get_eliminated_players(data['year'], data['round'], list_player_id)
+    fantasy_team_data['eliminated_players'] = create_team.get_eliminated_players_from_constraints(data['year'], data['round'], list_player_id)
     return jsonify(fantasy_team_data['eliminated_players'])
 
 #####################################################
