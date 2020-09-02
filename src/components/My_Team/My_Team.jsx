@@ -29,8 +29,8 @@ const MyTeam = () => {
     setRound(e.target.value);
   }
 
-  const getItems = () => {
-    const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM.CHOSEN, {
+  const fetchItems = (fetchURL) => {
+    const promiseItems = fetch(fetchURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -61,7 +61,7 @@ const MyTeam = () => {
   }
 
   const updateTeam = () => {
-    getItems()
+    fetchItems(CONSTANTS.ENDPOINT.MY_TEAM.CHOSEN)
       .then(res => {
         setUltimatePlayers(res.choosen);
         setEliminatedPlayers(res.defeated);
