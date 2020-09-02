@@ -156,14 +156,9 @@ def delete_eliminated_teams(year, round, playersId_players_map):
         for playerId in list(playersId_players_map):
             if playersId_players_map[playerId]["team_id"] not in relevant_teams:
                 del playersId_players_map[playerId]
-    # instead, we can add parameter to function and do:
-    # eliminated_players = get_eliminated_players(year,round, chosen_players_id_list)
-    # for player in eliminated_players:
-    #     del playersId_players_map[playerId]
-
     return playersId_players_map
 
-def get_eliminated_players(year, round, chosen_players_id_list):
+def get_eliminated_players_from_constraints(year, round, chosen_players_id_list):
     eliminated_players = []
     id_players_map = create_id_players_map()
     if(is_knockout(round)):
@@ -172,6 +167,7 @@ def get_eliminated_players(year, round, chosen_players_id_list):
             if(id_players_map[id]["team_id"]) not in relevant_teams:
                 update_id_playersData_map(id_players_map, id_players_map[id], 0)
                 eliminated_players.append(id_players_map[id])
+    sample_data.fantasy_team_data['eliminated_players'] = eliminated_players
     return eliminated_players
 
 def get_used_players(year, round, chosen_players_id_list):
