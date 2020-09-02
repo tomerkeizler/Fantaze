@@ -57,14 +57,29 @@ const MyTeam = () => {
 
   const handleSeasonRoundSubmit = () => {
     setIsLoading(true);
-    updateTeam();
+    calculateTeam();
+    displayTeam();
   }
 
-  const updateTeam = () => {
-    fetchItems(CONSTANTS.ENDPOINT.MY_TEAM.CHOSEN)
+  const calculateTeam = () => {
+    fetchItems(CONSTANTS.ENDPOINT.MY_TEAM.CALCULATE_TEAM)
       .then(res => {
-        setUltimatePlayers(res.choosen);
-        setEliminatedPlayers(res.defeated);
+        setUltimatePlayers(res);
+        // setEliminatedPlayers(res.defeated);
+        setIsLoading(false);
+      })
+      .catch(error =>
+        setWarningMessage({
+          warningMessageOpen: true,
+          warningMessageText: `Request to get grid text failed: ${error}`
+        })
+      );
+  }
+
+  const displayTeam = () => {
+    fetchItems(CONSTANTS.ENDPOINT.MY_TEAM.CHOSEN)
+      .then(ultimatePlayers => {
+        setUltimatePlayers(ultimatePlayers);
         setIsLoading(false);
       })
       .catch(error =>
@@ -77,7 +92,7 @@ const MyTeam = () => {
 
   React.useEffect(() => {
     setTeamShirtByIdMap(getTeamShirtByIdMap());
-    // updateTeam();
+    displayTeam();
   }, []);
 
 
