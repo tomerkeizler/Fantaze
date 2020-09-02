@@ -136,12 +136,13 @@ def get_chosen_players(year, round, playersId_players_map, chosen_players_id_lis
     for id in chosen_players_id_list:
         player = playersId_players_map.get(id)
         if player is not None:
-            if is_knockout(round):
-                relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
-                if player["team_id"] in relevant_teams: 
-                    chosen_players.append(player)
-            else:
-                chosen_players.append(player)
+            chosen_players.append(player)
+            # if is_knockout(round):
+            #     relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
+            #     if player["team_id"] in relevant_teams: 
+            #         chosen_players.append(player)
+            # else:
+            # chosen_players.append(player)
     return chosen_players
 
 def delete_chosen_players(playersId_players_map, chosen_players):
@@ -155,7 +156,7 @@ def delete_eliminated_teams(year, round, playersId_players_map):
         for playerId in list(playersId_players_map):
             if playersId_players_map[playerId]["team_id"] not in relevant_teams:
                 del playersId_players_map[playerId]
-    # instead we can add parameter to function and do:
+    # instead, we can add parameter to function and do:
     # eliminated_players = get_eliminated_players(year,round, chosen_players_id_list)
     # for player in eliminated_players:
     #     del playersId_players_map[playerId]
@@ -164,13 +165,13 @@ def delete_eliminated_teams(year, round, playersId_players_map):
 
 def get_eliminated_players(year, round, chosen_players_id_list):
     eliminated_players = []
-    playersId_players_map = get_id_player_map(year, round)
-    # id_players_map = create_id_players_map()
+    id_players_map = create_id_players_map()
     if(is_knockout(round)):
         relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
-        for playerId in list(playersId_players_map):
-            if playersId_players_map[playerId]["team_id"] not in relevant_teams:
-                eliminated_players.append(playersId_players_map[playerId])
+        for id in chosen_players_id_list:
+            if(id_players_map[id]["team_id"]) not in relevant_teams:
+                update_id_playersData_map(id_players_map, id_players_map[id], 0)
+                eliminated_players.append(id_players_map[id])
     return eliminated_players
 
 def get_used_players(year, round, chosen_players_id_list):
@@ -192,3 +193,25 @@ def get_used_players(year, round, chosen_players_id_list):
     return fantasy_league
 
 # get_used_players('2019/20', 'Final', [154])
+# ===========================================
+# ===========================================
+# ===========================================
+
+
+def filter_by_position(position, id_player_map):
+    filtered_map = {}
+    for id, player in id_player_map.items():
+        if player["position"] == position:
+            filtered_map[id] = player
+    return filtered_map
+
+def get_team(year, round, formation, chosen_players_id_list):
+    playersId_players_map = get_id_player_map(year, round)
+    playersId_players_map = delete_eliminated_teams(year, round, playersId_players_map)
+    
+    Goalkeeper_map = filter_by_position("Goalkeeper", playersId_players_map)
+    Attacker_map = filter_by_position("Attacker", playersId_players_map)
+    Midfielder_map = filter_by_position("Midfielder", playersId_players_map)
+    Defender_map = filter_by_position("Defender", playersId_players_map)
+
+
