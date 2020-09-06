@@ -209,5 +209,3 @@ def get_team(year, round, formation, chosen_players_id_list):
     Attacker_map = filter_by_position("Attacker", playersId_players_map)
     Midfielder_map = filter_by_position("Midfielder", playersId_players_map)
     Defender_map = filter_by_position("Defender", playersId_players_map)
-
-

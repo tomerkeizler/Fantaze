@@ -1,4 +1,5 @@
 ﻿import React, { useState } from "react";
+import { makeStyles } from '@material-ui/core/styles';
 import WarningMessage from "../WarningMessage";
 import CONSTANTS from "../../constants";
 import PlayerTile from "./PlayerTile";
@@ -8,6 +9,9 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import FilterTeamBySeasonRound from './FilterTeamBySeasonRound'
 import DraggableDialog from './DraggableDialog'
+import Chip from '@material-ui/core/Chip';
+import DoneIcon from '@material-ui/icons/Done';
+import SportsSoccerIcon from '@material-ui/icons/SportsSoccer';
 
 
 const MyTeam = () => {
@@ -21,6 +25,17 @@ const MyTeam = () => {
   const [teamShirtByIdMap, setTeamShirtByIdMap] = useState({ myMap: {} });
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
 
+  
+  // async function handleSeasonRoundSubmit() {
+  const handleSeasonRoundSubmit = () => {
+    setIsLoading(true);
+    displayEliminatedPlayers();
+    
+    calculateTeam();
+
+    // displayTeam();
+  }
+
   const handleSeasonChange = (e) => {
     setSeason(e.target.value);
   }
@@ -29,15 +44,27 @@ const MyTeam = () => {
     setRound(e.target.value);
   }
 
-  const fetchItems = (fetchURL) => {
-    const promiseItems = fetch(fetchURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        year: season,
-        round: round
-      })
-    })
+  const closeWarningMessage = () => {
+    setWarningMessage({
+      warningMessageOpen: false,
+      warningMessageText: ""
+    });
+  }
+
+
+  async function fetchItems(fetchURL, areSeasonRoundNeeded) {
+  // const fetchItems = (fetchURL, areSeasonRoundNeeded) => {
+    const fetchParams = !areSeasonRoundNeeded ? ({}) : (
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          season: season,
+          round: round
+        })
+      });
+    let promiseItems = await fetch(fetchURL, fetchParams)
+    // const promiseItems = fetch(fetchURL, fetchParams)
       .then(response => {
         if (!response.ok) {
           throw Error(response.statusText);
@@ -48,25 +75,13 @@ const MyTeam = () => {
     return promiseItems;
   }
 
-  const closeWarningMessage = () => {
-    setWarningMessage({
-      warningMessageOpen: false,
-      warningMessageText: ""
-    });
-  }
+  const displayEliminatedPlayers = () => {
+    fetchItems(CONSTANTS.ENDPOINT.MY_TEAM.ELIMINATED_PLAYERS, true)
+      .then(eliminatedPlayers => {
 
-  const handleSeasonRoundSubmit = () => {
-    setIsLoading(true);
-    calculateTeam();
-    displayTeam();
-  }
+        console.log(eliminatedPlayers);
 
-  const calculateTeam = () => {
-    fetchItems(CONSTANTS.ENDPOINT.MY_TEAM.CALCULATE_TEAM)
-      .then(res => {
-        setUltimatePlayers(res);
-        // setEliminatedPlayers(res.defeated);
-        setIsLoading(false);
+        setEliminatedPlayers(eliminatedPlayers);
       })
       .catch(error =>
         setWarningMessage({
@@ -76,8 +91,8 @@ const MyTeam = () => {
       );
   }
 
-  const displayTeam = () => {
-    fetchItems(CONSTANTS.ENDPOINT.MY_TEAM.CHOSEN)
+  const calculateTeam = () => {
+    fetchItems(CONSTANTS.ENDPOINT.MY_TEAM.CALCULATE_ULTIMATE_TEAM, true)
       .then(ultimatePlayers => {
         setUltimatePlayers(ultimatePlayers);
         setIsLoading(false);
@@ -90,29 +105,93 @@ const MyTeam = () => {
       );
   }
 
+  const displayTeam = () => {
+    fetchItems(CONSTANTS.ENDPOINT.MY_TEAM.GET_ULTIMATE_TEAM, false)
+
+      // const promiseItems = fetch(CONSTANTS.ENDPOINT.MY_TEAM.GET_ULTIMATE_TEAM, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     season: season,
+      //     round: round
+      //   })
+      // })
+      //   .then(response => {
+      //     if (!response.ok) {
+      //       throw Error(response.statusText);
+      //     }
+      //     return response.json();
+      //   });
+
+      // return promiseItems;
+
+
+      .then(ultimatePlayers => {
+        setUltimatePlayers(ultimatePlayers);
+        setIsLoading(false);
+      })
+      .catch(error =>
+        setWarningMessage({
+          warningMessageOpen: true,
+          warningMessageText: `Request to get grid text failed: ${error}`
+        })
+      );
+  }
+
+
   React.useEffect(() => {
     setTeamShirtByIdMap(getTeamShirtByIdMap());
+    displayEliminatedPlayers();
     displayTeam();
   }, []);
+
+
+  const useStyles = makeStyles({
+    chip: {
+      fontSize: '1.3rem',
+      padding: 12,
+      margin: 5
+    }
+  });
+
+  const classes = useStyles();
+
+  const InfoChip = props => (
+    <Chip
+      {...props}
+      className={classes.chip}
+      variant="outlined"
+      color="primary"
+      icon={<SportsSoccerIcon />}
+      // deleteIcon={<DoneIcon />}
+    // onDelete={}
+    />
+  );
 
 
   return (
     <main id="mainContent">
       <div className="container">
+
         <div className="row justify-content-center mt-5 p-0">
-          <h3>My Ultimate Team</h3>
+          <h2>My Ultimate Team</h2>
+        </div>
+
+        <div className="row justify-content-center">
+          <InfoChip label={`Season: ${season}`}></InfoChip>
+          <InfoChip label={`Round: ${round}`}></InfoChip>
         </div>
 
         <DraggableDialog
-        selectedSeason={season}
-        selectedRound={round}
-        data={eliminatedPlayers}
+          selectedSeason={season}
+          selectedRound={round}
+          data={eliminatedPlayers}
         />
 
         <FilterTeamBySeasonRound
-        onSeasonChange={handleSeasonChange}
-        onRoundChange={handleRoundChange}
-        onSubmit={handleSeasonRoundSubmit}
+          onSeasonChange={handleSeasonChange}
+          onRoundChange={handleRoundChange}
+          onSubmit={handleSeasonRoundSubmit}
         />
 
         {isLoading ? (

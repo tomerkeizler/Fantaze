@@ -11,9 +11,9 @@ CONSTANTS = {
 
     'ENDPOINT': {
         'MY_TEAM': {
-        'CHOSEN': '/api/my_team/chosen',
-        'CALCULATE_TEAM': '/api/my_team/calculate_team',
-        'ELIMINATED': '/api/my_team/eliminated',
+            'GET_ULTIMATE_TEAM': '/api/my_team/get_ultimate_team',
+            'CALCULATE_ULTIMATE_TEAM': '/api/my_team/calculate_ultimate_team',
+            'ELIMINATED_PLAYERS': '/api/my_team/eliminated_players',
         },
 
         'TEAM_CONSTRAINTS': {
