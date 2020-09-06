@@ -8,8 +8,9 @@
     "\\src\\components\\AboutUs",
     "\\src\\components\\App",
     "\\src\\components\\My_Team",
-    "\\src\\components\\Players_Statistics"
+    "\\src\\components\\Players_Statistics",
+    "\\src\\components\\WarningMessage"
   ],
-  "SelectedNode": "\\server\\players_statistics\\players_statistics.py",
+  "SelectedNode": "\\src\\components\\Players_Statistics\\Recent_Games_Stats.jsx",
   "PreviewInSolutionExplorer": false
 }
