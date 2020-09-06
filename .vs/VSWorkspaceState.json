@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\server",
+    "\\server\\players_statistics",
+    "\\src",
+    "\\src\\components",
+    "\\src\\components\\AboutUs",
+    "\\src\\components\\App",
+    "\\src\\components\\My_Team",
+    "\\src\\components\\Players_Statistics"
+  ],
+  "SelectedNode": "\\server\\players_statistics\\players_statistics.py",
+  "PreviewInSolutionExplorer": false
+}

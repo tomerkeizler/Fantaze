@@ -26,7 +26,13 @@ CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.FORMATION_PICK = "/api/team_constraints/form
 CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION = "/api/team_constraints/player_selection"
 CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.TEAM_FILTER = "/api/team_constraints/team_filter"
 CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_FILTER = "/api/team_constraints/player_filter"
-        
+
+CONSTANTS.ENDPOINT.PLAYER_STATS = "/api/players_statistics";
+CONSTANTS.ENDPOINT.TOP_SCORERS = "/api/top_scorers";
+CONSTANTS.ENDPOINT.MOST_ASSISTS = "/api/most_assists";
+CONSTANTS.ENDPOINT.BEST_GOALKEEPERS = "/api/best_goolkeepers";
+CONSTANTS.ENDPOINT.RECENT_GAMES_STATS = "/api/recent_games_stats";
+
 CONSTANTS.ENDPOINT.MASTERDETAIL = "/api/masterdetail";
 
 

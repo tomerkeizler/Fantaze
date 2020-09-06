@@ -9,8 +9,40 @@ from constants import CONSTANTS
 from sample_data import sample_data
 from sample_data import team_constraints
 from sample_data import fantasy_team_data
+from players_statistics import players_statistics
 
 app = Flask(__name__, static_folder='build')
+
+
+
+###############################################################
+####### ENDPOINTS - STATISTICS #######
+###############################################################
+
+@app.route(CONSTANTS['ENDPOINT']['PLAYER_STATS'], methods=['POST'])
+def get_players_stats():
+    data = request.get_json()
+    return jsonify(players_statistics.get_players_statistics(data['year']))
+
+
+@app.route(CONSTANTS['ENDPOINT']['TOP_SCORERS'], methods=['POST'])
+def get_top_scorers():
+    data = request.get_json()
+    return jsonify(players_statistics.get_top_scorers_stats(data['year']))
+
+@app.route(CONSTANTS['ENDPOINT']['MOST_ASSISTS'], methods=['POST'])
+def get_most_assists():
+    data = request.get_json()
+    return jsonify(players_statistics.get_most_assists_stats(data['year']))
+
+@app.route(CONSTANTS['ENDPOINT']['BEST_GOALKEEPERS'], methods=['POST'])
+def get_best_goalkeepers():
+    data = request.get_json()
+    return jsonify(players_statistics.get_best_goalkeepers_stats(data['year']))
+
+@app.route(CONSTANTS['ENDPOINT']['RECENT_GAMES_STATS'], methods=['POST'])
+def get_recent_games_stats():
+    return jsonify(players_statistics.get_recent_games_stats())
 
 ###################################
 ####### ENDPOINTS - MY TEAM #######

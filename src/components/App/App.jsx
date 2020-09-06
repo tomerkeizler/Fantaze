@@ -26,6 +26,11 @@ import MyTeam from "../My_Team/My_Team";
 import ConstraintsView from "../List/List";
 import ConstraintsCheckout from "../ConstraintsCheckout/ConstraintsCheckout";
 import Master_Detail from "../Master_Detail/Master_Detail";
+import Top_Scorers from "../Players_Statistics/Top_Scorers"
+import Most_Assists from "../Players_Statistics/Most_Assists"
+import Best_Goalkeepers from "../Players_Statistics/Best_Goalkeepers"
+import Recent_Games_Stats from "../Players_Statistics/Recent_Games_Stats"
+
 
 
 const drawerWidth = 240;
@@ -169,6 +174,10 @@ export default function App() {
               <Route exact path="/Constraints_Checkout" component={ConstraintsCheckout} />
               <Route path="/Constraints_View" component={ConstraintsView} />
               <Route path="/Master_Detail" component={Master_Detail} />
+              <Route path="/Top_Scorers" component={Top_Scorers} />
+              <Route path="/Most_Assists" component={Most_Assists} />
+              <Route path="/Best_Goalkeepers" component={Best_Goalkeepers} />
+              <Route path="/Recent_Games_Stats" component={Recent_Games_Stats} />
             </Switch>
           </Container>
         </main>

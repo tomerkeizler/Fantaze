@@ -11,17 +11,24 @@ CONSTANTS = {
 
     'ENDPOINT': {
         'MY_TEAM': {
-        'CHOSEN': '/api/my_team/chosen',
-        'CALCULATE_TEAM': '/api/my_team/calculate_team',
-        'ELIMINATED': '/api/my_team/eliminated',
+            'CHOSEN': '/api/my_team/chosen',
+            'CALCULATE_TEAM': '/api/my_team/calculate_team',
+            'ELIMINATED': '/api/my_team/eliminated',
+
         },
+
+        'PLAYER_STATS': '/api/players_statistics',
+        'TOP_SCORERS': '/api/top_scorers',
+        'MOST_ASSISTS': '/api/most_assists',
+        'RECENT_GAMES_STATS': '/api/recent_games_stats',
+        'BEST_GOALKEEPERS': '/api/best_goolkeepers',
 
         'TEAM_CONSTRAINTS': {
             'UPDATE': '/api/team_constraints/update',
             'FORMATION_PICK': '/api/team_constraints/formation_pick',
             'PLAYER_SELECTION': '/api/team_constraints/player_selection',
             'TEAM_FILTER': '/api/team_constraints/team_filter',
-            'PLAYER_FILTER':'/api/team_constraints/player_filter',
+            'PLAYER_FILTER': '/api/team_constraints/player_filter',
         },
 
         'MASTER_DETAIL': '/api/masterdetail',

@@ -106,12 +106,22 @@ export default function SideMenu() {
         {
           'name': 'Top scorers',
           'icon': <SportsSoccerIcon />,
-          'link': ''
-        },
+          'link': 'Top_Scorers'
+         },
         {
-          'name': 'Top Defenders',
+            'name': 'Most Assists ',
+              'icon': <SportsSoccerIcon />,
+            'link': 'Most_Assists'
+          },
+          {
+              'name': 'Recent Games Stats',
+              'icon': <SportsSoccerIcon />,
+              'link': 'Recent_Games_Stats'
+          },
+        {
+          'name': 'Best Goalkeepers',
           'icon': <SportsSoccerIcon />,
-          'link': ''
+           'link': 'Best_Goalkeepers'
         },
       ]
     },
