@@ -9,6 +9,8 @@ import math
 import numpy
 import copy
 
+MAX_PRICE = 15
+
 def convert_performances_list_to_avg(id_playerData_map):
     for player_id, player in id_playerData_map.items():
         sum = 0
@@ -232,15 +234,17 @@ def create_price_buckets_per_position_sort_by_performance(players_map_per_positi
     price_buckets_map_sort_by_performance = {}
     for key in players_map_per_position.keys():
         price_buckets_map_sort_by_performance[key] = []
-        for i in range(100 + 1):
+        for i in range(MAX_PRICE + 1):
             price_buckets_map_sort_by_performance[key].append([])
         for player in players_map_per_position[key].values():
             price_buckets_map_sort_by_performance[key][player['price']].append(player)
-        for i in range(100 + 1):
+        for i in range(MAX_PRICE + 1):
             price_buckets_map_sort_by_performance[key][i] = sorted(price_buckets_map_sort_by_performance[key][i], key=lambda x: x['performance'], reverse=True)
     return price_buckets_map_sort_by_performance
 
 def get_best_player_for_price(price_buckets_sorted_by_performance, price):
+    if price > MAX_PRICE: 
+        price = MAX_PRICE
     best_player = None
     best_performance = 0
     performance = 0
@@ -263,12 +267,12 @@ def is_rest_team_contains_current_player(best_player, rest_team):
     return player_in_rest_team
 
 def remove_chosen_players_from_buckets(price_buckets_sorted_by_performance, rest_team):
-    for player in rest_team:
+    for player in rest_team['players']:
         if player in price_buckets_sorted_by_performance[player['price']]:
             price_buckets_sorted_by_performance[player['price']].remove(player)
     return price_buckets_sorted_by_performance
     # update_buckets = copy.deepcopy(price_buckets_sorted_by_performance)
-    # for player in rest_team:
+    # for player in rest_team['players']:
     #     if player in update_buckets[player['price']]:
     #         update_buckets[player['price']].remove(player)
     # return update_buckets
@@ -294,20 +298,17 @@ def create_table(price_buckets_sorted_by_performance, prev_table ,price, table_n
         for i in range(1, len(table)):
             for j in range(1, i):
                 best_player_for_price = get_best_player_for_price(price_buckets_sorted_by_performance, j)
-                # rest_team = prev_table[i-j] # check the ability to stay this here
-                if prev_table[i-j] != 0:
-                    rest_team = copy.deepcopy(prev_table[i-j])
-                else:
-                    rest_team = prev_table[i-j]
+                rest_team = prev_table[i-j] # check the ability to stay this here
+# if prev_table[i-j] != 0:
+                #     rest_team = copy.deepcopy(prev_table[i-j])
+                # else:
+#     rest_team = prev_table[i-j]
 
                 if best_player_for_price:
                     if is_rest_team_contains_current_player(best_player_for_price, rest_team):
-                        update_buckets = remove_chosen_players_from_buckets(price_buckets_sorted_by_performance, rest_team['players'])
+                        update_buckets = remove_chosen_players_from_buckets(price_buckets_sorted_by_performance, rest_team)
                         best_player_for_price = get_best_player_for_price(update_buckets ,j)
-                        rest_team = copy.deepcopy(prev_table[i-j]) # it is possible to delete this row!!!
-# if is_smaller_team_size(rest_team, table_number):
-                    #     table[i] = 0
-# else:
+
                     if not is_smaller_team_size(rest_team, table_number) and best_player_for_price != None:
                         new_team = copy.deepcopy(rest_team) #.copy()
                         if table[i] != 0:
@@ -335,21 +336,6 @@ def calc_positions_order(formation):
         for i in range(formation[key]):
             position_order_table[len(position_order_table) + 1] = key
     return position_order_table
-# if 1 < 2 :
-    # for 4-3-3 formation: 
-    # position_order_table = {
-    #     1: Goalkeeper
-    #     2: Defender
-    #     3: Defender
-    #     4: Defender
-    #     5: Defender
-    #     6: Midfielder
-    #     7: Midfielder
-    #     8: Midfielder
-    #     9: Attacker
-    #     10: Attacker
-    #     11: Attacker
-    # }
 
 def get_tables(price_buckets_per_position_sorted_by_performance, formation, price):
     tables = {}
@@ -373,10 +359,9 @@ def get_team(year, round, chosen_players_id_list, selected_formation):
     price_buckets_per_position_sorted_by_performance = create_price_buckets_per_position_sort_by_performance(players_map_per_position, 100 - chosen_players_price)
     tables = get_tables(price_buckets_per_position_sorted_by_performance, formation, 100 - chosen_players_price)
     last_table = tables[len(tables)]
-    team = last_table[1][len(last_table[1]) - 1] # last cell in last table
-    team.append(chosen_players_id_list)
-    # TODO: convert id list of team to players 
-    return team
+    team = last_table[len(last_table) - 1] # last cell in last table
+    team['players'].append(chosen_players_id_list)
+    return team['players']
 
 get_team('2019/20', 'Group Stage - 6', [], '')
 
