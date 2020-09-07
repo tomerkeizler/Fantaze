@@ -12,7 +12,8 @@ CONSTANTS = {
     'ENDPOINT': {
         'MY_TEAM': {
             'GET_ULTIMATE_TEAM': '/api/my_team/get_ultimate_team',
-            'CALCULATE_ULTIMATE_TEAM': '/api/my_team/calculate_ultimate_team',
+            'SEASON_ROUND': '/api/my_team/season_round',
+            'CALCULATE_GET_ULTIMATE_TEAM': '/api/my_team/calculate_get_ultimate_team',
             'ELIMINATED_PLAYERS': '/api/my_team/eliminated_players',
         },
 

@@ -2,7 +2,9 @@
 # sys.path.insert(1, 'C:\\Users\\Noy Wolfson\\Dev\\Fantasy\\server')
 #sys.path.insert(1, 'C:\\Users\\Noy Wolfson\\Dev\\Fantasy\\server\\create_team')
 from server import mongo
-import sample_data
+from fantasyData import qualified_teams_id_by_year_round
+from fantasyData import team_constraints
+from fantasyData import fantasy_team_data
 from create_team import knapsack, create_team
 from collections import OrderedDict 
 import math
@@ -138,7 +140,7 @@ def get_chosen_players(year, round, playersId_players_map, chosen_players_id_lis
         if player is not None:
             chosen_players.append(player)
             # if is_knockout(round):
-            #     relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
+            #     relevant_teams = qualified_teams_id_by_year_round[year][round]
             #     if player["team_id"] in relevant_teams: 
             #         chosen_players.append(player)
             # else:
@@ -152,29 +154,37 @@ def delete_chosen_players(playersId_players_map, chosen_players):
 
 def delete_eliminated_teams(year, round, playersId_players_map):
     if(is_knockout(round)):
-        relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
+        relevant_teams = qualified_teams_id_by_year_round[year][round]
         for playerId in list(playersId_players_map):
             if playersId_players_map[playerId]["team_id"] not in relevant_teams:
                 del playersId_players_map[playerId]
     return playersId_players_map
 
-def get_eliminated_players_from_constraints(year, round, chosen_players_id_list):
+def get_eliminated_players_from_constraints():
+    season = fantasy_team_data['season']
+    round = fantasy_team_data['round']
+    chosen_players_id_list = [player['player_id'] for player in team_constraints['player_selection']]
+
     eliminated_players = []
     id_players_map = create_id_players_map()
     if(is_knockout(round)):
-        relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
+        relevant_teams = qualified_teams_id_by_year_round[season][round]
         for id in chosen_players_id_list:
             if(id_players_map[id]["team_id"]) not in relevant_teams:
                 update_id_playersData_map(id_players_map, id_players_map[id], 0)
                 eliminated_players.append(id_players_map[id])
-    sample_data.fantasy_team_data['eliminated_players'] = eliminated_players
+    fantasy_team_data['eliminated_players'] = eliminated_players
     return eliminated_players
 
-def get_used_players(year, round, chosen_players_id_list):
-    playersId_players_map = get_id_player_map(year, round)
-    playersId_players_map = delete_eliminated_teams(year, round, playersId_players_map)
+def get_used_players():
+    season = fantasy_team_data['season']
+    round = fantasy_team_data['round']
+    chosen_players_id_list = [player['player_id'] for player in team_constraints['player_selection']]
+
+    playersId_players_map = get_id_player_map(season, round)
+    playersId_players_map = delete_eliminated_teams(season, round, playersId_players_map)
     
-    chosen_players = get_chosen_players(year, round, playersId_players_map, chosen_players_id_list)
+    chosen_players = get_chosen_players(season, round, playersId_players_map, chosen_players_id_list)
     chosen_players_price = get_price_of_chosen_players(chosen_players)
     playersId_players_map = delete_chosen_players(playersId_players_map, chosen_players)
 

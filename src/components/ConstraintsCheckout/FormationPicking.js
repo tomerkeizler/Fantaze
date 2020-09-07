@@ -8,7 +8,6 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Zoom from '@material-ui/core/Zoom';
 import { green } from '@material-ui/core/colors';
-import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -116,7 +115,7 @@ export default function FormationPicking(props) {
                 timeout={transitionDuration}
                 style={{ transitionDelay: `${value === index ? transitionDuration.exit : 0}ms`, }}
                 unmountOnExit>
-                <img src={formationItem.image} width="300" />
+                <img src={formationItem.image} width="300" alt="" />
               </Zoom>
             </div>
           </Card>}

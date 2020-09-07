@@ -63,6 +63,12 @@ export default function PlayerSelection(props) {
   const checkedAvailablePlayers = intersection(checkedPlayers, availablePlayers);
   const checkedSelectedPlayers = intersection(checkedPlayers, selectedPlayers);
 
+  const closeWarningMessage = () => {
+    setWarningMessage({
+      warningMessageOpen: false,
+      warningMessageText: ""
+    });
+  }
 
   // --------------------------------------
   // ---- Handlers for list of teams ----
@@ -325,6 +331,12 @@ export default function PlayerSelection(props) {
         </Grid>
         <Grid item>{CustomSelectionList(false, 'Selected players', 300, 300, handleToggleAllPlayers, numberOfCheckedPlayers, selectedPlayers, handleTogglePlayer, checkedSelectedPlayers)}</Grid>
       </Grid>
+
+      <WarningMessage
+          open={warningMessage.warningMessageOpen}
+          text={warningMessage.warningMessageText}
+          onWarningClose={closeWarningMessage}
+        />
     </React.Fragment>
   );
 }
