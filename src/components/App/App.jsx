@@ -1,25 +1,19 @@
-﻿import React from 'react';
+﻿import "./App.css";
+import React from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import SideMenu from './SideMenu';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-
-import "./App.css";
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { Switch, Route } from "react-router-dom";
 import AboutUs from "../AboutUs/AboutUs";
 import MyTeam from "../My_Team/My_Team";
@@ -121,7 +115,6 @@ export default function App() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   return (
     <React.Fragment>

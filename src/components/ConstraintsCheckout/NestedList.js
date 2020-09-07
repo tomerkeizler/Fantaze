@@ -74,7 +74,7 @@ export default function NestedList(props) {
           <>
             <ListItem button selected divider
               classes={{ root: classes.root, selected: classes.selected }}
-              key={position} button onClick={() => handleClick(position)}>
+              key={position} onClick={() => handleClick(position)}>
               <ListItemText primary={`${position}s`} />
               {areGroupsOpen[position] ? <ExpandLess /> : <ExpandMore />}
             </ListItem>

@@ -1,5 +1,4 @@
 ﻿import React from "react";
-import ImgGreyBox from "../../images/GreyBox.svg"
 import PropTypes from "prop-types";
 
 const PlayerTile = ({ item, teamShirtImage}) => {

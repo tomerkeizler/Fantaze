@@ -10,6 +10,8 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import CONSTANTS from "../../constants";
+import WarningMessage from "../WarningMessage";
+import LoadingTeamScreen from '../My_Team/LoadingTeamScreen'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -51,10 +53,18 @@ const steps = ['Formation picking', 'Players selection', 'Advanced constraints']
 
 export default function ConstraintsCheckout() {
   const classes = useStyles();
+  const [isLoading, setIsLoading] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
-  const[formation, setFormation] = useState('4-3-3');
+  const [formation, setFormation] = useState('4-3-3');
   const [selectedPlayers, setSelectedPlayers] = useState([]);
-  const [warningMessage, setWarningMessage] = useState({warningMessageOpen: false, warningMessageText: ""});
+  const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
+
+  const closeWarningMessage = () => {
+    setWarningMessage({
+      warningMessageOpen: false,
+      warningMessageText: ""
+    });
+  }
 
   const onFormationChange = newFormation => {
     setFormation(newFormation);
@@ -77,32 +87,41 @@ export default function ConstraintsCheckout() {
     }
   }
 
-  const updateConstraints = () => {
-    fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.UPDATE, {
+  async function fetchItems(fetchURL, fetchParams) {
+    let response = await fetch(fetchURL, fetchParams);
+    return response.json();
+  }
+
+  const displayFetchErrors = (requestType, error) => {
+    setWarningMessage({
+      warningMessageOpen: true,
+      warningMessageText: `${requestType} request failed: ${error}`
+    })
+  }
+
+  async function handleSubmitConstraints() {
+    const updateConstraintsFetchParams = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         formationPickConstraint: formation,
         playerSelectionConstraintList: selectedPlayers
       })
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw Error(response.statusText);
-        }
-        return response.json();
-      })
-      .catch(error =>
-        setWarningMessage({
-          warningMessageOpen: true,
-          warningMessageText: `${CONSTANTS.ERROR_MESSAGE.LIST_ADD} ${error}`
-        })
-      );
+    }
+    setIsLoading(true);
+
+    let jsonUpdateApproval = await fetchItems(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.UPDATE, updateConstraintsFetchParams)
+      .catch(error => displayFetchErrors('Constraints updating', error));
+
+    let jsonUltimateTeam = await fetchItems(CONSTANTS.ENDPOINT.MY_TEAM.CALCULATE_GET_ULTIMATE_TEAM, {})
+      .catch(error => displayFetchErrors('Ultimate team', error));
+
+    window.location = 'My_Team';
   };
 
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
-      updateConstraints();
+      handleSubmitConstraints();
     }
     setActiveStep(activeStep + 1);
   };
@@ -163,6 +182,14 @@ export default function ConstraintsCheckout() {
               )}
           </React.Fragment>
         </Paper>
+
+        <LoadingTeamScreen isLoading={isLoading} text="Applying constraints..." />
+
+        <WarningMessage
+          open={warningMessage.warningMessageOpen}
+          text={warningMessage.warningMessageText}
+          onWarningClose={closeWarningMessage}
+        />
       </main>
     </React.Fragment>
   );

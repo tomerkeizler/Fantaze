@@ -1,5 +1,5 @@
 ﻿import React, { useState } from "react";
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import WarningMessage from "../WarningMessage";
 import CONSTANTS from "../../constants";
 import ConstraintCard from "./ConstraintCard"
@@ -138,7 +138,7 @@ const ConstraintsView = () => {
         <h2>Team Constraints</h2>
       </div>
 
-      {(!formationConstraint & playersConstraint.length == 0) ? (
+      {(!formationConstraint && playersConstraint.length === 0) ? (
         <center><h3>There are no Constraints</h3></center>
       ) : (
           <div className="row">
