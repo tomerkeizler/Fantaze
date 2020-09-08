@@ -103,10 +103,9 @@ def create_id_playerData_map(year, round):
     id_playersData_map = {}
     fixtures = get_fixtures(year, round)
     all_performances = mongo.find_from_collection(mongo.player_performances_collection, {})
-    players_map = create_id_players_map()
     for i in range(len(all_performances)):
-        if all_performances[i]["event_id"] in fixtures and all_performances[i]["player_id"] in players_map:
-            current_player = players_map[all_performances[i]["player_id"]]
+        if all_performances[i]["event_id"] in fixtures and all_performances[i]["player_id"] in id_players_map:
+            current_player = id_players_map[all_performances[i]["player_id"]]
             if current_player["price"] != 0:
                 player_id = current_player["player_id"]
                 performances = []
@@ -120,10 +119,6 @@ def create_id_playerDataAvg_map(year, round):
     id_playerData_map = create_id_playerData_map(year, round)
     id_playerData_avg_performances = convert_performances_list_to_avg(id_playerData_map)
     return id_playerData_avg_performances
-
-def get_id_player_map(year, round):
-    players = create_id_playerDataAvg_map(year, round)
-    return players
 
 def update_formation(formation, chosen_players):
     updated_formation = {
@@ -155,14 +150,10 @@ def get_chosen_players(year, round, playersId_players_map, chosen_players_id_lis
     chosen_players = []
     for id in chosen_players_id_list:
         player = playersId_players_map.get(id)
-        if player is not None:
-            chosen_players.append(player)
-            # if is_knockout(round):
-            #     relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
-            #     if player["team_id"] in relevant_teams: 
-            #         chosen_players.append(player)
-            # else:
-            # chosen_players.append(player)
+        if player is None: 
+            playersId_players_map = update_id_playersData_map(playersId_players_map, id_players_map.get(id), 0)
+            player = playersId_players_map.get(id)
+        chosen_players.append(player)
     return chosen_players
 
 def delete_chosen_players(playersId_players_map, chosen_players):
@@ -180,7 +171,6 @@ def delete_eliminated_teams(year, round, playersId_players_map):
 
 def get_eliminated_players_from_constraints(year, round, chosen_players_id_list):
     eliminated_players = []
-    id_players_map = create_id_players_map()
     if(is_knockout(round)):
         relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
         for id in chosen_players_id_list:
@@ -190,26 +180,25 @@ def get_eliminated_players_from_constraints(year, round, chosen_players_id_list)
     sample_data.fantasy_team_data['eliminated_players'] = eliminated_players
     return eliminated_players
 
-def get_used_players(year, round, chosen_players_id_list):
-    playersId_players_map = get_id_player_map(year, round)
-    playersId_players_map = delete_eliminated_teams(year, round, playersId_players_map)
+# def get_used_players(year, round, chosen_players_id_list):
+#     playersId_players_map = get_id_player_map(year, round)
+#     playersId_players_map = delete_eliminated_teams(year, round, playersId_players_map)
     
-    chosen_players = get_chosen_players(year, round, playersId_players_map, chosen_players_id_list)
-    chosen_players_price = get_price_of_chosen_players(chosen_players)
-    playersId_players_map = delete_chosen_players(playersId_players_map, chosen_players)
-    # formation = update_formation(selected_formation, chosen_players)
+#     chosen_players = get_chosen_players(year, round, playersId_players_map, chosen_players_id_list)
+#     chosen_players_price = get_price_of_chosen_players(chosen_players)
+#     playersId_players_map = delete_chosen_players(playersId_players_map, chosen_players)
+#     # formation = update_formation(selected_formation, chosen_players)
 
-    players = list(playersId_players_map.values())
-    final_matrix = create_team.knapsack.dynamic_program_knapsack(100 - chosen_players_price, playersId_players_map, 11 - len(chosen_players))
-    used_indexes = create_team.knapsack.get_used_indexes(100 - chosen_players_price, playersId_players_map, 11 - len(chosen_players), final_matrix)
-    fantasy_league = []
-    for i in range(len(used_indexes)):
-        if used_indexes[i] == 1:
-            fantasy_league.append(players[i])
-    fantasy_league.extend(chosen_players)
-    return fantasy_league
+#     players = list(playersId_players_map.values())
+#     final_matrix = create_team.knapsack.dynamic_program_knapsack(100 - chosen_players_price, playersId_players_map, 11 - len(chosen_players))
+#     used_indexes = create_team.knapsack.get_used_indexes(100 - chosen_players_price, playersId_players_map, 11 - len(chosen_players), final_matrix)
+#     fantasy_league = []
+#     for i in range(len(used_indexes)):
+#         if used_indexes[i] == 1:
+#             fantasy_league.append(players[i])
+#     fantasy_league.extend(chosen_players)
+#     return fantasy_league
 
-# get_used_players('2019/20', 'Final', [154])
 # ===========================================
 # ===========================================
 # ===========================================
@@ -270,12 +259,6 @@ def remove_chosen_players_from_buckets(price_buckets_sorted_by_performance, rest
     for player in rest_team['players']:
         if player in price_buckets_sorted_by_performance[player['price']]:
             price_buckets_sorted_by_performance[player['price']].remove(player)
-    return price_buckets_sorted_by_performance
-    # update_buckets = copy.deepcopy(price_buckets_sorted_by_performance)
-    # for player in rest_team['players']:
-    #     if player in update_buckets[player['price']]:
-    #         update_buckets[player['price']].remove(player)
-    # return update_buckets
 
 def is_smaller_team_size(rest_team, table_number):
     is_smaller = False
@@ -287,48 +270,46 @@ def is_smaller_team_size(rest_team, table_number):
 
 def create_table(price_buckets_sorted_by_performance, prev_table ,price, table_number):
     table = [0] * (price + 1)
-    if prev_table == None: 
+    if prev_table == None: # first table 
         for i in range(1, len(table)):
             best_player_for_price = get_best_player_for_price(price_buckets_sorted_by_performance, i)
             if best_player_for_price:
-                table[i] = { 'players' : [best_player_for_price], 
-                                'performance' : best_player_for_price['performance']
-                                }
-    else: 
+                table[i] = update_table_cell(None, best_player_for_price)
+    else: # rest tables
         for i in range(1, len(table)):
             for j in range(1, i):
                 best_player_for_price = get_best_player_for_price(price_buckets_sorted_by_performance, j)
-                rest_team = prev_table[i-j] # check the ability to stay this here
-# if prev_table[i-j] != 0:
-                #     rest_team = copy.deepcopy(prev_table[i-j])
-                # else:
-#     rest_team = prev_table[i-j]
-
                 if best_player_for_price:
+                    rest_team = prev_table[i-j] # check the ability to stay this here
                     if is_rest_team_contains_current_player(best_player_for_price, rest_team):
-                        update_buckets = remove_chosen_players_from_buckets(price_buckets_sorted_by_performance, rest_team)
-                        best_player_for_price = get_best_player_for_price(update_buckets ,j)
-
+                        remove_chosen_players_from_buckets(price_buckets_sorted_by_performance, rest_team)
+                        best_player_for_price = get_best_player_for_price(price_buckets_sorted_by_performance ,j)
                     if not is_smaller_team_size(rest_team, table_number) and best_player_for_price != None:
-                        new_team = copy.deepcopy(rest_team) #.copy()
-                        if table[i] != 0:
-                            current_performance = table[i]['performance']
-                            new_performance = best_player_for_price['performance'] + rest_team['performance']
-                            if new_performance > current_performance:
-                                new_team['players'].append(best_player_for_price)
-                                table[i] = { 'players' : new_team['players'], 
-                                            'performance' : best_player_for_price['performance'] + new_team['performance']
-                                            }
+                        new_team = copy.deepcopy(rest_team)
+                        if table[i] == 0:
+                            table[i] = update_table_cell(new_team, best_player_for_price)
                         else:
-                            new_team['players'].append(best_player_for_price)
-                            table[i] = { 'players' : new_team['players'], 
-                                        'performance' : best_player_for_price['performance'] + new_team['performance']
-                                        }
-    return  table
-
-def update_tables(price_buckets_sorted_by_performance, prev_table ,price, table_number):
-    table = create_table(price_buckets_sorted_by_performance, prev_table ,price, table_number)
+                            if is_new_greater_then_prev(table[i], best_player_for_price, rest_team):
+                                table[i] = update_table_cell(new_team, best_player_for_price)
     return table
+
+
+def is_new_greater_then_prev(current_team, best_player_for_price, rest_team):
+    current_performance = current_team['performance']
+    new_performance = best_player_for_price['performance'] + rest_team['performance']
+    return new_performance > current_performance
+
+def update_table_cell(new_team, best_player_for_price):
+    if new_team == None:
+        new_team = {
+            'players': [],
+            'performance' : 0
+        }
+    new_team['players'].append(best_player_for_price)
+    cell = { 'players' : new_team['players'], 
+                'performance' : best_player_for_price['performance'] + new_team['performance']
+                }
+    return cell
 
 def calc_positions_order(formation):
     position_order_table = {}
@@ -343,11 +324,11 @@ def get_tables(price_buckets_per_position_sorted_by_performance, formation, pric
     for i in range(1, len(positions_order) + 1):
         current_position = positions_order[i]
         price_buckets_current_position_players = price_buckets_per_position_sorted_by_performance[current_position]
-        tables[i] = update_tables(price_buckets_current_position_players, tables.get(len(tables)), price, i)
+        tables[i] = create_table(price_buckets_current_position_players, tables.get(len(tables)), price, i)
     return tables
 
 def get_team(year, round, chosen_players_id_list, selected_formation):
-    playersId_players_map = get_id_player_map(year, round)
+    playersId_players_map = create_id_playerDataAvg_map(year, round) # this is take 15 sec!!!
     playersId_players_map = delete_eliminated_teams(year, round, playersId_players_map)
     
     chosen_players = get_chosen_players(year, round, playersId_players_map, chosen_players_id_list)
@@ -360,9 +341,10 @@ def get_team(year, round, chosen_players_id_list, selected_formation):
     tables = get_tables(price_buckets_per_position_sorted_by_performance, formation, 100 - chosen_players_price)
     last_table = tables[len(tables)]
     team = last_table[len(last_table) - 1] # last cell in last table
-    team['players'].append(chosen_players_id_list)
+    team['players'].extend(chosen_players)
     return team['players']
 
-get_team('2019/20', 'Group Stage - 6', [], '')
+id_players_map = create_id_players_map()
+get_team('2018/19', 'Group Stage - 3', [154, 519], '3-5-2')
 
 
