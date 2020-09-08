@@ -10,6 +10,7 @@ import numpy
 import copy
 
 MAX_PRICE = 15
+MIN_PRICE = 3
 
 def convert_performances_list_to_avg(id_playerData_map):
     for player_id, player in id_playerData_map.items():
@@ -180,30 +181,6 @@ def get_eliminated_players_from_constraints(year, round, chosen_players_id_list)
     sample_data.fantasy_team_data['eliminated_players'] = eliminated_players
     return eliminated_players
 
-# def get_used_players(year, round, chosen_players_id_list):
-#     playersId_players_map = get_id_player_map(year, round)
-#     playersId_players_map = delete_eliminated_teams(year, round, playersId_players_map)
-    
-#     chosen_players = get_chosen_players(year, round, playersId_players_map, chosen_players_id_list)
-#     chosen_players_price = get_price_of_chosen_players(chosen_players)
-#     playersId_players_map = delete_chosen_players(playersId_players_map, chosen_players)
-#     # formation = update_formation(selected_formation, chosen_players)
-
-#     players = list(playersId_players_map.values())
-#     final_matrix = create_team.knapsack.dynamic_program_knapsack(100 - chosen_players_price, playersId_players_map, 11 - len(chosen_players))
-#     used_indexes = create_team.knapsack.get_used_indexes(100 - chosen_players_price, playersId_players_map, 11 - len(chosen_players), final_matrix)
-#     fantasy_league = []
-#     for i in range(len(used_indexes)):
-#         if used_indexes[i] == 1:
-#             fantasy_league.append(players[i])
-#     fantasy_league.extend(chosen_players)
-#     return fantasy_league
-
-# ===========================================
-# ===========================================
-# ===========================================
-
-
 def filter_by_position(position, id_player_map):
     filtered_map = {}
     for id, player in id_player_map.items():
@@ -231,34 +208,28 @@ def create_price_buckets_per_position_sort_by_performance(players_map_per_positi
             price_buckets_map_sort_by_performance[key][i] = sorted(price_buckets_map_sort_by_performance[key][i], key=lambda x: x['performance'], reverse=True)
     return price_buckets_map_sort_by_performance
 
-def get_best_player_for_price(price_buckets_sorted_by_performance, price):
+def get_best_player_for_price(price_buckets_sorted_by_performance, rest_team, price):
     if price > MAX_PRICE: 
         price = MAX_PRICE
     best_player = None
     best_performance = 0
     performance = 0
-    for i in range(1, price + 1):
+    for i in range(MIN_PRICE, price + 1):
         if price_buckets_sorted_by_performance[i]:
-            player = price_buckets_sorted_by_performance[i][0]
-            performance = player['performance']
-            if performance > best_performance:
-                best_performance = performance
-                best_player = player
+            index = 0
+            player = price_buckets_sorted_by_performance[i][index]
+            while rest_team != 0 and rest_team != {} and player in rest_team['players']:
+                index += 1
+                if index < len(price_buckets_sorted_by_performance[i]):
+                    player = price_buckets_sorted_by_performance[i][index]
+                else: 
+                    player = None
+            if player != None:
+                performance = player['performance']
+                if performance > best_performance:
+                    best_performance = performance
+                    best_player = player
     return best_player
-
-def is_rest_team_contains_current_player(best_player, rest_team):
-    player_in_rest_team = False
-    if rest_team == 0:
-        return player_in_rest_team
-    for player in rest_team['players']:
-        if best_player == player:
-            return True
-    return player_in_rest_team
-
-def remove_chosen_players_from_buckets(price_buckets_sorted_by_performance, rest_team):
-    for player in rest_team['players']:
-        if player in price_buckets_sorted_by_performance[player['price']]:
-            price_buckets_sorted_by_performance[player['price']].remove(player)
 
 def is_smaller_team_size(rest_team, table_number):
     is_smaller = False
@@ -272,19 +243,16 @@ def create_table(price_buckets_sorted_by_performance, prev_table ,price, table_n
     table = [0] * (price + 1)
     if prev_table == None: # first table 
         for i in range(1, len(table)):
-            best_player_for_price = get_best_player_for_price(price_buckets_sorted_by_performance, i)
+            best_player_for_price = get_best_player_for_price(price_buckets_sorted_by_performance, {}, i)
             if best_player_for_price:
                 table[i] = update_table_cell(None, best_player_for_price)
     else: # rest tables
         for i in range(1, len(table)):
             for j in range(1, i):
-                best_player_for_price = get_best_player_for_price(price_buckets_sorted_by_performance, j)
+                rest_team = prev_table[i-j]
+                best_player_for_price = get_best_player_for_price(price_buckets_sorted_by_performance, rest_team, j)
                 if best_player_for_price:
-                    rest_team = prev_table[i-j] # check the ability to stay this here
-                    if is_rest_team_contains_current_player(best_player_for_price, rest_team):
-                        remove_chosen_players_from_buckets(price_buckets_sorted_by_performance, rest_team)
-                        best_player_for_price = get_best_player_for_price(price_buckets_sorted_by_performance ,j)
-                    if not is_smaller_team_size(rest_team, table_number) and best_player_for_price != None:
+                    if not is_smaller_team_size(rest_team, table_number):
                         new_team = copy.deepcopy(rest_team)
                         if table[i] == 0:
                             table[i] = update_table_cell(new_team, best_player_for_price)
@@ -292,7 +260,6 @@ def create_table(price_buckets_sorted_by_performance, prev_table ,price, table_n
                             if is_new_greater_then_prev(table[i], best_player_for_price, rest_team):
                                 table[i] = update_table_cell(new_team, best_player_for_price)
     return table
-
 
 def is_new_greater_then_prev(current_team, best_player_for_price, rest_team):
     current_performance = current_team['performance']
@@ -345,6 +312,6 @@ def get_team(year, round, chosen_players_id_list, selected_formation):
     return team['players']
 
 id_players_map = create_id_players_map()
-get_team('2018/19', 'Group Stage - 3', [154, 519], '3-5-2')
+get_team('2018/19', 'Group Stage - 3', [154, 519], '')
 
 
