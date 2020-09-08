@@ -41,7 +41,7 @@ def set_season_round():
 @app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['CALCULATE_GET_ULTIMATE_TEAM'])
 def calculate_team():
     fantasy_team_data['ultimate_team'].clear()
-    fantasy_team_data['ultimate_team'] = create_team.get_used_players()
+    fantasy_team_data['ultimate_team'] = create_team.get_team()
     return jsonify(fantasy_team_data['ultimate_team'])
 
 
