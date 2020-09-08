@@ -1,7 +1,5 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -19,10 +17,6 @@ function PaperComponent(props) {
 export default function DraggableDialog(props) {
     const [open, setOpen] = React.useState(false);
 
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
     const handleClose = () => {
         setOpen(false);
     };
@@ -34,14 +28,12 @@ export default function DraggableDialog(props) {
     return (
         <div>
             <Dialog open={open} onClose={handleClose} PaperComponent={PaperComponent}>
-                <DialogTitle id="draggable-dialog-title" style={{ cursor: 'move' }}>
-                    Eliminated players
+                <DialogTitle id="draggable-dialog-title" style={{ cursor: 'move', backgroundColor: '#CEDAEE'}}>
+                    Eliminated players - {props.selectedSeason} {props.selectedRound}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        <b>
-                            The following players were selected in team constraints but were eliminated before {props.selectedSeason} {props.selectedRound}:
-                        </b>
+                        <b>Some of your favorite players were eliminated in a previous phase:</b>
                     </DialogContentText>
                     <ul>
                         {props.data.map(player => (
@@ -49,11 +41,6 @@ export default function DraggableDialog(props) {
                         ))}
                     </ul>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} variant="contained" color="primary">
-                        OK, Let's build a team!
-                    </Button>
-                </DialogActions>
             </Dialog>
         </div>
     );

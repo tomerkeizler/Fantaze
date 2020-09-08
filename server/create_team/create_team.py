@@ -2,7 +2,9 @@
 # sys.path.insert(1, 'C:\\Users\\Noy Wolfson\\Dev\\Fantasy\\server')
 #sys.path.insert(1, 'C:\\Users\\Noy Wolfson\\Dev\\Fantasy\\server\\create_team')
 from server import mongo
-import sample_data
+from fantasyData import qualified_teams_id_by_year_round
+from fantasyData import team_constraints
+from fantasyData import fantasy_team_data
 from create_team import knapsack, create_team
 from collections import OrderedDict 
 import math
@@ -52,7 +54,7 @@ def get_fixtures_id_by_league(league) -> list:
         fixtures.extend(result[i]["fixtures_id"])
     return fixtures
 
-def get_leagues(year):
+def get_leagues(season):
     leagues = []
     switcher = OrderedDict([ 
         ("2018/19" , 132),
@@ -62,7 +64,7 @@ def get_leagues(year):
     for league in switcher.values():
         leagues.append(league)
 
-    league = switcher.get(year)
+    league = switcher.get(season)
     seasons = leagues.index(league) + 1
     relevant_leagues = leagues[:seasons]
     return relevant_leagues
@@ -89,9 +91,9 @@ def get_possible_rounds(round):
     possible_rounds = rounds[:level]
     return possible_rounds
 
-def get_fixtures(year, round):
+def get_fixtures(season, round):
     fixtures = []
-    leagues_id = get_leagues(year)
+    leagues_id = get_leagues(season)
     possible_round = get_possible_rounds(round)
     fixtures_data = mongo.find_from_collection(mongo.data_fixtures_collection, {"league_id": leagues_id[-1], "round": { '$in' : possible_round } })
     for fixture_data in fixtures_data:
@@ -100,9 +102,9 @@ def get_fixtures(year, round):
     fixtures.extend(prev_years_fixtures)
     return fixtures
 
-def create_id_playerData_map(year, round):
+def create_id_playerData_map(season, round):
     id_playersData_map = {}
-    fixtures = get_fixtures(year, round)
+    fixtures = get_fixtures(season, round)
     all_performances = mongo.find_from_collection(mongo.player_performances_collection, {})
     for i in range(len(all_performances)):
         if all_performances[i]["event_id"] in fixtures and all_performances[i]["player_id"] in id_players_map:
@@ -116,8 +118,8 @@ def create_id_playerData_map(year, round):
                 update_id_playersData_map(id_playersData_map, current_player, performances)
     return id_playersData_map
 
-def create_id_playerDataAvg_map(year, round):
-    id_playerData_map = create_id_playerData_map(year, round)
+def create_id_playerDataAvg_map(season, round):
+    id_playerData_map = create_id_playerData_map(season, round)
     id_playerData_avg_performances = convert_performances_list_to_avg(id_playerData_map)
     return id_playerData_avg_performances
 
@@ -147,7 +149,7 @@ def is_knockout(round):
     perv_rounds = get_possible_rounds(round)
     return len(perv_rounds) > 5
 
-def get_chosen_players(year, round, playersId_players_map, chosen_players_id_list):
+def get_chosen_players(playersId_players_map, chosen_players_id_list):
     chosen_players = []
     for id in chosen_players_id_list:
         player = playersId_players_map.get(id)
@@ -162,23 +164,27 @@ def delete_chosen_players(playersId_players_map, chosen_players):
         playersId_players_map.pop(player['player_id'], None)
     return playersId_players_map
 
-def delete_eliminated_teams(year, round, playersId_players_map):
+def delete_eliminated_teams(season, round, playersId_players_map):
     if(is_knockout(round)):
-        relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
+        relevant_teams = qualified_teams_id_by_year_round[season][round]
         for playerId in list(playersId_players_map):
             if playersId_players_map[playerId]["team_id"] not in relevant_teams:
                 del playersId_players_map[playerId]
     return playersId_players_map
 
-def get_eliminated_players_from_constraints(year, round, chosen_players_id_list):
+def get_eliminated_players_from_constraints():
+    season = fantasy_team_data['season']
+    round = fantasy_team_data['round']
+    chosen_players_id_list = [player['player_id'] for player in team_constraints['player_selection']]
+    
     eliminated_players = []
     if(is_knockout(round)):
-        relevant_teams = sample_data.qualified_teams_id_by_year_round[year][round]
+        relevant_teams = qualified_teams_id_by_year_round[season][round]
         for id in chosen_players_id_list:
             if(id_players_map[id]["team_id"]) not in relevant_teams:
                 update_id_playersData_map(id_players_map, id_players_map[id], 0)
                 eliminated_players.append(id_players_map[id])
-    sample_data.fantasy_team_data['eliminated_players'] = eliminated_players
+    fantasy_team_data['eliminated_players'] = eliminated_players
     return eliminated_players
 
 def filter_by_position(position, id_player_map):
@@ -294,11 +300,16 @@ def get_tables(price_buckets_per_position_sorted_by_performance, formation, pric
         tables[i] = create_table(price_buckets_current_position_players, tables.get(len(tables)), price, i)
     return tables
 
-def get_team(year, round, chosen_players_id_list, selected_formation):
-    playersId_players_map = create_id_playerDataAvg_map(year, round) # this is take 15 sec!!!
-    playersId_players_map = delete_eliminated_teams(year, round, playersId_players_map)
+def get_team():
+    season = fantasy_team_data['season']
+    round = fantasy_team_data['round']
+    chosen_players_id_list = [player['player_id'] for player in team_constraints['player_selection']]
+    selected_formation = fantasy_team_data['formation_pick']
+
+    playersId_players_map = create_id_playerDataAvg_map(season, round) # this is take 15 sec!!!
+    playersId_players_map = delete_eliminated_teams(season, round, playersId_players_map)
     
-    chosen_players = get_chosen_players(year, round, playersId_players_map, chosen_players_id_list)
+    chosen_players = get_chosen_players(playersId_players_map, chosen_players_id_list)
     chosen_players_price = get_price_of_chosen_players(chosen_players)
     playersId_players_map = delete_chosen_players(playersId_players_map, chosen_players)
     formation = update_formation(selected_formation, chosen_players)
@@ -312,6 +323,4 @@ def get_team(year, round, chosen_players_id_list, selected_formation):
     return team['players']
 
 id_players_map = create_id_players_map()
-get_team('2018/19', 'Group Stage - 3', [154, 519], '')
-
-
+# get_team('2018/19', 'Group Stage - 3', [154, 519], '')

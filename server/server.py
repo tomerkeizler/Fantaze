@@ -6,9 +6,9 @@ from bson.json_util import dumps
 import mongo
 from create_team import create_team
 from constants import CONSTANTS
-from sample_data import sample_data
-from sample_data import team_constraints
-from sample_data import fantasy_team_data
+
+from fantasyData import team_constraints
+from fantasyData import fantasy_team_data
 
 app = Flask(__name__, static_folder='build')
 
@@ -16,29 +16,38 @@ app = Flask(__name__, static_folder='build')
 ####### ENDPOINTS - MY TEAM #######
 ###################################
 
-@app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['CHOSEN'], methods = ['POST'])
-def get_team():
+@app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['GET_ULTIMATE_TEAM'])
+def get_ultimate_team():
     return jsonify(fantasy_team_data['ultimate_team'])
 
 
-@app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['CALCULATE_TEAM'], methods = ['POST'])
+@app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['SEASON_ROUND'])
+def get_season_round():
+    fixture_info = {}
+    fixture_info['season'] = fantasy_team_data['season']
+    fixture_info['round'] = fantasy_team_data['round']
+    return jsonify(fixture_info)
+
+
+@app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['SEASON_ROUND'], methods = ['POST'])
+def set_season_round():
+    data = request.get_json()
+    fantasy_team_data['season'] = data['season']
+    fantasy_team_data['round'] = data['round']
+    json_response = jsonify({'text': 'The season and round are set'})
+    return make_response(json_response, CONSTANTS['HTTP_STATUS']['200_OK'])
+
+
+@app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['CALCULATE_GET_ULTIMATE_TEAM'])
 def calculate_team():
     fantasy_team_data['ultimate_team'].clear()
-    data = request.get_json()
-    list_player_id = [player['player_id'] for player in team_constraints['player_selection']]
-    # for player in team_constraints['player_selection']:
-    #     list_player_id.insert(0, player['player_id'])
-    fantasy_league = create_team.get_used_players(data['year'], data['round'], list_player_id)
-    fantasy_team_data['ultimate_team'] = fantasy_league
-    return make_response('', CONSTANTS['HTTP_STATUS']['200_OK'])
-    # return jsonify(fantasy_team_data['ultimate_team'])
+    fantasy_team_data['ultimate_team'] = create_team.get_team()
+    return jsonify(fantasy_team_data['ultimate_team'])
 
 
-@app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['ELIMINATED'], methods = ['POST'])
+@app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['ELIMINATED_PLAYERS'])
 def get_eliminated_players():
-    data = request.get_json()
-    list_player_id = [player['player_id'] for player in team_constraints['player_selection']]
-    fantasy_team_data['eliminated_players'] = create_team.get_eliminated_players_from_constraints(data['year'], data['round'], list_player_id)
+    fantasy_team_data['eliminated_players'] = create_team.get_eliminated_players_from_constraints()
     return jsonify(fantasy_team_data['eliminated_players'])
 
 #####################################################
@@ -54,7 +63,8 @@ def update_constraints_data():
     team_constraints['player_selection'].clear()
     for playerSelected in data['playerSelectionConstraintList']:
         team_constraints['player_selection'].insert(0, playerSelected)
-    return make_response('', CONSTANTS['HTTP_STATUS']['201_CREATED'])
+    json_response = jsonify({'text': 'The new constraints are set'})
+    return make_response(json_response, CONSTANTS['HTTP_STATUS']['201_CREATED'])
     
 
 #############################################################
@@ -100,15 +110,21 @@ def remove_single_player_constraint(id):
 
 @app.route(CONSTANTS['ENDPOINT']['TEAM_CONSTRAINTS']['TEAM_FILTER'])
 def get_all_teams():
-    teams = mongo.find_from_collection(mongo.teams_collection, {})
-    return dumps(teams)
+    allTeams = mongo.find_from_collection(mongo.teams_collection, {})
+    for team in allTeams:
+        del team['_id']
+    return jsonify(allTeams)
+    # return dumps(allTeams)
     
 
 @app.route(CONSTANTS['ENDPOINT']['TEAM_CONSTRAINTS']['PLAYER_FILTER'], methods = ['POST'])
 def get_squad_by_team():
     data = request.get_json()
     players_by_team = mongo.find_from_collection(mongo.players_data_collection, {'team_id': { '$in' : data['teams_id'] }})
-    return dumps(players_by_team)
+    for player in players_by_team:
+        del player['_id']
+    return jsonify(players_by_team)
+    # return dumps(players_by_team)
 
 #######################
 ####### GENERAL #######
@@ -117,7 +133,7 @@ def get_squad_by_team():
 # MasterDetail Page Endpoint
 @app.route(CONSTANTS['ENDPOINT']['MASTER_DETAIL'])
 def get_master_detail():
-    return jsonify(sample_data['text_assets'])
+    return jsonify({})
 
 
 # Catching all routes
