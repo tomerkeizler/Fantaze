@@ -22,7 +22,7 @@ import ConstraintsCheckout from "../ConstraintsCheckout/ConstraintsCheckout";
 import Master_Detail from "../Master_Detail/Master_Detail";
 
 
-const drawerWidth = 240;
+const drawerWidth = 260;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -87,11 +87,10 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     height: '100vh',
-    // overflow: 'auto',
+    overflow: 'auto',
   },
   container: {
-    // paddingTop: theme.spacing(4),
-    // paddingBottom: theme.spacing(4),
+    padding: theme.spacing(4),
   },
   paper: {
     padding: theme.spacing(2),
@@ -108,12 +107,17 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [pageTitle, setPageTitle] = React.useState('');
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handlePageChange = (pageName) => {
+    setPageTitle(pageName);
   };
 
   return (
@@ -131,11 +135,11 @@ export default function App() {
               <MenuIcon />
             </IconButton>
             <Typography component="h4" variant="h4" color="inherit" noWrap className={classes.title}>
-              Fantasy Planner
-          </Typography>
+              Fantaze {pageTitle==='' ? '' : `  >>  ${pageTitle}`}
+            </Typography>
             <Typography component="h6" variant="subtitle1" color="inherit" noWrap>
               The ultimate app for UEFA Champions Legaue Fantasy gamblers
-          </Typography>
+            </Typography>
             {/* <IconButton color="inherit" size="medium">
               <AccountCircleIcon />
           </IconButton> */}
@@ -150,7 +154,7 @@ export default function App() {
             </IconButton>
           </div>
           <Divider />
-          <SideMenu />
+          <SideMenu onPageChange={handlePageChange} />
         </Drawer>
 
         <main className={classes.content}>

@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function SideMenu() {
+export default function SideMenu({ onPageChange }) {
   const classes = useStyles();
   let initialCategories = { Constraints: false, Statistics: false, Predictions: false };
   const [areCategoriesOpen, setAreCategoriesOpen] = React.useState(initialCategories);
@@ -82,15 +82,17 @@ export default function SideMenu() {
 
     {
       'isCategory': true,
-      'name': 'Constraints',
+      'name': 'Team constraints',
       'icon': <SettingsIcon />,
       'subItems': [
         {
+          'isCategory': false,
           'name': 'View Constraints',
           'icon': <DoubleArrowIcon />,
           'link': 'Constraints_View'
         },
         {
+          'isCategory': false,
           'name': 'Set Constraints',
           'icon': <DoubleArrowIcon />,
           'link': 'Constraints_Checkout'
@@ -104,11 +106,13 @@ export default function SideMenu() {
       'icon': <EqualizerIcon />,
       'subItems': [
         {
+          'isCategory': false,
           'name': 'Top scorers',
           'icon': <SportsSoccerIcon />,
           'link': ''
         },
         {
+          'isCategory': false,
           'name': 'Top Defenders',
           'icon': <SportsSoccerIcon />,
           'link': ''
@@ -122,11 +126,13 @@ export default function SideMenu() {
       'icon': <LayersIcon />,
       'subItems': [
         {
+          'isCategory': false,
           'name': 'Next Round',
           'icon': <ViewHeadlineIcon />,
           'link': ''
         },
         {
+          'isCategory': false,
           'name': 'Next Year',
           'icon': <ViewHeadlineIcon />,
           'link': ''
@@ -155,7 +161,7 @@ export default function SideMenu() {
                 <List component="div" disablePadding>
                   {item.subItems.map((subItem) => {
                     return (
-                      <Link to={subItem.link} className={classes.itemLink} key={subItem.name}>
+                      <Link to={subItem.link} className={classes.itemLink} key={subItem.name} onClick={() => onPageChange(subItem.name)}>
                         <ListItem button>
                           <ListItemIcon>{subItem.icon}</ListItemIcon>
                           <ListItemText primary={subItem.name} />
@@ -171,7 +177,7 @@ export default function SideMenu() {
 
         else {
           return (
-            <Link to={item.link} className={classes.itemLink} key={item.name}>
+            <Link to={item.link} className={classes.itemLink} key={item.name} onClick={() => onPageChange(item.name)}>
               <ListItem button>
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.name} />

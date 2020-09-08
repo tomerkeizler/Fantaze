@@ -2,19 +2,34 @@
 import { makeStyles } from '@material-ui/core/styles';
 import WarningMessage from "../WarningMessage";
 import CONSTANTS from "../../constants";
-import ConstraintCard from "./ConstraintCard"
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
+import PlayerConstraintCard from "./PlayerConstraintCard"
+import FormationConstraintCard from "./FormationConstraintCard"
 import Zoom from '@material-ui/core/Zoom';
 import { getTeamShirtByIdMap } from '../../images/Team_Shirts'
+import Chip from '@material-ui/core/Chip';
 
 
 const useStyles = makeStyles((theme) => ({
   cardGrid: {
     display: 'flex',
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(6),
+    flexFlow: 'row wrap',
+    justifyContent: 'flex-start',
+    alignContent: 'space-around',
+    margin: theme.spacing(0),
   },
+  formationCardItem: {
+    flex: '2 0 auto',
+    margin: theme.spacing(2),
+  },
+  playerCardItem: {
+    flex: '1 0 auto',
+    margin: theme.spacing(2),
+  },
+  chip: {
+    fontSize: '2rem',
+    padding: 25,
+    marginBottom: 30
+  }
 }));
 
 
@@ -22,23 +37,17 @@ const ConstraintsView = () => {
   const classes = useStyles();
   const [displayed, setDisplayed] = useState(false);
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
-  
-  const [formationConstraint, setFormationConstraint] = useState();
-  const [formationPositions, setFormationPositions] = useState([]);
 
-  const [playersConstraint, setPlayersConstraint] = useState([]);
+  const [formationPositions, setFormationPositions] = useState([]);
   const [teamShirtByIdMap, setTeamShirtByIdMap] = useState({ myMap: {} });
+
+  const [formationConstraint, setFormationConstraint] = useState();
+  const [playersConstraint, setPlayersConstraint] = useState([]);
 
 
   async function fetchConstraint(fetchURL) {
-    let promiseList = await fetch(fetchURL)
-      .then(response => {
-        if (!response.ok) {
-          throw Error(response.statusText);
-        }
-        return response.json();
-      })
-    return promiseList;
+    let response = await fetch(fetchURL)
+    return response.json();
   }
 
   const removeFormationConstraint = () => {
@@ -133,52 +142,46 @@ const ConstraintsView = () => {
 
 
   return (
-    <main id="mainContent" className="container">
-      <div className="row justify-content-center py-4">
-        <h2>Team Constraints</h2>
-      </div>
-
+    <div>
       {(!formationConstraint && playersConstraint.length === 0) ? (
-        <center><h3>There are no Constraints</h3></center>
+        <center>
+          <Chip className={classes.chip} color="primary" label="There are no Constraints" />
+        </center>
       ) : (
-          <div className="row">
-            <Container className={classes.cardGrid} maxWidth="md">
-              <Grid container spacing={4}>
 
-                {/* formation constraint */}
-                {!formationConstraint ? '' : (
-                  <Zoom in={displayed}>
-                    <Grid item key={formationConstraint} xs={12} sm={6} md={6}>
-                      <ConstraintCard
-                        constraintTitle={`Formation: ${formationConstraint}`}
-                        firstDescription={`${formationPositions[0]} Defenders`}
-                        secondDescription={`${formationPositions[1]} Midfielders`}
-                        thirdDescription={`${formationPositions[2]} Attackers`}
-                        deleteConstraint={removeFormationConstraint}
-                        image={getFormationImage(formationConstraint)}
-                        />
-                    </Grid>
-                  </Zoom>
-                )}
+          <div className={classes.cardGrid} maxWidth="md">
 
-                {/* players constraint */}
-                {playersConstraint.map((playerItem, index) => (
-                  <Zoom key={playerItem.player_id} in={displayed} style={{ transitionDelay: displayed ? `${300 * (index + 1)}ms` : '0ms' }}>
-                    <Grid item key={playerItem.player_id} xs={12} sm={6} md={6}>
-                      <ConstraintCard
-                        constraintTitle={playerItem.player_name}
-                        firstDescription={playerItem.position}
-                        secondDescription={playerItem.team_name}
-                        deleteConstraint={() => removeSinglePlayerConstraint(playerItem.player_id)}
-                        image={teamShirtByIdMap.get(playerItem.team_id)}
-                      />
+            {/* formation constraint */}
+            {!formationConstraint ? '' : (
+              <div className={classes.formationCardItem}>
+                <Zoom in={displayed}>
+                  <FormationConstraintCard
+                    constraintTitle={formationConstraint}
+                    numOfDefenders={`${formationPositions[0]} Defenders`}
+                    numOfMidfielders={`${formationPositions[1]} Midfielders`}
+                    numOfAttackers={`${formationPositions[2]} Attackers`}
+                    deleteConstraint={removeFormationConstraint}
+                    image={getFormationImage(formationConstraint)} />
+                </Zoom>
+              </div>
+            )}
 
-                    </Grid>
-                  </Zoom>
-                ))}
+            {/* players constraint */}
+            {playersConstraint.map((playerItem, index) => (
+              <div className={classes.playerCardItem}>
+                <Zoom in={displayed}
+                  key={playerItem.player_id}
+                  style={{ transitionDelay: displayed ? `${300 * (index + 1)}ms` : '0ms' }}>
+                  <PlayerConstraintCard
+                    constraintTitle={playerItem.player_name}
+                    position={playerItem.position}
+                    teamName={playerItem.team_name}
+                    deleteConstraint={() => removeSinglePlayerConstraint(playerItem.player_id)}
+                    image={teamShirtByIdMap.get(playerItem.team_id)} />
+                </Zoom>
+              </div>
+            ))}
 
-              </Grid>
-            </Container>
           </div>
         )}
 
@@ -187,7 +190,7 @@ const ConstraintsView = () => {
         text={warningMessage.warningMessageText}
         onWarningClose={closeWarningMessage}
       />
-    </main>
+    </div>
   );
 }
 

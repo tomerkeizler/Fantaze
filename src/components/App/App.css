@@ -4,7 +4,7 @@
 }
 
 body {
-  margin-bottom: 160px !important; /* Height of the footer */
+  margin-bottom: 0px !important; /* Height of the footer */
   padding: 0;
 }
 
