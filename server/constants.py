@@ -17,11 +17,13 @@ CONSTANTS = {
 
         },
 
-        'PLAYER_STATS': '/api/players_statistics',
-        'TOP_SCORERS': '/api/top_scorers',
-        'MOST_ASSISTS': '/api/most_assists',
-        'RECENT_GAMES_STATS': '/api/recent_games_stats',
-        'BEST_GOALKEEPERS': '/api/best_goolkeepers',
+		'PLAYERS_STATS':{
+			'TOP_SCORERS': '/api/players_stats/top_scorers',
+			'MOST_ASSISTS': '/api/players_stats/most_assists',
+			'RECENT_GAMES_STATS': '/api/players_stats/recent_games_stats',
+			'BEST_GOALKEEPERS': '/api/players_stats/best_goolkeepers',
+		},
+
 
         'TEAM_CONSTRAINTS': {
             'UPDATE': '/api/team_constraints/update',

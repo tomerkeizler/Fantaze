@@ -115,6 +115,8 @@ const Best_Goalkeepers = () => {
                 console.log(list)
                 setItems(list)
             })
+        setPage(0)
+
     }
 
 
@@ -149,12 +151,14 @@ const Best_Goalkeepers = () => {
             })
             setBestGoalkeepers(setStatsForTeam(allStats[BEST_GOALKEEPER_PLACE], id))
         }
+        setPage(0)
+
     }
 
 
     const getItems = (season) => {
         setIsLoading(true);
-        let promiseList = fetch(CONSTANTS.ENDPOINT.BEST_GOALKEEPERS, {
+        let promiseList = fetch(CONSTANTS.ENDPOINT.PLAYER_STATS.BEST_GOALKEEPERS, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

@@ -116,6 +116,7 @@ const Most_Assists = () => {
                 console.log(list)
                 setItems(list)
             })
+        setPage(0)
     }
 
 
@@ -150,12 +151,14 @@ const Most_Assists = () => {
             })
             setMostAssists(setStatsForTeam(allStats[MOST_ASSISTS_PLACE], id))
         }
+        setPage(0)
+
     }
 
 
     const getItems = (season) => {
         setIsLoading(true);
-        let promiseList = fetch(CONSTANTS.ENDPOINT.MOST_ASSISTS, {
+        let promiseList = fetch(CONSTANTS.ENDPOINT.PLAYER_STATS.MOST_ASSISTS, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

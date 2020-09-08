@@ -116,6 +116,8 @@ const Top_Scorers = () => {
                 console.log(list)
                 setItems(list)
             })
+        setPage(0)
+
     }
 
 
@@ -150,12 +152,13 @@ const Top_Scorers = () => {
             })
             setTopScorers(setStatsForTeam(allStats[TOP_SCORERS_PLACE], id))
         }
+        setPage(0)
     }
 
 
     const getItems = (season) => {
         setIsLoading(true);
-        let promiseList = fetch(CONSTANTS.ENDPOINT.TOP_SCORERS, {
+        let promiseList = fetch(CONSTANTS.ENDPOINT.PLAYER_STATS.TOP_SCORERS, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -174,8 +177,7 @@ const Top_Scorers = () => {
     React.useEffect(() => {
         getItems("2019/20")
             .then(list => {
-                setItems(list)
-				
+                setItems(list)			
             })
     }, []);
 

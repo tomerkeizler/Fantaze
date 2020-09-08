@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 120,
     },
     table: {
-        minWidth: 900,
+        minWidth: 1000,
     },
     paper: {
         width: '100%',
@@ -76,6 +76,8 @@ const Recent_Games_Stats = () => {
     const [teams, setTeams] = useState([]);
     const [allStats, setAllStats] = useState([]);
     const [recentGamesNum, setRecentGamesNum] = useState(10);
+    const [teamName, setTeamName] = useState('All');
+    const [position, setPosition] = useState('All');
     const [recentGamesStats, setRecentGamesStats] = useState([]);
     const [page, setPage] = React.useState(0);
     const [dense,] = React.useState(false);
@@ -99,8 +101,12 @@ const Recent_Games_Stats = () => {
                 var pass_accuracy = 0;
                 var number_of_games = 0;
                 var average_performance = 0;
+                var price = 0;
                 newPlayer['name'] = playersRecetGamesList[i].player_name
+                newPlayer['team_name'] = playersRecetGamesList[i].team_name
+                newPlayer['position'] = playersRecetGamesList[i].position
                 newPlayer['place'] = statsForLastGames.length + 1
+                price = playersRecetGamesList[i].price
                 playersRecetGamesList[i].games_performances.slice(0,recentGames).forEach(performance =>{
                     goals = goals + parseInt(performance.goals.total);
                     assists = assists + parseInt(performance.goals.assists);
@@ -123,6 +129,7 @@ const Recent_Games_Stats = () => {
                 newPlayer['pass_accuracy'] = Math.round(pass_accuracy / number_of_games);
                 newPlayer['number_of_games'] = number_of_games;
                 newPlayer['average_performance'] = Math.round(average_performance / number_of_games);
+                newPlayer['performance_to_price'] = Math.round(average_performance / price);
                 statsForLastGames.push(newPlayer)
             }
         }
@@ -136,6 +143,7 @@ const Recent_Games_Stats = () => {
         player.place = newPlace;
         newPlace++;
         })
+        setPage(0);
         return statsForLastGames
     }
 
@@ -167,54 +175,97 @@ const Recent_Games_Stats = () => {
     };
 
     const handleRecentGamesNumChange = (e) => {
-        console.log(e.target.value)
+        //console.log(e.target.value)
         setRecentGamesNum(e.target.value);
-        var theSortedList = setRecetStats(allStats[RECENT_GAMES_STATS],e.target.value, 'average_performance')
+        //var theSortedList = setRecetStats(allStats[RECENT_GAMES_STATS], e.target.value, 'average_performance')
+        var theSortedList = setStatsForPosition(setStatsForTeam(setRecetStats(allStats[RECENT_GAMES_STATS], e.target.value, 'average_performance'), teamName), position)
         setRecentGamesStats(theSortedList)
+    }
+
+    const handlePositionChange = (e) => {
+        const position = e.target.value
+        setPosition(e.target.value)
+        //if (position === "All") {
+           // setItems(allStats)
+        //}
+        //else {
+            //setRecentGamesStats(setStatsForTeam(allStats[RECENT_GAMES_STATS], teamName))
+        //setRecentGamesStats(setRecetStats(setStatsForTeam(allStats[RECENT_GAMES_STATS], teamName)), recentGamesNum, 'average_performance')
+        var theSortedList = setStatsForPosition(setStatsForTeam(setRecetStats(allStats[RECENT_GAMES_STATS], recentGamesNum, 'average_performance'), teamName), e.target.value)
+            setRecentGamesStats(theSortedList)
+       // }
     }
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, recentGamesStats.length - page * rowsPerPage);
 
 
-
-
-    const setStatsForTeam = (playersList, team_name) => {
-        console.log("setStatsForTeam")
-        console.log(team_name)
-
+    const setStatsForPosition = (playersList, position) => {
+        if (position === "All") {
+            return playersList;
+        }
         var justTeamStats = [];
         for (var i = 0; i < playersList.length; i++) {
-            if (playersList[i].team_name === team_name) {
-                console.log("TEAM:" + playersList[i].team_name)
+            if (playersList[i].position === position) {
                 justTeamStats.push(playersList[i])
             }
         }
+        var newPlace = 1;
+        justTeamStats.forEach(player => {
+            player.place = newPlace;
+            newPlace++;
+        })
+        return justTeamStats
+    }
+
+    const setStatsForTeam = (playersList, team_name) => {
+        //console.log("setStatsForTeam")
+        //console.log(team_name)
+        if (team_name === "All") {
+            return playersList;
+        }
+        var justTeamStats = [];
+        for (var i = 0; i < playersList.length; i++) {
+            if (playersList[i].team_name === team_name) {
+                justTeamStats.push(playersList[i])
+            }
+        }
+        var newPlace = 1;
+        justTeamStats.forEach(player => {
+            player.place = newPlace;
+            newPlace++;
+        })
         return justTeamStats
     }
 
 
    const handleTeamNameChange = (e) => {
-       console.log(e.target.value)
+       //console.log(e.target.value)
        const teamName = e.target.value
-       if (teamName === "All") {
-           setItems(allStats)
-       }
-       else {
+       setTeamName(e.target.value)
+      // if (teamName === "All") {
+          // setItems(allStats)
+      // }
+       //else {
            //setRecentGamesStats(setStatsForTeam(allStats[RECENT_GAMES_STATS], teamName))
-           setRecentGamesStats(setRecetStats(setStatsForTeam(allStats[RECENT_GAMES_STATS], teamName)),recentGamesNum,'average_performance')
-
-       }
+       //setRecentGamesStats(setRecetStats(setStatsForTeam(allStats[RECENT_GAMES_STATS], teamName)), recentGamesNum, 'average_performance')
+       var theSortedList = setStatsForPosition(setStatsForTeam(setRecetStats(allStats[RECENT_GAMES_STATS], recentGamesNum, 'average_performance'), e.target.value), position)
+           setRecentGamesStats(theSortedList)
+      // }
    }
 
    const sortRecent = (sortBy) => {
-       var theSortedList = setRecetStats(allStats[RECENT_GAMES_STATS],recentGamesNum, sortBy)
+       //var theSortedList = setRecetStats(allStats[RECENT_GAMES_STATS], recentGamesNum, sortBy)
+       console.log(recentGamesNum)
+       console.log(sortBy)
+       console.log(teamName)
+       var theSortedList = setStatsForPosition(setStatsForTeam(setRecetStats(allStats[RECENT_GAMES_STATS], recentGamesNum, sortBy), teamName), position)
        setRecentGamesStats(theSortedList)
     }
 
 
     const getItems = () => {
         setIsLoading(true);
-        let promiseList = fetch(CONSTANTS.ENDPOINT.RECENT_GAMES_STATS, {
+        let promiseList = fetch(CONSTANTS.ENDPOINT.PLAYER_STATS.RECENT_GAMES_STATS, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
         })
@@ -279,6 +330,23 @@ const Recent_Games_Stats = () => {
                             ))}
                     </Select>
                 </FormControl>
+                <FormControl className={classes.formControl}>
+                    <InputLabel id="demo-dialog-select-label">Position</InputLabel>
+                    <Select
+                        labelId="demo-dialog-select-label"
+                        id="recent_games"
+                        name="recent_games"
+                        defaultValue="All"
+                        onChange={handlePositionChange}
+                        input={<Input />}
+                    >
+                        <MenuItem value="Goalkeeper">Goalkeeper</MenuItem>
+                        <MenuItem value="Defender">Defender</MenuItem>
+                        <MenuItem value="Midfielder">Midfielder</MenuItem>
+                        <MenuItem value="Attacker">Attacker</MenuItem>
+                        <MenuItem value="All">All</MenuItem>
+                    </Select>
+                </FormControl>
             </div>
             <div className="d-flex justify-content-center row">
                 {isLoading ? (
@@ -312,7 +380,7 @@ const Recent_Games_Stats = () => {
                                                     <StyledTableCell className="cursor-pointer" onClick={()=> sortRecent("key_passes")} align="center">Key Passes</StyledTableCell>
                                                     <StyledTableCell className="cursor-pointer" onClick={()=> sortRecent("pass_accuracy")} align="center">Pass Accuracy</StyledTableCell>
                                                     <StyledTableCell className="cursor-pointer" onClick={()=> sortRecent("number_of_games")} align="center">Number Of Games</StyledTableCell>
-                                                    <StyledTableCell className="cursor-pointer" onClick={()=> sortRecent("average_performance")} align="center">Average Performance</StyledTableCell>
+                                                    <StyledTableCell className="cursor-pointer" onClick={() => sortRecent("average_performance")} align="center">Average Performance</StyledTableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>

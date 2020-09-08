@@ -2,15 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\server",
-    "\\server\\players_statistics",
+    "\\server\\players_statistics\\__pycache__",
     "\\src",
-    "\\src\\components",
-    "\\src\\components\\AboutUs",
-    "\\src\\components\\App",
-    "\\src\\components\\My_Team",
-    "\\src\\components\\Players_Statistics",
-    "\\src\\components\\WarningMessage"
+    "\\src\\components"
   ],
-  "SelectedNode": "\\src\\components\\Players_Statistics\\Recent_Games_Stats.jsx",
+  "SelectedNode": "\\server\\sample_data.py",
   "PreviewInSolutionExplorer": false
 }
