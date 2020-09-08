@@ -149,14 +149,22 @@ def is_knockout(round):
     perv_rounds = get_possible_rounds(round)
     return len(perv_rounds) > 5
 
+def is_eliminated(player_id):
+    eliminated_players = get_eliminated_players_from_constraints()
+    for player in eliminated_players:
+        if player_id == player['player_id']:
+            return True
+    return False
+
 def get_chosen_players(playersId_players_map, chosen_players_id_list):
     chosen_players = []
     for id in chosen_players_id_list:
-        player = playersId_players_map.get(id)
-        if player is None: 
-            playersId_players_map = update_id_playersData_map(playersId_players_map, id_players_map.get(id), 0)
+        if not is_eliminated(id):
             player = playersId_players_map.get(id)
-        chosen_players.append(player)
+            if player is None: 
+                playersId_players_map = update_id_playersData_map(playersId_players_map, id_players_map.get(id), 0)
+                player = playersId_players_map.get(id)
+            chosen_players.append(player)
     return chosen_players
 
 def delete_chosen_players(playersId_players_map, chosen_players):
@@ -304,7 +312,7 @@ def get_team():
     season = fantasy_team_data['season']
     round = fantasy_team_data['round']
     chosen_players_id_list = [player['player_id'] for player in team_constraints['player_selection']]
-    selected_formation = fantasy_team_data['formation_pick']
+    selected_formation = team_constraints['formation_pick']
 
     playersId_players_map = create_id_playerDataAvg_map(season, round) # this is take 15 sec!!!
     playersId_players_map = delete_eliminated_teams(season, round, playersId_players_map)
