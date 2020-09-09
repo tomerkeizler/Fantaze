@@ -15,11 +15,8 @@ MAX_PRICE = 15
 MIN_PRICE = 3
 
 def convert_performances_list_to_avg(id_playerData_map):
-    for player_id, player in id_playerData_map.items():
-        sum = 0
-        for score in player["performance"]:
-            sum += score
-        avg = int(math.floor(sum / len(player["performance"])))
+    for player in id_playerData_map.values(): #.items(): 
+        avg = int(math.floor(sum(player['performance']) / len(player["performance"])))
         player["performance"] = avg
     return id_playerData_map
 
@@ -36,23 +33,27 @@ def update_id_playersData_map(id_playersData_map, current_player, performances):
                                     }
     return id_playersData_map
 
-def get_all_players():
-    all_players = mongo.find_from_collection(mongo.players_data_collection, {})
-    return all_players
+# def get_all_players():
+#     all_players = mongo.find_from_collection(mongo.players_data_collection, {})
+#     return all_players
+
+# def get_all_fixtures_data():
+#     all_fixtures_data = mongo.find_from_collection(mongo.data_fixtures_collection, {})
+#     return all_fixtures_data
 
 def create_id_players_map():
     players_map = {}
-    all_players = get_all_players()
+    all_players = mongo.find_from_collection(mongo.players_data_collection, {})
     for player in all_players:
         players_map[player["player_id"]] = player
     return players_map
     
-def get_fixtures_id_by_league(league) -> list:
-    fixtures = []
-    result = list(mongo.find_from_collection(mongo.fixtures_collection, {"league": {'$in': league } } ))
-    for i in range(len(result)):
-        fixtures.extend(result[i]["fixtures_id"])
-    return fixtures
+# def get_fixtures_id_by_league(league) -> list:
+#     fixtures = []
+#     result = list(mongo.find_from_collection(mongo.fixtures_collection, {"league": {'$in': league } } ))
+#     for i in range(len(result)):
+#         fixtures.extend(result[i]["fixtures_id"])
+#     return fixtures
 
 def get_leagues(season):
     leagues = []
@@ -95,17 +96,15 @@ def get_fixtures(season, round):
     fixtures = []
     leagues_id = get_leagues(season)
     possible_round = get_possible_rounds(round)
-    fixtures_data = mongo.find_from_collection(mongo.data_fixtures_collection, {"league_id": leagues_id[-1], "round": { '$in' : possible_round } })
-    for fixture_data in fixtures_data:
-        fixtures.append(fixture_data["fixture_id"])
-    prev_years_fixtures = get_fixtures_id_by_league(leagues_id[:len(leagues_id)-1])
-    fixtures.extend(prev_years_fixtures)
+    for fixture_data in all_fixtures_data:
+        if (fixture_data['league_id'] == leagues_id[-1] and fixture_data['round'] in possible_round) or (fixture_data['league_id'] in leagues_id[:len(leagues_id)-1]):
+            fixtures.append(fixture_data["fixture_id"])
     return fixtures
 
 def create_id_playerData_map(season, round):
     id_playersData_map = {}
     fixtures = get_fixtures(season, round)
-    all_performances = mongo.find_from_collection(mongo.player_performances_collection, {})
+    # all_performances = mongo.find_from_collection(mongo.player_performances_collection, { 'event_id': { '$in': fixtures } }) # this is take 5 seconds
     for i in range(len(all_performances)):
         if all_performances[i]["event_id"] in fixtures and all_performances[i]["player_id"] in id_players_map:
             current_player = id_players_map[all_performances[i]["player_id"]]
@@ -330,5 +329,7 @@ def get_team():
     team['players'].extend(chosen_players)
     return team['players']
 
+all_fixtures_data = mongo.find_from_collection(mongo.data_fixtures_collection, {})
+all_performances = mongo.find_from_collection(mongo.player_performances_collection, {})
 id_players_map = create_id_players_map()
-# get_team('2018/19', 'Group Stage - 3', [154, 519], '')
+get_team()
