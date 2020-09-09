@@ -22,24 +22,19 @@ export default function DraggableDialog(props) {
     };
 
     React.useEffect(() => {
-        setOpen(props.data.length > 0);
-    }, [props.data]);
+        setOpen(props.toShow.length === 0);
+    }, []);
 
     return (
         <div>
             <Dialog open={open} onClose={handleClose} PaperComponent={PaperComponent}>
-                <DialogTitle id="draggable-dialog-title" style={{ cursor: 'move', backgroundColor: '#CEDAEE'}}>
-                    Eliminated players - {props.selectedSeason} {props.selectedRound}
+                <DialogTitle id="draggable-dialog-title" style={{ cursor: 'move', backgroundColor: '#CEDAEE' }}>
+                    What are you waiting for?
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        <b>Some of your favorite players were eliminated in a previous phase:</b>
+                        <b>Create your first ultimate team with Fantaze!</b>
                     </DialogContentText>
-                    <ul>
-                        {props.data.map(player => (
-                            <li key={player.player_id}>{player.player_name} ({player.position}, {player.team_name})</li>
-                        ))}
-                    </ul>
                 </DialogContent>
             </Dialog>
         </div>

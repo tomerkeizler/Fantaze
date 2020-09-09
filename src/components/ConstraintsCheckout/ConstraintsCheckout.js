@@ -152,12 +152,7 @@ export default function ConstraintsCheckout() {
         <React.Fragment>
           {activeStep === steps.length ? (
             <div className={classes.centralize}>
-              <Typography variant="h5" gutterBottom>
-                Thank you for setting your team constraints.
-                </Typography>
-              <Typography variant="subtitle1">
-                Your ultimate team of UEFA Champions League Fantasy is ready!
-                </Typography>
+              <h3>Thank you for setting your team constraints</h3>
             </div>
           ) : (
               <React.Fragment>

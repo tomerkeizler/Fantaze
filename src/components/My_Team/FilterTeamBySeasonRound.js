@@ -16,6 +16,8 @@ import Chip from '@material-ui/core/Chip';
 import SportsSoccerIcon from '@material-ui/icons/SportsSoccer';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Grid from '@material-ui/core/Grid';
+import EventNoteIcon from '@material-ui/icons/EventNote';
+import ScheduleIcon from '@material-ui/icons/Schedule';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -27,14 +29,25 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 120,
   },
-  button: {
-    margin: theme.spacing(1),
-  },
   chip: {
     fontSize: '1.3rem',
     padding: 12,
     margin: 5
-  }
+  },
+  blueButton: {
+    margin: theme.spacing(1),
+    '&:hover': {
+      background: "#3f51b5",
+      color: 'white',
+    },
+  },
+  redButton: {
+    margin: theme.spacing(1),
+    '&:hover': {
+      background: "#f00",
+      color: 'white',
+    },
+  },
 }));
 
 
@@ -42,6 +55,7 @@ export default function FilterTeamBySeasonRound(props) {
   const classes = useStyles();
   const [doesTeamExist, setDoesTeamExist] = useState(false);
   const [open, setOpen] = useState(false);
+  const [teamFormation, setTeamFormation] = useState('');
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -51,13 +65,11 @@ export default function FilterTeamBySeasonRound(props) {
     setOpen(false);
   };
 
-  const InfoChip = props => (
+  const ClickableChip = props => (
     <Chip
       {...props}
+      // variant="outlined"
       className={classes.chip}
-      variant="outlined"
-      color="primary"
-      icon={<SportsSoccerIcon />}
       onDelete={handleClickOpen}
     />
   );
@@ -70,18 +82,19 @@ export default function FilterTeamBySeasonRound(props) {
   return (
     <div>
       {doesTeamExist ? (
-        <div className="row justify-content-center">
-          <InfoChip label={`Season: ${props.currentSeason}`} />
-          <InfoChip label={`Round: ${props.currentRound}`} />
+        <div className="row justify-content-center" style={{ marginBottom: 10 }}>
+          <Chip label={`Formation: ${props.formation}`} className={classes.chip} icon={<SportsSoccerIcon />} />
+          <ClickableChip label={`Season: ${props.currentSeason}`}  icon={<EventNoteIcon />}/>
+          <ClickableChip label={`Round: ${props.currentRound}`}  icon={<ScheduleIcon />}/>
         </div>
       ) : (
           <Grid container direction="column" alignItems="center">
-            <Button variant="contained" color="primary" size="large"
-              className={classes.button}
+            <Button variant="outlined" color="primary" size="large"
               startIcon={<SettingsIcon />}
+              className={classes.blueButton}
               onClick={handleClickOpen}>
               Set your first team
-            </Button>
+              </Button>
           </Grid>
         )}
 
@@ -126,14 +139,14 @@ export default function FilterTeamBySeasonRound(props) {
         </DialogContent>
 
         <DialogActions>
-          <Button variant="contained" color="secondary"
-            className={classes.button}
+          <Button variant="outlined" color="secondary"
+            className={classes.redButton}
             startIcon={<DeleteIcon />}
             onClick={() => { handleClose(); props.onClose() }}>
             Cancel
       </Button>
-          <Button variant="contained" color="primary"
-            className={classes.button}
+          <Button variant="outlined" color="primary"
+            className={classes.blueButton}
             startIcon={<SendIcon />}
             onClick={() => { handleClose(); props.onSubmit(); setDoesTeamExist(true) }}>
             Get your team!
