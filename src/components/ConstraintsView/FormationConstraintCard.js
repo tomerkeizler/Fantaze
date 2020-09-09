@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     control: {
         marginTop: theme.spacing(1),
         '&:hover': {
-            background: "#00f",
+            background: "#f00",
             color: 'white',
         },
     },
@@ -45,7 +45,7 @@ export default function FormationConstraintCard(props) {
                         <b>Formation</b>
                     </Typography>
                     <Typography variant="h4">
-                        <b>{props.constraintTitle}</b>
+                        <b>{props.constraintTitle.split('').join(' ')}</b>
                     </Typography>
                     <Typography variant="h5" color="textSecondary">
                         {props.numOfDefenders}
@@ -57,7 +57,7 @@ export default function FormationConstraintCard(props) {
                         {props.numOfAttackers}
                     </Typography>
 
-                    <Button variant="outlined" color="primary" size="large"
+                    <Button variant="outlined" color="secondary" size="large"
                         startIcon={<DeleteIcon />}
                         className={classes.control}
                         onClick={props.deleteConstraint}>

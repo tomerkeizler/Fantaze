@@ -18,11 +18,11 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0),
   },
   formationCardItem: {
-    flex: '2 0 auto',
+    flex: '2 0 content',
     margin: theme.spacing(2),
   },
   playerCardItem: {
-    flex: '1 0 auto',
+    flex: '1 0 content',
     margin: theme.spacing(2),
   },
   chip: {
@@ -153,8 +153,8 @@ const ConstraintsView = () => {
 
             {/* formation constraint */}
             {!formationConstraint ? '' : (
-              <div className={classes.formationCardItem}>
-                <Zoom in={displayed}>
+              <Zoom in={displayed}>
+                <div className={classes.formationCardItem}>
                   <FormationConstraintCard
                     constraintTitle={formationConstraint}
                     numOfDefenders={`${formationPositions[0]} Defenders`}
@@ -162,24 +162,23 @@ const ConstraintsView = () => {
                     numOfAttackers={`${formationPositions[2]} Attackers`}
                     deleteConstraint={removeFormationConstraint}
                     image={getFormationImage(formationConstraint)} />
-                </Zoom>
-              </div>
+                </div>
+              </Zoom>
             )}
 
             {/* players constraint */}
             {playersConstraint.map((playerItem, index) => (
-              <div className={classes.playerCardItem}>
-                <Zoom in={displayed}
-                  key={playerItem.player_id}
-                  style={{ transitionDelay: displayed ? `${300 * (index + 1)}ms` : '0ms' }}>
+              <Zoom in={displayed} key={playerItem.player_id}
+                style={{ transitionDelay: displayed ? `${300 * (index + 1)}ms` : '0ms' }}>
+                <div className={classes.playerCardItem}>
                   <PlayerConstraintCard
                     constraintTitle={playerItem.player_name}
                     position={playerItem.position}
                     teamName={playerItem.team_name}
                     deleteConstraint={() => removeSinglePlayerConstraint(playerItem.player_id)}
                     image={teamShirtByIdMap.get(playerItem.team_id)} />
-                </Zoom>
-              </div>
+                </div>
+              </Zoom>
             ))}
 
           </div>
