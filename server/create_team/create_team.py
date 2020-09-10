@@ -324,8 +324,10 @@ def get_team():
     players_map_per_position = create_players_per_position_map(playersId_players_map)
     price_buckets_per_position_sorted_by_performance = create_price_buckets_per_position_sort_by_performance(players_map_per_position, 100 - chosen_players_price)
     tables = get_tables(price_buckets_per_position_sorted_by_performance, formation, 100 - chosen_players_price)
-    last_table = tables[len(tables)]
-    team = last_table[len(last_table) - 1] # last cell in last table
+    team = {'players': [] }
+    if len(tables) != 0:
+        last_table = tables[len(tables)]
+        team = last_table[len(last_table) - 1] # last cell in last table
     team['players'].extend(chosen_players)
     return team['players']
 
