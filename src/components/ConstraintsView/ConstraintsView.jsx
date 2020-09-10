@@ -134,18 +134,26 @@ const ConstraintsView = () => {
     removing selected constraints
     both from react states (for rearranging the grid) and from server
     -------------------------------------------------------------- */
-    setTimeout(() => {
-      deleteFormationConstraint();
-      deletePlayerConstraint();
-    }, 1000)
+    await timeout(500);
+    let [actions] = await Promise.all([
+      deleteFormationConstraint(),
+      deletePlayerConstraint(),
+    ]);
 
     /* -------------------------------------------------
     calculate ultimate team and redirect to My team page
     ------------------------------------------------- */
+    await timeout(500);
     setIsLoading(true);
+
     let jsonUltimateTeam = await customFetch(CONSTANTS.ENDPOINT.MY_TEAM.CALCULATE_GET_ULTIMATE_TEAM, false)
       .catch(error => displayFetchErrors('Ultimate team', error));
+
     window.location = 'My_Team';
+  }
+
+  async function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   /* ----------------------------
