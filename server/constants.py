@@ -14,7 +14,7 @@ CONSTANTS = {
             'GET_ULTIMATE_TEAM': '/api/my_team/get_ultimate_team',
             'SEASON_ROUND': '/api/my_team/season_round',
             'CALCULATE_GET_ULTIMATE_TEAM': '/api/my_team/calculate_get_ultimate_team',
-            'ELIMINATED_PLAYERS': '/api/my_team/eliminated_players',
+            'INCLUDED_AND_ELIMINATED_SELECTED_PLAYERS': '/api/my_team/included_and_eliminated_selected_players',
         },
 
         'TEAM_CONSTRAINTS': {

@@ -9,22 +9,6 @@ import Collapse from '@material-ui/core/Collapse';
 import Divider from '@material-ui/core/Divider';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-
-import PeopleIcon from '@material-ui/icons/People';
-import StarIcon from '@material-ui/icons/Star';
-import SportsSoccerIcon from '@material-ui/icons/SportsSoccer';
-import SettingsIcon from '@material-ui/icons/Settings';
-import EqualizerIcon from '@material-ui/icons/Equalizer';
-import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
-import LayersIcon from '@material-ui/icons/Layers';
-import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
-
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import ViewListIcon from '@material-ui/icons/ViewList';
-import HelpIcon from '@material-ui/icons/Help';
 import { fontStyle } from '@material-ui/system';
 
 
@@ -57,6 +41,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SideMenu() {
   const classes = useStyles();
+  let routes = require('./appRoutes.js').routes;
+
   let initialCategories = { Constraints: false, Statistics: false, Predictions: false };
   const [areCategoriesOpen, setAreCategoriesOpen] = React.useState(initialCategories);
 
@@ -65,80 +51,9 @@ export default function SideMenu() {
   };
 
 
-  const menuItems = [
-    {
-      'isCategory': false,
-      'name': 'About Us',
-      'icon': <PeopleIcon />,
-      'link': ''
-    },
-
-    {
-      'isCategory': false,
-      'name': 'My Ultimate Team',
-      'icon': <StarIcon />,
-      'link': 'My_Team'
-    },
-
-    {
-      'isCategory': true,
-      'name': 'Constraints',
-      'icon': <SettingsIcon />,
-      'subItems': [
-        {
-          'name': 'View Constraints',
-          'icon': <DoubleArrowIcon />,
-          'link': 'Constraints_View'
-        },
-        {
-          'name': 'Set Constraints',
-          'icon': <DoubleArrowIcon />,
-          'link': 'Constraints_Checkout'
-        },
-      ]
-    },
-
-    {
-      'isCategory': true,
-      'name': 'Statistics',
-      'icon': <EqualizerIcon />,
-      'subItems': [
-        {
-          'name': 'Top scorers',
-          'icon': <SportsSoccerIcon />,
-          'link': ''
-        },
-        {
-          'name': 'Top Defenders',
-          'icon': <SportsSoccerIcon />,
-          'link': ''
-        },
-      ]
-    },
-
-    {
-      'isCategory': true,
-      'name': 'Predictions',
-      'icon': <LayersIcon />,
-      'subItems': [
-        {
-          'name': 'Next Round',
-          'icon': <ViewHeadlineIcon />,
-          'link': ''
-        },
-        {
-          'name': 'Next Year',
-          'icon': <ViewHeadlineIcon />,
-          'link': ''
-        },
-      ]
-    },
-  ]
-
-
   return (
     <List className={classes.list}>
-      {menuItems.map((item) => {
+      {routes.map((item) => {
 
         if (item.isCategory) {
           return (

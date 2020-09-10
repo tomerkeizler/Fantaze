@@ -5,7 +5,7 @@ from server import mongo
 from fantasyData import qualified_teams_id_by_year_round
 from fantasyData import team_constraints
 from fantasyData import fantasy_team_data
-from create_team import knapsack, create_team
+from create_team import create_team
 from collections import OrderedDict 
 import math
 import numpy

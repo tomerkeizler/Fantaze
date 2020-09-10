@@ -13,16 +13,15 @@ import Container from '@material-ui/core/Container';
 import MenuIcon from '@material-ui/icons/Menu';
 import SideMenu from './SideMenu';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { Switch, Route } from "react-router-dom";
 import AboutUs from "../AboutUs/AboutUs";
 import MyTeam from "../My_Team/My_Team";
-import ConstraintsView from "../List/List";
+import ConstraintsView from "../ConstraintsView/ConstraintsView";
 import ConstraintsCheckout from "../ConstraintsCheckout/ConstraintsCheckout";
-import Master_Detail from "../Master_Detail/Master_Detail";
+// import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 
-const drawerWidth = 240;
+const drawerWidth = 260;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -87,11 +86,10 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     height: '100vh',
-    // overflow: 'auto',
+    overflow: 'auto',
   },
   container: {
-    // paddingTop: theme.spacing(4),
-    // paddingBottom: theme.spacing(4),
+    padding: theme.spacing(4),
   },
   paper: {
     padding: theme.spacing(2),
@@ -107,7 +105,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function App() {
   const classes = useStyles();
+  let routes = require('./appRoutes.js').routes;
+
   const [open, setOpen] = React.useState(true);
+  const [pageTitle, setPageTitle] = React.useState('');
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -115,6 +116,24 @@ export default function App() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const getPageNameByPath = (path) => {
+    let route;
+    for (route of routes) {
+      if (route.isCategory) {
+        let subRoute;
+        for (subRoute of route.subItems) {
+          if (subRoute.link === path) {
+            return subRoute.name;
+          }
+        }
+      }
+      else if (route.link === path) {
+        return route.name;
+      }
+    }
+  }
+
 
   return (
     <React.Fragment>
@@ -131,11 +150,11 @@ export default function App() {
               <MenuIcon />
             </IconButton>
             <Typography component="h4" variant="h4" color="inherit" noWrap className={classes.title}>
-              Fantasy Planner
-          </Typography>
+              Fantaze {pageTitle === '' ? '' : `  >>  ${pageTitle}`}
+            </Typography>
             <Typography component="h6" variant="subtitle1" color="inherit" noWrap>
               The ultimate app for UEFA Champions Legaue Fantasy gamblers
-          </Typography>
+            </Typography>
             {/* <IconButton color="inherit" size="medium">
               <AccountCircleIcon />
           </IconButton> */}
@@ -161,8 +180,14 @@ export default function App() {
               <Route path="/My_Team" component={MyTeam} />
               <Route exact path="/Constraints_Checkout" component={ConstraintsCheckout} />
               <Route path="/Constraints_View" component={ConstraintsView} />
-              <Route path="/Master_Detail" component={Master_Detail} />
             </Switch>
+
+            <Route render={({ history }) => {
+              let currentPath = history.location.pathname.substring(1);
+              let currentPageName = getPageNameByPath(currentPath);
+              setPageTitle(currentPageName);
+            }} />
+
           </Container>
         </main>
 

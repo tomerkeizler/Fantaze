@@ -3,52 +3,47 @@ import FormationPicking from './FormationPicking';
 import PlayerSelection from './PlayerSelection'
 import AdvancedConstraints from './AdvancedConstraints';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import CONSTANTS from "../../constants";
 import WarningMessage from "../WarningMessage";
 import LoadingTeamScreen from '../My_Team/LoadingTeamScreen'
+import Chip from '@material-ui/core/Chip';
 
 
 const useStyles = makeStyles((theme) => ({
   layout: {
-    width: 'auto',
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-      width: '80%',
-      marginLeft: 'auto',
-      marginRight: 'auto',
-    },
-  },
-  paper: {
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    padding: theme.spacing(2),
-    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(6),
-      padding: theme.spacing(3),
-    },
+    width: '100%',
+    // margin: theme.spacing(3),
+    // [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
+    //   width: '100%',
+    //   marginLeft: '15',
+    //   marginTop: '15',
+    // },
   },
   stepper: {
-    padding: theme.spacing(3, 0, 5),
+    padding: theme.spacing(0, 0, 3),
   },
-  buttons: {
+  centralize: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column'
   },
   button: {
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
+  chip: {
+    fontSize: '1.5rem',
+    padding: 18,
+    marginBottom: 30,
+  }
 }));
 
-const steps = ['Formation picking', 'Players selection', 'Advanced constraints'];
+const steps = ['Formation picking', 'Players selection', 'Teams selection'];
 
 
 export default function ConstraintsCheckout() {
@@ -73,6 +68,19 @@ export default function ConstraintsCheckout() {
   const onPlayerSelectionChange = selectedPlayers => {
     setSelectedPlayers(selectedPlayers);
   };
+
+  function getStepTitle(step) {
+    switch (step) {
+      case 0:
+        return 'Pick your desired football formation'
+      case 1:
+        return 'Select your favorite players'
+      case 2:
+        return 'Select your favorite teams'
+      default:
+        throw new Error('Unknown step');
+    }
+  }
 
   function getStepContent(step) {
     switch (step) {
@@ -133,35 +141,27 @@ export default function ConstraintsCheckout() {
   return (
     <React.Fragment>
       <main className={classes.layout}>
-        <Paper className={classes.paper}>
-          <Typography component="h1" variant="h4" align="center">
-            Constraints for your ultimate team
-          </Typography>
-          <Stepper activeStep={activeStep} className={classes.stepper}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel><h4><b>{label}</b></h4></StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <React.Fragment>
-            {activeStep === steps.length ? (
+        <Stepper activeStep={activeStep} className={classes.stepper}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel><h4><b>{label}</b></h4></StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <React.Fragment>
+          {activeStep === steps.length ? (
+            <div className={classes.centralize}>
+              <h3>Thank you for setting your team constraints</h3>
+            </div>
+          ) : (
               <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  Thank you for setting your team constraints.
-                </Typography>
-                <Typography variant="subtitle1">
-                  Your ultimate team of UEFA Champions League Fantasy is ready!
-                </Typography>
-              </React.Fragment>
-            ) : (
-                <React.Fragment>
 
-                  <div width="500px">
-                    {getStepContent(activeStep)}
-                  </div>
+                <div className={classes.centralize}>
+                  <Chip className={classes.chip} color="primary" label={getStepTitle(activeStep)} />
 
-                  <div className={classes.buttons}>
+                  {getStepContent(activeStep)}
+
+                  <div>
                     {activeStep !== 0 && (
                       <Button
                         variant="contained"
@@ -175,13 +175,14 @@ export default function ConstraintsCheckout() {
                       color="primary"
                       onClick={handleNext}
                       className={classes.button}>
-                      {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                      {activeStep === steps.length - 1 ? 'Finish' : 'Next step'}
                     </Button>
                   </div>
-                </React.Fragment>
-              )}
-          </React.Fragment>
-        </Paper>
+
+                </div>
+              </React.Fragment>
+            )}
+        </React.Fragment>
 
         <LoadingTeamScreen isLoading={isLoading} text="Applying constraints..." />
 

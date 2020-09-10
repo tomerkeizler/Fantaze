@@ -11,7 +11,6 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import Typography from '@material-ui/core/Typography';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -292,13 +291,11 @@ export default function PlayerSelection(props) {
   return (
     <React.Fragment>
 
-      <Grid container spacing={2} direction="column" alignItems="center" style={{paddingBottom: 12}}>
-        <Typography variant="h5"><b>
-          Select your favorite players.
-        </b></Typography>
-        <Typography variant="h6" gutterBottom>
-          Those players will be included in your ultimate team!
-      </Typography>
+      <Grid container spacing={2} direction="column" alignItems="center" style={{ paddingBottom: 12 }}>
+
+        <h4><b>
+        </b></h4>
+
       </Grid>
 
       <Grid container spacing={1} alignItems="center" justify="center" className={classes.root}>
@@ -333,10 +330,10 @@ export default function PlayerSelection(props) {
       </Grid>
 
       <WarningMessage
-          open={warningMessage.warningMessageOpen}
-          text={warningMessage.warningMessageText}
-          onWarningClose={closeWarningMessage}
-        />
+        open={warningMessage.warningMessageOpen}
+        text={warningMessage.warningMessageText}
+        onWarningClose={closeWarningMessage}
+      />
     </React.Fragment>
   );
 }

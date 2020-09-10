@@ -19,7 +19,7 @@ CONSTANTS.ENDPOINT.MY_TEAM = {};
 CONSTANTS.ENDPOINT.MY_TEAM.GET_ULTIMATE_TEAM = "/api/my_team/get_ultimate_team";
 CONSTANTS.ENDPOINT.MY_TEAM.SEASON_ROUND = "/api/my_team/season_round";
 CONSTANTS.ENDPOINT.MY_TEAM.CALCULATE_GET_ULTIMATE_TEAM = "/api/my_team/calculate_get_ultimate_team";
-CONSTANTS.ENDPOINT.MY_TEAM.ELIMINATED_PLAYERS= "/api/my_team/eliminated_players";
+CONSTANTS.ENDPOINT.MY_TEAM.INCLUDED_AND_ELIMINATED_SELECTED_PLAYERS= "/api/my_team/included_and_eliminated_selected_players";
 
 CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS = {};
 CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.UPDATE = "/api/team_constraints/update"

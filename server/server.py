@@ -45,10 +45,18 @@ def calculate_team():
     return jsonify(fantasy_team_data['ultimate_team'])
 
 
-@app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['ELIMINATED_PLAYERS'])
-def get_eliminated_players():
+@app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['INCLUDED_AND_ELIMINATED_SELECTED_PLAYERS'])
+def get_selected_players_decisions():
     fantasy_team_data['eliminated_players'] = create_team.get_eliminated_players_from_constraints()
-    return jsonify(fantasy_team_data['eliminated_players'])
+
+    selected_players = team_constraints['player_selection']
+    eliminated_players_ids = [player['player_id'] for player in fantasy_team_data['eliminated_players']]
+    included_players = [player for player in selected_players if player['player_id'] not in eliminated_players_ids]
+
+    res = {}
+    res['included_players'] = included_players
+    res['eliminated_players'] = fantasy_team_data['eliminated_players']
+    return jsonify(res)
 
 #####################################################
 ####### ENDPOINTS - UPDATING TEAM CONSTRAINTS #######
