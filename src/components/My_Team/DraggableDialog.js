@@ -14,16 +14,12 @@ function PaperComponent(props) {
     );
 }
 
-export default function DraggableDialog(props) {
-    const [open, setOpen] = React.useState(false);
+export default function DraggableDialog() {
+    const [open, setOpen] = React.useState(true);
 
     const handleClose = () => {
         setOpen(false);
     };
-
-    React.useEffect(() => {
-        setOpen(props.toShow.length === 0);
-    }, []);
 
     return (
         <div>

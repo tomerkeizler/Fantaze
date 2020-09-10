@@ -7,6 +7,9 @@ import FormationConstraintCard from "./FormationConstraintCard"
 import Zoom from '@material-ui/core/Zoom';
 import { getTeamShirtByIdMap } from '../../images/Team_Shirts'
 import Chip from '@material-ui/core/Chip';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Button from '@material-ui/core/Button';
+import LoadingTeamScreen from '../My_Team/LoadingTeamScreen'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -29,65 +32,125 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '2rem',
     padding: 25,
     marginBottom: 30
-  }
+  },
+  removeAllButton: {
+    marginTop: theme.spacing(1),
+    '&:hover': {
+      background: 'lightgray',
+      color: 'black',
+    },
+  },
 }));
 
 
 const ConstraintsView = () => {
   const classes = useStyles();
-  const [displayed, setDisplayed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
-
-  const [formationPositions, setFormationPositions] = useState([]);
   const [teamShirtByIdMap, setTeamShirtByIdMap] = useState({ myMap: {} });
 
-  const [formationConstraint, setFormationConstraint] = useState();
+  const [formationConstraint, setFormationConstraint] = useState({ value: '', isVisible: false });
   const [playersConstraint, setPlayersConstraint] = useState([]);
 
+  const [isFormationToDelete, setIsFormationToDelete] = useState(false);
+  const [playersToDeleteListID, setPlayersToDeleteListID] = useState([]);
 
-  async function fetchConstraint(fetchURL) {
-    let response = await fetch(fetchURL)
+  /* ---------------------------------------------
+    ------------ General fetch function ------------
+    --------------------------------------------- */
+
+  async function customFetch(fetchURL, isDeleteRequest) {
+    const fetchParams = isDeleteRequest ? { method: "DELETE" } : {};
+    let response = await fetch(fetchURL, fetchParams);
     return response.json();
   }
 
-  const removeFormationConstraint = () => {
-    fetch(`${CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.FORMATION_PICK}/1`, { method: "DELETE", })
-      .then(response => {
-        if (!response.ok) {
-          throw Error(response.statusText);
-        }
-        return response.json();
-      })
-      .then(() => {
-        setFormationConstraint('');
-        setFormationPositions([]);
-      })
-      .catch(error => {
-        setWarningMessage({
-          warningMessageOpen: true,
-          warningMessageText: `${CONSTANTS.ERROR_MESSAGE.LIST_DELETE} ${error}`
-        });
-      });
+  const displayFetchErrors = (requestType, error) => {
+    setWarningMessage({
+      warningMessageOpen: true,
+      warningMessageText: `${requestType} request failed: ${error}`
+    })
   }
 
-  const removeSinglePlayerConstraint = (playerID) => {
-    fetch(`${CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION}/${playerID}`, { method: "DELETE" })
-      .then(response => {
-        if (!response.ok) {
-          throw Error(response.statusText);
-        }
-        return response.json();
-      })
-      .then(result => {
-        setPlayersConstraint(playersConstraint.filter(player => player.player_id !== result.player_id));
-      })
-      .catch(error => {
-        setWarningMessage({
-          warningMessageOpen: true,
-          warningMessageText: `${CONSTANTS.ERROR_MESSAGE.LIST_DELETE} ${error}`
-        });
-      });
+  /* -----------------------------------------
+  ----------- fetch calls - DELETE -----------
+  ----------------------------------------- */
+
+  const deleteFormationConstraint = () => {
+    if (isFormationToDelete)
+      customFetch(`${CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.FORMATION_PICK}/1`, true)
+        .then(setFormationConstraint({ value: '', isVisible: false }))
+        .catch(error => displayFetchErrors('DELETE formation', error));
   }
+
+  const deletePlayerConstraint = () => {
+    playersToDeleteListID.map(playerID => {
+      customFetch(`${CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION}/${playerID}`, true)
+        .catch(error => displayFetchErrors('DELETE player', error));
+      setPlayersConstraint(playersConstraint.filter(({ player_id }) => !playersToDeleteListID.includes(player_id)));
+    });
+  }
+
+  /* -----------------------------------------------
+  ----------- remove constraints locally -----------
+  ----------------------------------------------- */
+
+  const removeFormationConstraintLocally = () => {
+    setIsFormationToDelete(true);
+  }
+
+  const removePlayerConstraintLocally = (playerToDeleteID) => {
+    setPlayersToDeleteListID([...playersToDeleteListID, playerToDeleteID]);
+  }
+
+  /* -----------------------------------------------
+  ----------- restore constraints locally -----------
+  ----------------------------------------------- */
+
+  const restoreFormationConstraintLocally = () => {
+    setIsFormationToDelete(false);
+  }
+
+  const restorePlayerConstraintLocally = (playerToRestoreID) => {
+    setPlayersToDeleteListID(playersToDeleteListID.filter(playerID => playerID !== playerToRestoreID));
+  }
+
+  /* ----------------------------------------------------------
+  ----------- DELETE selected constraints entyirely -----------
+  ---------------------------------------------------------- */
+
+  async function deleteConstraints() {
+    /* ---------------------------------------------------------------------------
+    marking selected constraints as hidden (for triggering disappearing animation)
+    --------------------------------------------------------------------------- */
+    if (isFormationToDelete)
+      setFormationConstraint(oldFormationConstraint => ({ value: oldFormationConstraint.value, isVisible: false }));
+
+    setPlayersConstraint(playersConstraint.map(player => (
+      (playersToDeleteListID.includes(player.player_id)) ? { ...player, isVisible: false } : player
+    )))
+
+    /* --------------------------------------------------------------
+    removing selected constraints
+    both from react states (for rearranging the grid) and from server
+    -------------------------------------------------------------- */
+    setTimeout(() => {
+      deleteFormationConstraint();
+      deletePlayerConstraint();
+    }, 1000)
+
+    /* -------------------------------------------------
+    calculate ultimate team and redirect to My team page
+    ------------------------------------------------- */
+    setIsLoading(true);
+    let jsonUltimateTeam = await customFetch(CONSTANTS.ENDPOINT.MY_TEAM.CALCULATE_GET_ULTIMATE_TEAM, false)
+      .catch(error => displayFetchErrors('Ultimate team', error));
+    window.location = 'My_Team';
+  }
+
+  /* ----------------------------
+  ----------- general -----------
+  ---------------------------- */
 
   const closeWarningMessage = () => {
     setWarningMessage({
@@ -116,73 +179,70 @@ const ConstraintsView = () => {
   React.useEffect(() => {
     setTeamShirtByIdMap(getTeamShirtByIdMap());
 
-    fetchConstraint(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.FORMATION_PICK)
-      .then(formation => {
-        setFormationConstraint(formation)
-        setFormationPositions(formation.split('-', 3));
-      })
-      .catch(error =>
-        setWarningMessage({
-          warningMessageOpen: true,
-          warningMessageText: `${CONSTANTS.ERROR_MESSAGE.LIST_GET} ${error}`
-        })
-      );
+    customFetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.FORMATION_PICK, false)
+      .then(formation => setFormationConstraint({ value: formation, isVisible: true }))
+      .catch(error => displayFetchErrors('GET formation', error));
 
-    fetchConstraint(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION)
-      .then(players => { setPlayersConstraint(players) })
-      .catch(error =>
-        setWarningMessage({
-          warningMessageOpen: true,
-          warningMessageText: `${CONSTANTS.ERROR_MESSAGE.LIST_GET} ${error}`
-        })
-      );
-
-    setDisplayed(true);
+    customFetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION, false)
+      .then(players => setPlayersConstraint(players.map(player => ({ ...player, isVisible: true }))))
+      .catch(error => displayFetchErrors('GET player selection', error));
   }, []);
 
+  /* ---------------------------
+  ----------- render -----------
+  --------------------------- */
 
   return (
     <div>
-      {(!formationConstraint && playersConstraint.length === 0) ? (
+      {(!formationConstraint.value && playersConstraint.length === 0) ? (
         <center>
           <Chip className={classes.chip} color="primary" label="There are no Constraints" />
         </center>
       ) : (
-
-          <div className={classes.cardGrid} maxWidth="md">
-
-            {/* formation constraint */}
-            {!formationConstraint ? '' : (
-              <Zoom in={displayed}>
-                <div className={classes.formationCardItem}>
-                  <FormationConstraintCard
-                    constraintTitle={formationConstraint}
-                    numOfDefenders={`${formationPositions[0]} Defenders`}
-                    numOfMidfielders={`${formationPositions[1]} Midfielders`}
-                    numOfAttackers={`${formationPositions[2]} Attackers`}
-                    deleteConstraint={removeFormationConstraint}
-                    image={getFormationImage(formationConstraint)} />
-                </div>
+          <div>
+            <center>
+              <Zoom in={(isFormationToDelete || playersToDeleteListID.length > 0) ? true : false}>
+                <Button variant="outlined" size="large"
+                  startIcon={<DeleteIcon />}
+                  className={classes.removeAllButton}
+                  onClick={() => { deleteConstraints() }}>
+                  Remove selected constraints
+              </Button>
               </Zoom>
-            )}
+            </center>
 
-            {/* players constraint */}
-            {playersConstraint.map((playerItem, index) => (
-              <Zoom in={displayed} key={playerItem.player_id}
-                style={{ transitionDelay: displayed ? `${300 * (index + 1)}ms` : '0ms' }}>
-                <div className={classes.playerCardItem}>
-                  <PlayerConstraintCard
-                    constraintTitle={playerItem.player_name}
-                    position={playerItem.position}
-                    teamName={playerItem.team_name}
-                    deleteConstraint={() => removeSinglePlayerConstraint(playerItem.player_id)}
-                    image={teamShirtByIdMap.get(playerItem.team_id)} />
-                </div>
-              </Zoom>
-            ))}
+            <div className={classes.cardGrid} maxWidth="md">
+              {/* -------- formation constraint -------- */}
+              {!formationConstraint.value ? '' : (
+                <Zoom in={formationConstraint.isVisible}>
+                  <div className={classes.formationCardItem}>
+                    <FormationConstraintCard
+                      formation={formationConstraint.value}
+                      onRemoveFormation={removeFormationConstraintLocally}
+                      onRestoreFormation={restoreFormationConstraintLocally}
+                      image={getFormationImage(formationConstraint.value)} />
+                  </div>
+                </Zoom>
+              )}
 
+              {/* -------- players constraint -------- */}
+              {playersConstraint.map((playerItem, index) => (
+                <Zoom in={playerItem.isVisible} key={playerItem.player_id}
+                  style={{ transitionDelay: playerItem.isVisible ? `${300 * (index + 1)}ms` : '0ms' }}>
+                  <div className={classes.playerCardItem}>
+                    <PlayerConstraintCard
+                      player={playerItem}
+                      onRemovePlayer={removePlayerConstraintLocally}
+                      onRestorePlayer={restorePlayerConstraintLocally}
+                      image={teamShirtByIdMap.get(playerItem.team_id)} />
+                  </div>
+                </Zoom>
+              ))}
+            </div>
           </div>
         )}
+
+      <LoadingTeamScreen isLoading={isLoading} text="Updating constraints..." />
 
       <WarningMessage
         open={warningMessage.warningMessageOpen}

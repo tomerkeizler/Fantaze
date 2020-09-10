@@ -32,7 +32,7 @@ const MyTeam = () => {
 
   const [season, setSeason] = useState('');
   const [round, setRound] = useState('');
-  
+
   const [selectedSeason, setSelectedSeason] = useState('');
   const [selectedRound, setSelectedRound] = useState('');
 
@@ -151,10 +151,11 @@ const MyTeam = () => {
       .then(ultimatePlayers => {
         setUltimatePlayers(ultimatePlayers);
         setIsLoading(false);
-        
-        setIsTeamDisplayed(true);
-        if (!isCalculateNeeded)
-          setWelcomeWindow(<DraggableDialog toShow={ultimatePlayers} />);
+
+        if (ultimatePlayers.length > 0)
+          setIsTeamDisplayed(true);
+        else
+          setWelcomeWindow(<DraggableDialog />);
       })
       .catch(error => displayFetchErrors('Ultimate team', error));
   }
@@ -214,10 +215,10 @@ const MyTeam = () => {
               // <Zoom in={isTeamDisplayed} key={item.player_id}
               //   style={{ transitionDelay: isTeamDisplayed ? `${300 * i}ms` : '0ms' }}>
               //   <div>
-                  <PlayerTile
-                    item={item}
-                    teamShirtImage={teamShirtByIdMap.get(item.team_id)}
-                  />
+              <PlayerTile
+                item={item}
+                teamShirtImage={teamShirtByIdMap.get(item.team_id)}
+              />
               //   </div>
               // </Zoom>
             ))}

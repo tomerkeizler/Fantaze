@@ -93,7 +93,7 @@ export default function FilterTeamBySeasonRound(props) {
               startIcon={<SettingsIcon />}
               className={classes.blueButton}
               onClick={handleClickOpen}>
-              Set your first team
+              Set up your first team
               </Button>
           </Grid>
         )}
