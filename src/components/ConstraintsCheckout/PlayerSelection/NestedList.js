@@ -18,16 +18,16 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'scroll',
     width: 200,
     height: 300,
-    maxHeight: 300,
+    maxHeight: 270,
   },
   nested: {
     paddingLeft: theme.spacing(5),
   },
   root: {
     '&$selected': {
-      backgroundColor: '#9fa8da',
+      backgroundColor: '#cfd8dc',
       '&:hover': {
-        backgroundColor: '#797ff0',
+        backgroundColor: '#b0bec5',
       }
     },
   },
@@ -49,29 +49,13 @@ export default function NestedList(props) {
   const [areGroupsOpen, setAreGroupsOpen] = React.useState(initialAreGroupsOpen);
 
 
-
-  React.useEffect(() => {
-    console.log(playersGroupedByPosition)
-    // playersGroupedByPosition = _.groupBy(props.items, 'position');
-    // let initialAreGroupsOpen = {};
-    // Object.keys(playersGroupedByPosition).map(group => initialAreGroupsOpen[group] = true);
-    // setAreGroupsOpen(initialAreGroupsOpen);
-    // let initialAreGroupsOpen = {Defender: false};
-  }, [props.items]);
-
-
-
-
-
-
-
   return (
     <List className={classes.list} dense component="div" role="list"
       style={{ width: props.listWidth }}>
 
       {Object.keys(playersGroupedByPosition).map((position) => {
         return (
-          <>
+          <React.Fragment key={position}>
             <ListItem button selected divider
               classes={{ root: classes.root, selected: classes.selected }}
               key={position} onClick={() => handleClick(position)}>
@@ -89,7 +73,7 @@ export default function NestedList(props) {
                       key={player.id} role="listitem" button onClick={props.handleToggle(player)}>
                       <ListItemIcon>
                         <Checkbox
-                          color="primary"
+                          color="default"
                           checked={props.checkedItems.findIndex(obj => obj.id === player.id) !== -1}
                           tabIndex={-1}
                           disableRipple
@@ -101,7 +85,7 @@ export default function NestedList(props) {
                 })}
               </List>
             </Collapse>
-          </>
+          </React.Fragment>
         );
       })
       }

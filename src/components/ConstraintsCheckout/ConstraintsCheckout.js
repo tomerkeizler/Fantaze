@@ -1,6 +1,6 @@
 ﻿import React, { useState } from "react";
-import FormationPicking from './FormationPicking';
-import PlayerSelection from './PlayerSelection'
+import FormationPicking from './FormationPicking/FormationPicking';
+import PlayerSelection from './PlayerSelection/PlayerSelection'
 import AdvancedConstraints from './AdvancedConstraints';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     // },
   },
   stepper: {
-    padding: theme.spacing(0, 0, 3),
+    padding: theme.spacing(0, 0, 2),
   },
   centralize: {
     display: 'flex',
@@ -39,19 +39,18 @@ const useStyles = makeStyles((theme) => ({
   chip: {
     fontSize: '1.5rem',
     padding: 18,
-    marginBottom: 30,
+    marginBottom: 20,
   }
 }));
-
-const steps = ['Formation picking', 'Players selection', 'Teams selection'];
 
 
 export default function ConstraintsCheckout() {
   const classes = useStyles();
   const [isLoading, setIsLoading] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
+  const [isPlayerSelectionValid, setIsPlayerSelectionValid] = useState();
   const [formation, setFormation] = useState('4-3-3');
-  const [selectedPlayers, setSelectedPlayers] = useState([]);
+  const [favoritePlayers, setFavoritePlayers] = useState([]);
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
 
   const closeWarningMessage = () => {
@@ -61,39 +60,48 @@ export default function ConstraintsCheckout() {
     });
   }
 
-  const onFormationChange = newFormation => {
-    setFormation(newFormation);
-  };
+  /* ---------------------------------------
+ ------------ Constraints steps ------------
+ --------------------------------------- */
 
-  const onPlayerSelectionChange = selectedPlayers => {
-    setSelectedPlayers(selectedPlayers);
-  };
+  const steps = [
+    {
+      'label': 'Formation picking',
+      'title': 'Pick your desired football formation',
+      'validity': true,
+      'component': <FormationPicking onChange={onFormationChange} />
+    },
+    {
+      'label': 'Players selection',
+      'title': 'Select your favorite players',
+      'validity': isPlayerSelectionValid,
+      'component': <PlayerSelection
+        onPlayerSelectionChange={onPlayerSelectionChange}
+        onPlayerLimitsChange={onPlayerLimitsChange}
+        formation={formation} />
+    },
+    {
+      'label': 'Teams selection',
+      'title': 'Select your favorite teams',
+      'validity': true,
+      'component': <AdvancedConstraints />
+    }
+  ]
 
-  function getStepTitle(step) {
-    switch (step) {
+  function getStep(stepNumber, key) {
+    switch (stepNumber) {
       case 0:
-        return 'Pick your desired football formation'
       case 1:
-        return 'Select your favorite players'
       case 2:
-        return 'Select your favorite teams'
+        return steps[stepNumber][key];
       default:
         throw new Error('Unknown step');
     }
   }
 
-  function getStepContent(step) {
-    switch (step) {
-      case 0:
-        return <FormationPicking onChange={onFormationChange} />;
-      case 1:
-        return <PlayerSelection onChange={onPlayerSelectionChange} />;
-      case 2:
-        return <AdvancedConstraints />;
-      default:
-        throw new Error('Unknown step');
-    }
-  }
+  /* ------------------------------------
+  ----------- Fetch functions -----------
+  ------------------------------------ */
 
   async function fetchItems(fetchURL, fetchParams) {
     let response = await fetch(fetchURL, fetchParams);
@@ -107,13 +115,29 @@ export default function ConstraintsCheckout() {
     })
   }
 
+  /* ------------------------------------------------
+  ----------- Constraints change Handlers -----------
+  ------------------------------------------------ */
+
+  function onFormationChange(newFormation) {
+    setFormation(newFormation);
+  };
+
+  function onPlayerSelectionChange(selectedPlayers) {
+    setFavoritePlayers(selectedPlayers);
+  };
+
+  function onPlayerLimitsChange(playerSelectionValidity) {
+    setIsPlayerSelectionValid(playerSelectionValidity);
+  };
+
   async function handleSubmitConstraints() {
     const updateConstraintsFetchParams = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         formationPickConstraint: formation,
-        playerSelectionConstraintList: selectedPlayers
+        playerSelectionConstraintList: favoritePlayers
       })
     }
     setIsLoading(true);
@@ -127,6 +151,10 @@ export default function ConstraintsCheckout() {
     window.location = 'My_Team';
   };
 
+  /* --------------------------------------
+  ----------- Stepping handlers -----------
+  -------------------------------------- */
+
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
       handleSubmitConstraints();
@@ -138,11 +166,15 @@ export default function ConstraintsCheckout() {
     setActiveStep(activeStep - 1);
   };
 
+  /* -----------------------------------
+  ----------- Main component -----------
+  ----------------------------------- */
+
   return (
     <React.Fragment>
       <main className={classes.layout}>
         <Stepper activeStep={activeStep} className={classes.stepper}>
-          {steps.map((label) => (
+          {steps.map(({ label }) => (
             <Step key={label}>
               <StepLabel><h4><b>{label}</b></h4></StepLabel>
             </Step>
@@ -157,9 +189,9 @@ export default function ConstraintsCheckout() {
               <React.Fragment>
 
                 <div className={classes.centralize}>
-                  <Chip className={classes.chip} color="primary" label={getStepTitle(activeStep)} />
+                  <Chip className={classes.chip} color="primary" label={getStep(activeStep, 'title')} />
 
-                  {getStepContent(activeStep)}
+                  {getStep(activeStep, 'component')}
 
                   <div>
                     {activeStep !== 0 && (
@@ -172,10 +204,12 @@ export default function ConstraintsCheckout() {
                     )}
                     <Button
                       variant="contained"
+                      disabled={!getStep(activeStep, 'validity')}
                       color="primary"
+                      // color={!getStep(activeStep, 'validity')? `secondary` : `primary`}
                       onClick={handleNext}
                       className={classes.button}>
-                      {activeStep === steps.length - 1 ? 'Finish' : 'Next step'}
+                      {activeStep === steps.length - 1 ? 'Create ultimate team' : 'Next step'}
                     </Button>
                   </div>
 
@@ -192,6 +226,6 @@ export default function ConstraintsCheckout() {
           onWarningClose={closeWarningMessage}
         />
       </main>
-    </React.Fragment>
+    </React.Fragment >
   );
 }

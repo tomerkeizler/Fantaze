@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
     width: 200,
     height: 300,
-    maxHeight: 300,
+    maxHeight: 270,
   },
 }));
 
@@ -33,7 +33,7 @@ export default function StandardList(props) {
           key={item.id} role="listitem" button onClick={props.handleToggle(item)}>
             <ListItemIcon>
               <Checkbox
-                color={props.title === 'Selected players' ? 'secondary' : 'default'}
+                color={props.title === 'Favorite players' ? 'primary' : 'default'}
                 checked={props.checkedItems.findIndex(obj => obj.id === item.id) !== -1}
                 tabIndex={-1}
                 disableRipple
