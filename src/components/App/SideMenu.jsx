@@ -6,10 +6,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
-import Divider from '@material-ui/core/Divider';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import { fontStyle } from '@material-ui/system';
 
 
 const useStyles = makeStyles((theme) => ({
