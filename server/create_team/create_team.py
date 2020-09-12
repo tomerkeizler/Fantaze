@@ -327,11 +327,12 @@ def get_team():
     team = {'players': [] }
     if len(tables) != 0:
         last_table = tables[len(tables)]
-        team = last_table[len(last_table) - 1] # last cell in last table
+        if last_table[len(last_table) - 1] != 0:
+            team = last_table[len(last_table) - 1] # last cell in last table
     team['players'].extend(chosen_players)
     return team['players']
 
 all_fixtures_data = mongo.find_from_collection(mongo.data_fixtures_collection, {})
 all_performances = mongo.find_from_collection(mongo.player_performances_collection, {})
 id_players_map = create_id_players_map()
-get_team()
+# get_team()
