@@ -84,7 +84,7 @@ const ConstraintsView = () => {
   }
 
   const deletePlayerConstraint = () => {
-    playersToDeleteListID.map(playerID => {
+    playersToDeleteListID.map(playerID => function () {
       customFetch(`${CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_SELECTION}/${playerID}`, true)
         .catch(error => displayFetchErrors('DELETE player', error));
       setPlayersConstraint(playersConstraint.filter(({ player_id }) => !playersToDeleteListID.includes(player_id)));
