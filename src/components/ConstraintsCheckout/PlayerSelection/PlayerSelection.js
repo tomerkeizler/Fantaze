@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import CONSTANTS from "../../constants";
-import WarningMessage from "../WarningMessage";
+import CONSTANTS from "../../../constants";
+import WarningMessage from "../../WarningMessage";
 import StandardList from "./StandardList";
 import NestedList from "./NestedList";
+import FavoritePlayersLimits from "./FavoritePlayersLimits";
 
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -50,17 +51,18 @@ export default function PlayerSelection(props) {
   const [warningMessage, setWarningMessage] = useState({ warningMessageOpen: false, warningMessageText: "" });
 
   const [teams, setTeams] = useState([]);
-  const [checkedTeams, setCheckedTeams] = useState([{ id: 529, value: 'Barcelona' }]);
+  const [checkedTeams, setCheckedTeams] = useState([]);
 
   const [positions, setPositions] = useState([]);
   const [checkedPositions, setCheckedPositions] = useState([]);
 
   const [availablePlayers, setAvailablePlayers] = useState([]);
-  const [selectedPlayers, setSelectedPlayers] = useState([]);
+  const [favoritePlayers, setFavoritePlayers] = useState([]);
   const [checkedPlayers, setCheckedPlayers] = useState([]);
 
   const checkedAvailablePlayers = intersection(checkedPlayers, availablePlayers);
-  const checkedSelectedPlayers = intersection(checkedPlayers, selectedPlayers);
+  const checkedFavoritePlayers = intersection(checkedPlayers, favoritePlayers);
+  
 
   const closeWarningMessage = () => {
     setWarningMessage({
@@ -69,81 +71,85 @@ export default function PlayerSelection(props) {
     });
   }
 
+  const initializeAvailablePlayers = (relevantTeams, relevantPositions) => {
+    getPlayersByTeam(relevantTeams.map((team) => team.id))
+      .then(playerList => {
+        setAvailablePlayers(playerList.filter(playerObj =>
+          relevantPositions.map(positionObj => positionObj.value).includes(playerObj.position)
+          && !favoritePlayers.map(favoritePlayerObj => favoritePlayerObj.player_id).includes(playerObj.player_id)
+          )
+          .map((playerObj) => ({
+            ...playerObj,
+            id: playerObj.player_id,
+            value: `${playerObj.player_name} (${playerObj.team_name}) - ${playerObj.price}M`
+          })))
+      })
+      .catch(error => displayFetchErrors('GET players by team', error));
+  }
+
   // --------------------------------------
   // ---- Handlers for list of teams ----
   // --------------------------------------
-  const handleToggleTeam = (teamToggledObj) => () => {
 
+  const numberOfCheckedTeams = (items) => intersection(checkedTeams, items).length;
+
+  const handleToggleTeam = (teamToggledObj) => () => {
     // ---- update state of checked teams
     const currentIndex = checkedTeams.findIndex(teamObj => teamObj.id === teamToggledObj.id);
     const newCheckedTeams = [...checkedTeams];
-
     if (currentIndex === -1) {
       newCheckedTeams.push(teamToggledObj);
     } else {
       newCheckedTeams.splice(currentIndex, 1);
     }
     setCheckedTeams(newCheckedTeams);
-    // console.log(checkedTeams);
 
-    // ---- initilize available players state
-    getPlayersByTeam(checkedTeams.map((team) => team.id))
-      .then(playerList => {
-        setAvailablePlayers(playerList.map((playerObj) => ({
-          ...playerObj,
-          id: playerObj.player_id,
-          value: `${playerObj.player_name} (${playerObj.team_name})`
-        })))
-      })
-      .catch(error =>
-        setWarningMessage({
-          warningMessageOpen: true,
-          warningMessageText: `Request to get players failed: ${error}`
-        })
-      );
-  };
-
-  const numberOfCheckedTeams = (items) => intersection(checkedTeams, items).length;
-
+    // ---- initialize available players state
+    initializeAvailablePlayers(newCheckedTeams, checkedPositions);
+  }
 
   // ----------------------------------------
   // ---- Handlers for list of positions ----
   // ----------------------------------------
 
-  // ---- update state of checked positions
+  const numberOfCheckedPositions = (items) => intersection(checkedPositions, items).length;
+
   const handleTogglePosition = (positionToggledObj) => () => {
+    // ---- update state of checked positions
     const currentIndex = checkedPositions.findIndex(positionObj => positionObj.id === positionToggledObj.id);
     const newCheckedPositions = [...checkedPositions];
-
     if (currentIndex === -1) {
       newCheckedPositions.push(positionToggledObj);
     } else {
       newCheckedPositions.splice(currentIndex, 1);
     }
     setCheckedPositions(newCheckedPositions);
-    // console.log(checkedPositions);
 
-
-
-
-
-
+    // ---- initialize available players state
+    initializeAvailablePlayers(checkedTeams, newCheckedPositions);
   }
 
-  const numberOfCheckedPositions = (items) => intersection(checkedPositions, items).length;
 
   const handleToggleAllPositions = (items) => () => {
+    // ---- update state of checked positions
+    let newCheckedPositions;
     if (numberOfCheckedPositions(items) === items.length) {
-      setCheckedPositions(not(checkedPositions, items));
+      newCheckedPositions = not(checkedPositions, items);
     } else {
-      setCheckedPositions(union(checkedPositions, items));
+      newCheckedPositions = union(checkedPositions, items);
     }
-  };
+    setCheckedPositions(newCheckedPositions);
+
+    // ---- initialize available players state
+    initializeAvailablePlayers(checkedTeams, newCheckedPositions);
+  }
 
 
   // ------------------------------------------
   // ---- Handlers for two lists of player ----
   // ------------------------------------------
+
+  const numberOfCheckedPlayers = (items) => intersection(checkedPlayers, items).length;
 
   // ---- update state of checked players
   const handleTogglePlayer = (value) => () => {
@@ -159,7 +165,6 @@ export default function PlayerSelection(props) {
     setCheckedPlayers(newCheckedPlayers);
   };
 
-  const numberOfCheckedPlayers = (items) => intersection(checkedPlayers, items).length;
 
   const handleToggleAllPlayers = (items) => () => {
     if (numberOfCheckedPlayers(items) === items.length) {
@@ -170,50 +175,50 @@ export default function PlayerSelection(props) {
   };
 
   const handleCheckedRight = () => {
-    setSelectedPlayers(selectedPlayers.concat(checkedAvailablePlayers));
+    let newFavoritePlayers = favoritePlayers.concat(checkedAvailablePlayers);
+    setFavoritePlayers(newFavoritePlayers);
     setAvailablePlayers(not(availablePlayers, checkedAvailablePlayers));
     setCheckedPlayers(not(checkedPlayers, checkedAvailablePlayers));
+
+    props.onPlayerSelectionChange(newFavoritePlayers);
   };
 
   const handleCheckedLeft = () => {
-    setAvailablePlayers(availablePlayers.concat(checkedSelectedPlayers));
-    setSelectedPlayers(not(selectedPlayers, checkedSelectedPlayers));
-    setCheckedPlayers(not(checkedPlayers, checkedSelectedPlayers));
+    let newFavoritePlayers = not(favoritePlayers, checkedFavoritePlayers);
+    setAvailablePlayers(availablePlayers.concat(checkedFavoritePlayers));
+    setFavoritePlayers(newFavoritePlayers);
+    setCheckedPlayers(not(checkedPlayers, checkedFavoritePlayers));
+
+    props.onPlayerSelectionChange(newFavoritePlayers);
   };
 
 
   // ------------------------
   // ---- Fetching data  ----
   // ------------------------
-  const getTeams = () => {
-    let teamList = fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.TEAM_FILTER)
-      .then(response => {
-        if (!response.ok) {
-          throw Error(response.statusText);
-        }
-        return response.json();
-      })
-    return teamList;
+  async function getTeams() {
+    let teamListResponse = await fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.TEAM_FILTER);
+    return teamListResponse.json();
   }
 
-
-  const getPlayersByTeam = (teams_id_checked) => {
-    const playerList = fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_FILTER, {
+  async function getPlayersByTeam(teams_id_checked) {
+    const playerListFetchParams = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         teams_id: teams_id_checked
       })
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw Error(response.statusText);
-        }
-        return response.json();
-      })
-    return playerList;
+    }
+    let playerListResponse = await fetch(CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.PLAYER_FILTER, playerListFetchParams);
+    return playerListResponse.json();
   }
 
+  const displayFetchErrors = (requestType, error) => {
+    setWarningMessage({
+      warningMessageOpen: true,
+      warningMessageText: `${requestType} request failed: ${error}`
+    })
+  }
 
   React.useEffect(() => {
     // ---- initilize teams state
@@ -221,12 +226,7 @@ export default function PlayerSelection(props) {
       .then(teamList => {
         setTeams(teamList.map((teamObj) => ({ id: teamObj.team_id, value: teamObj.team_name })));
       })
-      .catch(error =>
-        setWarningMessage({
-          warningMessageOpen: true,
-          warningMessageText: `Request to get teams failed: ${error}`
-        })
-      );
+      .catch(error => displayFetchErrors('GET teams', error));
 
     // ---- initilize positions state
     let footballPositions = ['Goalkeeper', 'Defender', 'Midfielder', 'Attacker']
@@ -240,15 +240,14 @@ export default function PlayerSelection(props) {
   const CustomSelectionList = (isNested, title, listWidth, listHeight, handleToggleAll, numberOfCheckedItems, items, handleToggle, checkedItems) => (
     <Card>
       <CardHeader
-        style={(title === 'Available players') ? { backgroundColor: "#797ff0" } :
-          (title === 'Selected players') ? { backgroundColor: "#ff7961" } :
+        style={(title === 'Favorite players') ? { backgroundColor: "#797ff0" } :
             { backgroundColor: "#cfd8dc" }}
         className={classes.cardHeader}
         avatar=
         {handleToggleAll !== null ?
           (<Checkbox
             onClick={handleToggleAll(items)}
-            color={title === 'Selected players' ? 'secondary' : 'default'}
+            color={title === 'Favorite players' ? 'primary' : 'default'}
             checked={numberOfCheckedItems(items) === items.length && items.length !== 0}
             indeterminate={numberOfCheckedItems(items) !== items.length && numberOfCheckedItems(items) !== 0}
             disabled={items.length === 0}
@@ -284,19 +283,17 @@ export default function PlayerSelection(props) {
     </Card>
   );
 
-
   // -----------------------------------------------
   // ---- The entire Player selection component ----
   // -----------------------------------------------
+
   return (
     <React.Fragment>
 
-      <Grid container spacing={2} direction="column" alignItems="center" style={{ paddingBottom: 12 }}>
-
-        <h4><b>
-        </b></h4>
-
-      </Grid>
+      <FavoritePlayersLimits
+      formation={props.formation}
+      favoritePlayers={favoritePlayers}
+      onPlayerLimitsChange={props.onPlayerLimitsChange} />
 
       <Grid container spacing={1} alignItems="center" justify="center" className={classes.root}>
         <Grid item>{CustomSelectionList(false, 'Teams', 200, 300, null, numberOfCheckedTeams, teams, handleToggleTeam, checkedTeams)}</Grid>
@@ -309,7 +306,7 @@ export default function PlayerSelection(props) {
               color="primary"
               size="small"
               className={classes.button}
-              onClick={() => { handleCheckedRight(); props.onChange(selectedPlayers) }}
+              onClick={() => { handleCheckedRight() }}
               disabled={checkedAvailablePlayers.length === 0}
               aria-label="move selected right">
               Add &gt;&gt;
@@ -319,14 +316,14 @@ export default function PlayerSelection(props) {
               color="secondary"
               size="small"
               className={classes.button}
-              onClick={() => { handleCheckedLeft(); props.onChange(selectedPlayers) }}
-              disabled={checkedSelectedPlayers.length === 0}
+              onClick={() => { handleCheckedLeft() }}
+              disabled={checkedFavoritePlayers.length === 0}
               aria-label="move selected left">
               &lt;&lt; Remove
           </Button>
           </Grid>
         </Grid>
-        <Grid item>{CustomSelectionList(false, 'Selected players', 300, 300, handleToggleAllPlayers, numberOfCheckedPlayers, selectedPlayers, handleTogglePlayer, checkedSelectedPlayers)}</Grid>
+        <Grid item>{CustomSelectionList(false, 'Favorite players', 300, 300, handleToggleAllPlayers, numberOfCheckedPlayers, favoritePlayers, handleTogglePlayer, checkedFavoritePlayers)}</Grid>
       </Grid>
 
       <WarningMessage

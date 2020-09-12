@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     // width: '100%',
     // width: 'auto',
     position: 'relative',
-    minHeight: 200,
+    minHeight: 220,
   },
   tabs: {
     // width: '100%',

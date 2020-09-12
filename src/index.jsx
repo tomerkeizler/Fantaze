@@ -4,11 +4,14 @@ import App from "./components/App/App"
 import { BrowserRouter } from "react-router-dom";
 import registerServiceWorker from "./registerServiceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { SnackbarProvider } from 'notistack';
 
 ReactDOM.render(
-    <BrowserRouter>
+  <BrowserRouter>
+    <SnackbarProvider maxSnack={4} hideIconVariant preventDuplicate>
       <App />
-    </BrowserRouter>,
+    </SnackbarProvider>
+  </BrowserRouter>,
   document.getElementById("root")
 );
 
