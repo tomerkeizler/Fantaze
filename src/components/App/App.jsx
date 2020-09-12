@@ -15,6 +15,7 @@ import SideMenu from './SideMenu';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { Switch, Route } from "react-router-dom";
 import AboutUs from "../AboutUs/AboutUs";
+import GettingStarted from "../GettingStarted/GettingStarted";
 import MyTeam from "../My_Team/My_Team";
 import ConstraintsView from "../ConstraintsView/ConstraintsView";
 import ConstraintsCheckout from "../ConstraintsCheckout/ConstraintsCheckout";
@@ -181,6 +182,7 @@ export default function App() {
           <Container maxWidth="lg" className={classes.container}>
             <Switch>
               <Route exact path="/" component={AboutUs} />
+              <Route path="/Getting_Started" component={GettingStarted} />
               <Route path="/My_Team" component={MyTeam} />
               <Route exact path="/Constraints_Checkout" component={ConstraintsCheckout} />
               <Route path="/Constraints_View" component={ConstraintsView} />

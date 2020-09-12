@@ -7,8 +7,8 @@ import EqualizerIcon from '@material-ui/icons/Equalizer';
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
 import LayersIcon from '@material-ui/icons/Layers';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
-// import DashboardIcon from '@material-ui/icons/Dashboard';
 // import BarChartIcon from '@material-ui/icons/BarChart';
 // import AssignmentIcon from '@material-ui/icons/Assignment';
 // import TrendingUpIcon from '@material-ui/icons/TrendingUp';
@@ -22,6 +22,13 @@ const routes = [
         'name': 'About Us',
         'icon': <PeopleIcon />,
         'link': '',
+    },
+
+    {
+        'isCategory': false,
+        'name': 'Getting Started',
+        'icon': <DashboardIcon />,
+        'link': 'Getting_Started',
     },
 
     {
