@@ -60,13 +60,25 @@ const routes = [
                 'isCategory': false,
                 'name': 'Top scorers',
                 'icon': <SportsSoccerIcon />,
-                'link': '',
+                'link': 'Top_Scorers',
             },
             {
                 'isCategory': false,
-                'name': 'Top Defenders',
+                'name': 'Most Assists',
                 'icon': <SportsSoccerIcon />,
-                'link': '',
+                'link': 'Most_Assists',
+            },
+            {
+                'isCategory': false,
+                'name': 'Recent Games Stats',
+                'icon': <SportsSoccerIcon />,
+                'link': 'Recent_Games_Stats',
+            },
+            {
+                'isCategory': false,
+                'name': 'Best Goalkeepers',
+                'icon': <SportsSoccerIcon />,
+                'link': 'Best_Goalkeepers',
             },
         ]
     },

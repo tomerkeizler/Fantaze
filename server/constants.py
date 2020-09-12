@@ -25,6 +25,13 @@ CONSTANTS = {
             'PLAYER_FILTER':'/api/team_constraints/player_filter',
         },
 
+        'PLAYERS_STATS': {
+			'TOP_SCORERS': '/api/players_stats/top_scorers',
+			'MOST_ASSISTS': '/api/players_stats/most_assists',
+			'RECENT_GAMES_STATS': '/api/players_stats/recent_games_stats',
+			'BEST_GOALKEEPERS': '/api/players_stats/best_goolkeepers',
+		},
+
         'MASTER_DETAIL': '/api/masterdetail',
     }
 }
