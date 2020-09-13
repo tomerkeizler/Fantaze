@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     overflow: 'auto',
     width: 200,
-    height: 300,
+    height: 250,
     maxHeight: 270,
   },
 }));

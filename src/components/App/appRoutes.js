@@ -89,26 +89,6 @@ const routes = [
             },
         ]
     },
-
-    {
-        'isCategory': true,
-        'name': 'Predictions',
-        'icon': <LayersIcon />,
-        'subItems': [
-            {
-                'isCategory': false,
-                'name': 'Next Round',
-                'icon': <ViewHeadlineIcon />,
-                'link': '',
-            },
-            {
-                'isCategory': false,
-                'name': 'Next Year',
-                'icon': <ViewHeadlineIcon />,
-                'link': '',
-            },
-        ]
-    },
 ]
 
-export {routes}
+export { routes }

@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
   },
   container: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(3),
   },
   paper: {
     padding: theme.spacing(2),
