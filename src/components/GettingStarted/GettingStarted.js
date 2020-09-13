@@ -8,10 +8,7 @@ import ScheduleIcon from '@material-ui/icons/Schedule';
 import SportsSoccerIcon from '@material-ui/icons/SportsSoccer';
 import StarIcon from '@material-ui/icons/Star';
 import PeopleIcon from '@material-ui/icons/People';
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
-
-
 
 
 const useStyles = makeStyles((theme) => ({
@@ -92,7 +89,8 @@ const GettingStarted = () => {
   return (
     <div className="row justify-content-center">
       <Timeline align="alternate" className={classes.main}>
-        {timeLineItems.map(item => <GettingStartedItem item={item} />)}
+        {timeLineItems.map((item, index) =>
+          <GettingStartedItem item={item} index={index} key={index} />)}
       </Timeline>
     </div>
   )
