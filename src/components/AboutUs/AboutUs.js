@@ -45,14 +45,6 @@ const AboutUs = () => {
       </Typography>
       <br />
 
-      <Typography variant="body1">
-        The football preformances data was collected from API-Football with rapidAPI subscription, and stored in our Atlas mongoDB.
-          <br />
-        This app was developed with Python, javascript and React js.
-          <br />
-        The Client-Server communication is based on Flask.
-      </Typography>
-
     </div>
   )
 }
