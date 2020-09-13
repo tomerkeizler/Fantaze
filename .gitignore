@@ -28,3 +28,4 @@ yarn-error.log*
 bash.exe.stackdump
 server/__pycache__/server.cpython-38.pyc
 server/__pycache__/mongo.cpython-38.pyc
+server/players_statistics/__pycache__/players_statistics.cpython-38.pyc
