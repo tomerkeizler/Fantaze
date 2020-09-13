@@ -1,6 +1,3 @@
-#import sys
-# sys.path.insert(1, 'C:\\Users\\Noy Wolfson\\Dev\\Fantasy\\server')
-#sys.path.insert(1, 'C:\\Users\\Noy Wolfson\\Dev\\Fantasy\\server\\create_team')
 from server import mongo
 from fantasyData import qualified_teams_id_by_year_round
 from fantasyData import team_constraints
@@ -33,27 +30,12 @@ def update_id_playersData_map(id_playersData_map, current_player, performances):
                                     }
     return id_playersData_map
 
-# def get_all_players():
-#     all_players = mongo.find_from_collection(mongo.players_data_collection, {})
-#     return all_players
-
-# def get_all_fixtures_data():
-#     all_fixtures_data = mongo.find_from_collection(mongo.data_fixtures_collection, {})
-#     return all_fixtures_data
-
 def create_id_players_map():
     players_map = {}
     all_players = mongo.find_from_collection(mongo.players_data_collection, {})
     for player in all_players:
         players_map[player["player_id"]] = player
     return players_map
-    
-# def get_fixtures_id_by_league(league) -> list:
-#     fixtures = []
-#     result = list(mongo.find_from_collection(mongo.fixtures_collection, {"league": {'$in': league } } ))
-#     for i in range(len(result)):
-#         fixtures.extend(result[i]["fixtures_id"])
-#     return fixtures
 
 def get_leagues(season):
     leagues = []
@@ -104,7 +86,6 @@ def get_fixtures(season, round):
 def create_id_playerData_map(season, round):
     id_playersData_map = {}
     fixtures = get_fixtures(season, round)
-    # all_performances = mongo.find_from_collection(mongo.player_performances_collection, { 'event_id': { '$in': fixtures } }) # this is take 5 seconds
     for i in range(len(all_performances)):
         if all_performances[i]["event_id"] in fixtures and all_performances[i]["player_id"] in id_players_map:
             current_player = id_players_map[all_performances[i]["player_id"]]
@@ -307,13 +288,21 @@ def get_tables(price_buckets_per_position_sorted_by_performance, formation, pric
         tables[i] = create_table(price_buckets_current_position_players, tables.get(len(tables)), price, i)
     return tables
 
+def get_team_from_tables(tables):
+    team = {'players': [] }
+    if len(tables) != 0:
+        last_table = tables[len(tables)]
+        if last_table[len(last_table) - 1] != 0:
+            team = last_table[len(last_table) - 1] # last cell in last table
+    return team
+
 def get_team():
     season = fantasy_team_data['season']
     round = fantasy_team_data['round']
     chosen_players_id_list = [player['player_id'] for player in team_constraints['player_selection']]
     selected_formation = team_constraints['formation_pick']
 
-    playersId_players_map = create_id_playerDataAvg_map(season, round) # this is take 15 sec!!!
+    playersId_players_map = create_id_playerDataAvg_map(season, round)
     playersId_players_map = delete_eliminated_teams(season, round, playersId_players_map)
     
     chosen_players = get_chosen_players(playersId_players_map, chosen_players_id_list)
@@ -324,15 +313,56 @@ def get_team():
     players_map_per_position = create_players_per_position_map(playersId_players_map)
     price_buckets_per_position_sorted_by_performance = create_price_buckets_per_position_sort_by_performance(players_map_per_position, 100 - chosen_players_price)
     tables = get_tables(price_buckets_per_position_sorted_by_performance, formation, 100 - chosen_players_price)
-    team = {'players': [] }
-    if len(tables) != 0:
-        last_table = tables[len(tables)]
-        if last_table[len(last_table) - 1] != 0:
-            team = last_table[len(last_table) - 1] # last cell in last table
+    team = get_team_from_tables(tables)
     team['players'].extend(chosen_players)
     return team['players']
+
+def update_performances(player_performance, performance):
+    player_performance['startXI'] += performance['startXI']
+    player_performance['substitute'] += performance['startXI'] == False and performance['minutes_played'] > 0
+    player_performance['goals'] += performance['goals']['total']
+    player_performance['assists'] += performance['goals']['assists']
+    player_performance['yellow'] += performance['cards']['yellow']
+    player_performance['red'] += performance['cards']['red']
+    player_performance['minutes_played'].append(performance['minutes_played'])
+    player_performance['passes_accuracy'].append(performance['passes']['accuracy'])
+    if player_performance.get('conceded') is not None:
+        player_performance['conceded'] += performance['goals']['conceded']
+    
+    return player_performance        
+
+def get_player_performances_struct():
+    player_performances = {
+        'startXI' : 0,
+        'substitute': 0,
+        'goals': 0, 
+        'assists': 0,  
+        'yellow': 0,
+        'red': 0,
+        'minutes_played': [],
+        'passes_accuracy': []
+    }
+    return player_performances
+
+def get_player_performances(player_id):
+    season = fantasy_team_data['season']
+    round = fantasy_team_data['round']
+    player_performance = get_player_performances_struct()
+    fixtures = get_fixtures(season, round)
+    
+    for i in range(len(all_performances)):
+        if all_performances[i]["event_id"] in fixtures and player_id == all_performances[i]["player_id"]:
+            if all_performances[i]['position'] == "G" or all_performances[i]['position'] == "D":
+                if not player_performance.get('conceded'): 
+                    player_performance['conceded'] = 0
+            player_performance = update_performances(player_performance, all_performances[i])
+            
+    player_performance['minutes_played'] = sum(player_performance['minutes_played']) / len (player_performance['minutes_played'])
+    player_performance['passes_accuracy'] = sum(player_performance['passes_accuracy']) / len(player_performance['passes_accuracy'])
+    return player_performance
 
 all_fixtures_data = mongo.find_from_collection(mongo.data_fixtures_collection, {})
 all_performances = mongo.find_from_collection(mongo.player_performances_collection, {})
 id_players_map = create_id_players_map()
+# get_player_performances(505)
 # get_team()
