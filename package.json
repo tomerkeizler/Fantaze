@@ -37,6 +37,7 @@
     "lint": "eslint src/**/*.js src/**/*.jsx"
   },
   "proxy": "https://my-fantaze-app.herokuapp.com",
+  "root": "build/",
   "browserslist": [
     ">0.2%",
     "not dead",
