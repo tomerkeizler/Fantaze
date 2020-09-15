@@ -1,7 +1,7 @@
 import os
 
 CONSTANTS = {
-    'PORT': os.environ.get('PORT', 'https://my-fantaze-app.herokuapp.com/api/my_team/get_ultimate_team'),
+    'PORT': os.environ.get('PORT', 3001),
     'HTTP_STATUS': {
         '404_NOT_FOUND': 404,
         '200_OK': 200,
