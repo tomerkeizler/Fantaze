@@ -36,8 +36,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.js src/**/*.jsx"
   },
-  "proxy": "https://my-fantaze-app.herokuapp.com",
-  "root": "build/",
+  "proxy": "http://localhost:3001",
   "browserslist": [
     ">0.2%",
     "not dead",
