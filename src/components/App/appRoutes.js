@@ -1,5 +1,6 @@
 import React from 'react';
 import PeopleIcon from '@material-ui/icons/People';
+import ScoreIcon from '@material-ui/icons/Score';
 import StarIcon from '@material-ui/icons/Star';
 import SportsSoccerIcon from '@material-ui/icons/SportsSoccer';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -88,6 +89,12 @@ const routes = [
                 'link': 'Best_Goalkeepers',
             },
         ]
+    },
+    {
+        'isCategory': false,
+        'name': 'Fixtures And Results',
+        'icon': <ScoreIcon />,
+        'link': 'Fixtures_And_Results'
     },
 ]
 
