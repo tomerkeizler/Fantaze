@@ -35,6 +35,9 @@ CONSTANTS.ENDPOINT.PLAYER_STATS.MOST_ASSISTS = "/api/players_stats/most_assists"
 CONSTANTS.ENDPOINT.PLAYER_STATS.BEST_GOALKEEPERS = "/api/players_stats/best_goolkeepers";
 CONSTANTS.ENDPOINT.PLAYER_STATS.RECENT_GAMES_STATS = "/api/players_stats/recent_games_stats";
 
+CONSTANTS.ENDPOINT.ALL_FIXTURES = "/api/fixtures_and_results";
+
+
 CONSTANTS.ENDPOINT.MASTERDETAIL = "/api/masterdetail";
 
 
