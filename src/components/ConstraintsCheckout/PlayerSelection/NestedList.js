@@ -66,23 +66,25 @@ export default function NestedList(props) {
 
             <Collapse in={areGroupsOpen[position]} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                {playersGroupedByPosition[position].map((player) => {
-                  return (
-                    <ListItem disableGutters
-                      selected={props.checkedItems.findIndex(obj => obj.id === player.id) !== -1}
-                      key={player.id} role="listitem" button onClick={props.handleToggle(player)}>
-                      <ListItemIcon>
-                        <Checkbox
-                          color="default"
-                          checked={props.checkedItems.findIndex(obj => obj.id === player.id) !== -1}
-                          tabIndex={-1}
-                          disableRipple
-                        />
-                      </ListItemIcon>
-                      <ListItemText id={player.id} primary={player.value} />
-                    </ListItem>
-                  );
-                })}
+                {playersGroupedByPosition[position]
+                  .sort((a, b) => parseFloat(b.price) - parseFloat(a.price))
+                  .map((player) => {
+                    return (
+                      <ListItem disableGutters
+                        selected={props.checkedItems.findIndex(obj => obj.id === player.id) !== -1}
+                        key={player.id} role="listitem" button onClick={props.handleToggle(player)}>
+                        <ListItemIcon>
+                          <Checkbox
+                            color="default"
+                            checked={props.checkedItems.findIndex(obj => obj.id === player.id) !== -1}
+                            tabIndex={-1}
+                            disableRipple
+                          />
+                        </ListItemIcon>
+                        <ListItemText id={player.id} primary={player.value} />
+                      </ListItem>
+                    );
+                  })}
               </List>
             </Collapse>
           </React.Fragment>

@@ -108,6 +108,21 @@ export default function PlayerSelection(props) {
     initializeAvailablePlayers(newCheckedTeams, checkedPositions);
   }
 
+
+  const handleToggleAllTeams = (items) => () => {
+    // ---- update state of checked positions
+    let newCheckedTeams;
+    if (numberOfCheckedTeams(items) === items.length) {
+      newCheckedTeams = not(checkedTeams, items);
+    } else {
+      newCheckedTeams = union(checkedTeams, items);
+    }
+    setCheckedTeams(newCheckedTeams);
+
+    // ---- initialize available players state
+    initializeAvailablePlayers(newCheckedTeams, checkedPositions);
+  }
+
   // ----------------------------------------
   // ---- Handlers for list of positions ----
   // ----------------------------------------
@@ -296,7 +311,7 @@ export default function PlayerSelection(props) {
       onPlayerLimitsChange={props.onPlayerLimitsChange} />
 
       <Grid container spacing={1} alignItems="center" justify="center" className={classes.root}>
-        <Grid item>{CustomSelectionList(false, 'Teams', 200, 300, null, numberOfCheckedTeams, teams, handleToggleTeam, checkedTeams)}</Grid>
+        <Grid item>{CustomSelectionList(false, 'Teams', 200, 300, handleToggleAllTeams, numberOfCheckedTeams, teams, handleToggleTeam, checkedTeams)}</Grid>
         <Grid item>{CustomSelectionList(false, 'Position', 200, 300, handleToggleAllPositions, numberOfCheckedPositions, positions, handleTogglePosition, checkedPositions)}</Grid>
         <Grid item>{CustomSelectionList(true, 'Available players', 300, 300, null, numberOfCheckedPlayers, availablePlayers, handleTogglePlayer, checkedAvailablePlayers)}</Grid>
         <Grid item>
