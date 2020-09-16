@@ -213,14 +213,14 @@ const MyTeam = () => {
           {ultimatePlayers.filter(player => player.position === position)
             .map(item => (
               // <Zoom in={isTeamDisplayed} key={item.player_id}
-              //   style={{ transitionDelay: isTeamDisplayed ? `${300 * i}ms` : '0ms' }}>
+              //   style={{ transitionDelay: isTeamDisplayed ? `${600 * i}ms` : '0ms' }}>
               //   <div>
-              <PlayerTile
-                item={item}
-                teamShirtImage={teamShirtByIdMap.get(item.team_id)}
-              />
-              //   </div>
-              // </Zoom>
+                  <PlayerTile
+                    item={item}
+                    teamShirtImage={teamShirtByIdMap.get(item.team_id)}
+                  />
+                /* </div>
+              </Zoom> */
             ))}
         </div>
       ))
