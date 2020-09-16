@@ -31,7 +31,5 @@ CONSTANTS = {
 			'RECENT_GAMES_STATS': '/api/players_stats/recent_games_stats',
 			'BEST_GOALKEEPERS': '/api/players_stats/best_goolkeepers',
 		},
-
-        'MASTER_DETAIL': '/api/masterdetail',
     }
 }
