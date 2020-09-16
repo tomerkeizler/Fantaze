@@ -19,6 +19,7 @@ yarn-error.log*
 
 
 # production
+/build
 /server/build
 /server/__pycache__/
 /server/create_team/__pycache__/

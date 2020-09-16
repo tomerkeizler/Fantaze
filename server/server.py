@@ -157,16 +157,7 @@ def get_squad_by_team():
         del player['_id']
     return jsonify(players_by_team)
     # return dumps(players_by_team)
-
-#######################
-####### GENERAL #######
-#######################
-
-# MasterDetail Page Endpoint
-@app.route(CONSTANTS['ENDPOINT']['MASTER_DETAIL'])
-def get_master_detail():
-    return jsonify({})
-
+    
 
 # Catching all routes
 # This route is used to serve all the routes in the frontend application after deployment.

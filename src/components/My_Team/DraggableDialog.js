@@ -14,7 +14,7 @@ function PaperComponent(props) {
     );
 }
 
-export default function DraggableDialog() {
+export default function DraggableDialog({ isValid }) {
     const [open, setOpen] = React.useState(true);
 
     const handleClose = () => {
@@ -24,12 +24,16 @@ export default function DraggableDialog() {
     return (
         <div>
             <Dialog open={open} onClose={handleClose} PaperComponent={PaperComponent}>
-                <DialogTitle id="draggable-dialog-title" style={{ cursor: 'move', backgroundColor: '#CEDAEE' }}>
-                    What are you waiting for?
+                <DialogTitle id="draggable-dialog-title"
+                    style={{ cursor: 'move', backgroundColor: isValid ? '#CEDAEE' : '#ff4d4d', color: isValid ? 'black' : 'white' }}>
+                    {isValid ? 'What are you waiting for?' : 'OOPS! Your team constraints are too strict'}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        <b>Create your first ultimate team with Fantaze!</b>
+                        <b>
+                            {isValid ? 'Create your first ultimate team with Fantaze!'
+                                : 'Please edit your favorite players OR choose an earlier round'}
+                        </b>
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
