@@ -40,7 +40,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
-  "proxy": "https://localhost:3001",
+  "proxy": "http://localhost:3001",
   "browserslist": [
     ">0.2%",
     "not dead",
