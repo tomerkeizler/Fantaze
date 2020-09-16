@@ -152,10 +152,17 @@ const MyTeam = () => {
         setUltimatePlayers(ultimatePlayers);
         setIsLoading(false);
 
-        if (ultimatePlayers.length > 0)
+        if (ultimatePlayers.length === 11) {
           setIsTeamDisplayed(true);
-        else
-          setWelcomeWindow(<DraggableDialog />);
+        }
+        else if (ultimatePlayers.length > 0) {
+          setIsTeamDisplayed(false);
+          setWelcomeWindow(<DraggableDialog isValid={false} />);
+        }
+        else {
+          setIsTeamDisplayed(false);
+          setWelcomeWindow(<DraggableDialog isValid={true} />);
+        }
       })
       .catch(error => displayFetchErrors('Ultimate team', error));
   }
@@ -215,12 +222,12 @@ const MyTeam = () => {
               // <Zoom in={isTeamDisplayed} key={item.player_id}
               //   style={{ transitionDelay: isTeamDisplayed ? `${600 * i}ms` : '0ms' }}>
               //   <div>
-                  <PlayerTile
-                    item={item}
-                    teamShirtImage={teamShirtByIdMap.get(item.team_id)}
-                  />
-                /* </div>
-              </Zoom> */
+              <PlayerTile
+                item={item}
+                teamShirtImage={teamShirtByIdMap.get(item.team_id)}
+              />
+              /* </div>
+            </Zoom> */
             ))}
         </div>
       ))
