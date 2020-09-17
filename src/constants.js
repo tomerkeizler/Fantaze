@@ -13,8 +13,8 @@ CONSTANTS.ERROR_MESSAGE.MASTERDETAIL_GET = "Request to get master detail text fa
 
 // ------------------------------------
 
-// CONSTANTS.URL_PREFIX = "https://cors-anywhere.herokuapp.com/https://peaceful-spire-26551.herokuapp.com";
-CONSTANTS.URL_PREFIX = "";
+CONSTANTS.URL_PREFIX = "https://cors-anywhere.herokuapp.com/https://peaceful-spire-26551.herokuapp.com";
+// CONSTANTS.URL_PREFIX = "";
 
 CONSTANTS.ENDPOINT = {};
 
