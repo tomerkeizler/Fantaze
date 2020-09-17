@@ -10,6 +10,8 @@ CONSTANTS = {
     },
 
     'ENDPOINT': {
+        'ALL_FIXTURES': '/api/fixtures_and_results',
+
         'MY_TEAM': {
             'GET_ULTIMATE_TEAM': '/api/my_team/get_ultimate_team',
             'SEASON_ROUND': '/api/my_team/season_round',
@@ -31,7 +33,5 @@ CONSTANTS = {
 			'RECENT_GAMES_STATS': '/api/players_stats/recent_games_stats',
 			'BEST_GOALKEEPERS': '/api/players_stats/best_goolkeepers',
 		},
-
-        'MASTER_DETAIL': '/api/masterdetail',
     }
 }

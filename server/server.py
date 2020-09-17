@@ -10,8 +10,16 @@ from constants import CONSTANTS
 from fantasyData import team_constraints
 from fantasyData import fantasy_team_data
 from players_statistics import players_statistics
+from fixtures_and_results import fixtures_and_results
 
 app = Flask(__name__, static_folder='build')
+
+###############################################################
+####### ENDPOINTS - Fixtures And Results #######
+###############################################################
+@app.route(CONSTANTS['ENDPOINT']['ALL_FIXTURES'], methods=['POST'])
+def get_all_fixtures():
+    return jsonify(fixtures_and_results.get_all_fixtures())
 
 ###############################################################
 ####### ENDPOINTS - STATISTICS #######
@@ -157,16 +165,7 @@ def get_squad_by_team():
         del player['_id']
     return jsonify(players_by_team)
     # return dumps(players_by_team)
-
-#######################
-####### GENERAL #######
-#######################
-
-# MasterDetail Page Endpoint
-@app.route(CONSTANTS['ENDPOINT']['MASTER_DETAIL'])
-def get_master_detail():
-    return jsonify({})
-
+    
 
 # Catching all routes
 # This route is used to serve all the routes in the frontend application after deployment.

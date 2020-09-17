@@ -19,13 +19,15 @@ yarn-error.log*
 
 
 # production
+/build
 /server/build
 /server/__pycache__/
 /server/create_team/__pycache__/
+server/__pycache__/server.cpython-38.pyc
+server/__pycache__/mongo.cpython-38.pyc
+server/players_statistics/__pycache__
+server/fixtures_and_results/__pycache__
+bash.exe.stackdump
 
 # dependencies
 /node_modules
-bash.exe.stackdump
-server/__pycache__/server.cpython-38.pyc
-server/__pycache__/mongo.cpython-38.pyc
-server/players_statistics/__pycache__/players_statistics.cpython-38.pyc

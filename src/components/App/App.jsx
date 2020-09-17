@@ -24,6 +24,7 @@ import Top_Scorers from "../Players_Statistics/Top_Scorers"
 import Most_Assists from "../Players_Statistics/Most_Assists"
 import Best_Goalkeepers from "../Players_Statistics/Best_Goalkeepers"
 import Recent_Games_Stats from "../Players_Statistics/Recent_Games_Stats"
+import Fixtures_And_Results from "../Fixtures_And_Results/Fixtures_And_Results"
 
 
 const drawerWidth = 260;
@@ -190,6 +191,8 @@ export default function App() {
               <Route path="/Most_Assists" component={Most_Assists} />
               <Route path="/Best_Goalkeepers" component={Best_Goalkeepers} />
               <Route path="/Recent_Games_Stats" component={Recent_Games_Stats} />
+              <Route path="/Fixtures_And_Results" component={Fixtures_And_Results} />
+
             </Switch>
 
             <Route render={({ history }) => {
