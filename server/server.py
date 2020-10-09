@@ -64,9 +64,7 @@ def get_season_round():
 @app.route(CONSTANTS['ENDPOINT']['MY_TEAM']['SEASON_ROUND'], methods = ['POST'])
 def set_season_round():
     data = request.get_json()
-    fantasy_team_data['season'] = ''
     fantasy_team_data['season'] = data['season']
-    fantasy_team_data['round'] = ''
     fantasy_team_data['round'] = data['round']
     json_response = jsonify({'text': 'The season and round are set'})
     return make_response(json_response, CONSTANTS['HTTP_STATUS']['200_OK'])
@@ -101,7 +99,6 @@ def get_selected_players_decisions():
 def update_constraints_data():
     data = request.get_json()
     # formation update
-    team_constraints['formation_pick'] = ''
     team_constraints['formation_pick'] = data['formationPickConstraint']
     # selected players update
     team_constraints['player_selection'].clear()
