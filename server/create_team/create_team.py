@@ -65,7 +65,7 @@ def update_id_playersData_map(id_playersData_map, current_player, performances_d
 
 def create_id_players_map():
     players_map = {}
-    all_players = mongo.find_from_collection(mongo.players_data_collection, {})
+    # all_players = mongo.find_from_collection(mongo.players_data_collection, {})
     for player in all_players:
         players_map[player["player_id"]] = player
     return players_map
@@ -172,7 +172,6 @@ def get_chosen_players(playersId_players_map, chosen_players_id_list):
             if player is None: 
                 player_struct = get_player_struct(id_players_map[id])
                 player_struct['performance'] = 0
-                # playersId_players_map = update_id_playersData_map(playersId_players_map, id_players_map.get(id), 0)
                 player = player_struct
             chosen_players.append(player)
     return chosen_players
@@ -191,9 +190,14 @@ def delete_eliminated_teams(season, round, playersId_players_map):
     return playersId_players_map
 
 def get_eliminated_players_from_constraints():
-    season = fantasy_team_data['season']
-    round = fantasy_team_data['round']
-    chosen_players_id_list = [player['player_id'] for player in team_constraints['player_selection']]
+    # season = fantasy_team_data['season']
+    # round = fantasy_team_data['round']
+    data = mongo.find_from_collection(mongo.fantaze_data, {})
+    season = data[0]['season']
+    round = data[0]['round']
+    player_selection = data[0]['player_selection']
+    chosen_players_id_list = [player['player_id'] for player in player_selection]
+    # chosen_players_id_list = [player['player_id'] for player in team_constraints['player_selection']]
     
     eliminated_players = []
     if(is_knockout(round)):
@@ -203,9 +207,8 @@ def get_eliminated_players_from_constraints():
                 player_struct = get_player_struct(id_players_map[id])
                 player_struct['performance'] = 0
                 eliminated_players.append(player_struct)
-                # update_id_playersData_map(id_players_map, id_players_map[id], 0)
-                # eliminated_players.append(id_players_map[id])
-    fantasy_team_data['eliminated_players'] = eliminated_players
+    mongo.update_collection(mongo.fantaze_data, 'eliminated_players', eliminated_players)
+    # fantasy_team_data['eliminated_players'] = eliminated_players
     return eliminated_players
 
 def filter_by_position(position, id_player_map):
@@ -330,10 +333,16 @@ def get_team_from_tables(tables):
     return team
 
 def get_team():
-    season = fantasy_team_data['season']
-    round = fantasy_team_data['round']
-    chosen_players_id_list = [player['player_id'] for player in team_constraints['player_selection']]
-    selected_formation = team_constraints['formation_pick']
+    # season = fantasy_team_data['season']
+    # round = fantasy_team_data['round']
+    data = mongo.find_from_collection(mongo.fantaze_data, {})
+    season = data[0]['season']
+    round = data[0]['round']
+    player_selection = data[0]['player_selection']
+    chosen_players_id_list = [player['player_id'] for player in player_selection]
+    # chosen_players_id_list = [player['player_id'] for player in team_constraints['player_selection']]
+    selected_formation = data[0]['formation_pick']
+    # selected_formation = team_constraints['formation_pick']
 
     playersId_players_map = create_id_playerDataAvg_map(season, round)
     playersId_players_map = delete_eliminated_teams(season, round, playersId_players_map)
@@ -353,5 +362,6 @@ def get_team():
 
 all_fixtures_data = mongo.find_from_collection(mongo.data_fixtures_collection, {})
 all_performances = mongo.find_from_collection(mongo.player_performances_collection, {})
+all_players = mongo.find_from_collection(mongo.players_data_collection, {})
 id_players_map = create_id_players_map()
 # get_team()

@@ -13,8 +13,8 @@ CONSTANTS.ERROR_MESSAGE.MASTERDETAIL_GET = "Request to get master detail text fa
 
 // ------------------------------------
 
-CONSTANTS.URL_PREFIX = "https://cors-anywhere.herokuapp.com/https://peaceful-spire-26551.herokuapp.com";
-// CONSTANTS.URL_PREFIX = "";
+// CONSTANTS.URL_PREFIX = "https://cors-anywhere.herokuapp.com/https://peaceful-spire-26551.herokuapp.com";
+CONSTANTS.URL_PREFIX = "";
 
 CONSTANTS.ENDPOINT = {};
 
@@ -23,6 +23,7 @@ CONSTANTS.ENDPOINT.MY_TEAM.GET_ULTIMATE_TEAM = CONSTANTS.URL_PREFIX.concat("/api
 CONSTANTS.ENDPOINT.MY_TEAM.SEASON_ROUND = CONSTANTS.URL_PREFIX.concat("/api/my_team/season_round");
 CONSTANTS.ENDPOINT.MY_TEAM.CALCULATE_GET_ULTIMATE_TEAM = CONSTANTS.URL_PREFIX.concat("/api/my_team/calculate_get_ultimate_team");
 CONSTANTS.ENDPOINT.MY_TEAM.INCLUDED_AND_ELIMINATED_SELECTED_PLAYERS = CONSTANTS.URL_PREFIX.concat("/api/my_team/included_and_eliminated_selected_players");
+CONSTANTS.ENDPOINT.MY_TEAM.SET_DEFAULT_DATA = CONSTANTS.URL_PREFIX.concat("/api/my_team/set_default_data");
 
 CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS = {};
 CONSTANTS.ENDPOINT.TEAM_CONSTRAINTS.UPDATE = CONSTANTS.URL_PREFIX.concat("/api/team_constraints/update");

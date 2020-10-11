@@ -25,6 +25,7 @@ import Most_Assists from "../Players_Statistics/Most_Assists"
 import Best_Goalkeepers from "../Players_Statistics/Best_Goalkeepers"
 import Recent_Games_Stats from "../Players_Statistics/Recent_Games_Stats"
 import Fixtures_And_Results from "../Fixtures_And_Results/Fixtures_And_Results"
+import CONSTANTS from "../../constants";
 
 
 const drawerWidth = 260;
@@ -115,6 +116,16 @@ export default function App() {
 
   const [open, setOpen] = React.useState(true);
   const [pageTitle, setPageTitle] = React.useState('');
+
+  async function myFetch(url) {
+    let response = await fetch(url);
+    return response.json();
+  }
+
+  React.useEffect(() => {
+    myFetch(CONSTANTS.ENDPOINT.MY_TEAM.SET_DEFAULT_DATA)
+      .catch(err => console.log(err));
+  }, [])
 
   const handleDrawerOpen = () => {
     setOpen(true);
