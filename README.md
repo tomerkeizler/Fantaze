@@ -26,9 +26,11 @@ The client-server communication is done by a Flask based HTTP server.
 
 ## Getting Started
 
-1. Install node modules `npm install`.
-2. Install Python dependencies `npm install-requirements`
-2. Start development server `npm start`.
+1. Clone/Download the zip file from the Fantaze repository to your local computer
+2. Install node modules `npm install`.
+3. Install Python dependencies `npm install-requirements`
+4. Start development server `npm start`.
+5. Enter this URL - http://localhost:3000 to your web browser
 
 ## File Structure
 
