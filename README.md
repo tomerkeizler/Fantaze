@@ -10,14 +10,18 @@ Our football performances data was collected from API-Footabll (powered by rapid
 The application was developed using Python, React js and Java Script.
 The client-server communication is done by a Flask based HTTP server.
  
- ## Screenshots
+## Screenshots
 
+### Getting started page
 ![Getting started page](https://raw.githubusercontent.com/tomerkeizler/Fantasy/master/src/images/Fantaze_UI_1.png)
 
+### Revealing the ultimate team lineup chosen by our algorithm
 ![Revealing the ultimate team lineup chosen by our algorithm](https://raw.githubusercontent.com/tomerkeizler/Fantasy/master/src/images/Fantaze_UI_2.png)
 
+### Defining your football desires and preferences
 ![Defining your football desires and preferences](https://raw.githubusercontent.com/tomerkeizler/Fantasy/master/src/images/Fantaze_UI_3.png)
 
+### Managing your preferences
 ![Managing your preferences](https://raw.githubusercontent.com/tomerkeizler/Fantasy/master/src/images/Fantaze_UI_4.png)
 
 ## Getting Started
