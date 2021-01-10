@@ -1,4 +1,4 @@
-﻿﻿# Project Fantaze
+﻿# Project Fantaze
 
  A fantasy sport is a type of game where participants assemble imaginary teams composed of real players of a professional sport, with which they accumulate points throughout the season based on the players' performances in actual games.
 
@@ -12,7 +12,13 @@ The client-server communication is done by a Flask based HTTP server.
  
  ## Screenshots
 
+![Getting started page](https://raw.githubusercontent.com/tomerkeizler/Fantasy/master/src/images/Fantaze_UI_1.png)
 
+![Revealing the ultimate team lineup chosen by our algorithm](https://raw.githubusercontent.com/tomerkeizler/Fantasy/master/src/images/Fantaze_UI_2.png)
+
+![Defining your football desires and preferences](https://raw.githubusercontent.com/tomerkeizler/Fantasy/master/src/images/Fantaze_UI_3.png)
+
+![Managing your preferences](https://raw.githubusercontent.com/tomerkeizler/Fantasy/master/src/images/Fantaze_UI_4.png)
 
 ## Getting Started
 
