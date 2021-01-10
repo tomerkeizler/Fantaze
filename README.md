@@ -1,53 +1,24 @@
-﻿## Getting Started
+﻿﻿# Project Fantaze
 
-In the root directory of the project...
+ A fantasy sport is a type of game where participants assemble imaginary teams composed of real players of a professional sport, with which they accumulate points throughout the season based on the players' performances in actual games.
 
-1. Install node modules `yarn install` or `npm install`.
-2. Install Python dependencies `yarn install-requirements` or `npm install-requirements`
-2. Start development server `yarn start` or `npm start`.
+Fantaze supports football fantasy gamblers around the world in the field of UEFA Champions League. By analyzing the players' performances (such as goals, assists, steals and fouls) and making conclusions based on them, we provide you with the ultimate team that will produce the most points possible, thus allow you to gamble smartly.
 
-## Next Steps
+In addition, we take into account your football preferences. You can choose a desired football lineup or pick some of your favorite players who would not necessarily have been selected by the algorithm.
 
-
-### Sample Data
-
-Replace the sample data stored in /server/sampleData.py.
-Replace the default images stored in /src/images.
+Our football performances data was collected from API-Footabll (powered by rapid-API) and is stored using mongoDB database.
+The application was developed using Python, React js and Java Script.
+The client-server communication is done by a Flask based HTTP server.
+ 
+ ## Screenshots
 
 
 
-### Adding a New Page
+## Getting Started
 
-1. Create a folder in `/src/components` with your react components.
-2. Add a route for your page to `/src/App.js`.
-3. Add a button to the navigation bar in `/src/components/NavBar/index.js`.
-
-
-### Deployment
-
-If you selected Azure App Service when creating your project, follow these steps:
-
-1. Press `Ctrl + Shift + P` in Windows/Linux or `Shift ⇧ + Command ⌘ + P` in Mac and type/select `Web Template Studio: Deploy App` to start deploying your app.
-2. After your project is built, click on "server" in the pop up on the top middle section of your screen, and then click "Deploy" on the window pop up.
-3. Once the deployment is done, click "Browse website" in the notification window on the lower right corner to check out your newly deployed app.
-
-If you did not select Azure App Service and want to create a new Azure App Service web app, follow these steps:
-
-1. Press `Ctrl + Shift + P` in Windows/Linux or `Shift ⇧ + Command ⌘ + P` in Mac and type/select `Azure App Service: Create New Web App...` to create a new web app.
-   - Select your subscription
-   - Enter your web app name
-   - Select Linux as your OS
-   - Select Node.js 10.14 for a Node/Express application, Python 3.7 for a Flask application
-2. Once the creation is done, click "Deploy" in the notification window on the lower right corner.
-   - Click "Browse" on the top middle section of your screen and select the server folder within your project
-   - Click "Yes" in the notification window on the lower right corner (build prompt)
-   - Click "Deploy" on the window pop up
-   - Click "Yes" in the notification window on the lower right corner again
-3. Once the deployment is done, click "Browse website" in the notification window on the lower right corner to check out your newly deployed app.
-
-Consider adding authentication and securing back-end API's by following [Azure App Service Security](https://docs.microsoft.com/en-us/azure/app-service/overview-security).
-
-Full documentation for deployment to Azure App Service can be found here: [Deployment Docs](https://github.com/Microsoft/WebTemplateStudio/blob/dev/docs/deployment.md).
+1. Install node modules `npm install`.
+2. Install Python dependencies `npm install-requirements`
+2. Start development server `npm start`.
 
 ## File Structure
 
@@ -59,25 +30,28 @@ The front-end is served on http://localhost:3000/ and the back-end on http://loc
 
 ```
 .
-├── src - React front-end
-│ ├── components - React components for each page
-│ ├── App.jsx - React routing
-│ └── index.jsx - React root component
+├── src/ - React front-end
+│ ├── constants.js - Defines the constants for the endpoints and port
+│ |── index.jsx - React root component
+│ └── components/ - React components for each page
+│   └── App/ - React routing specifications
+
 ├── server/ - Flask server that provides API routes and serves front-end
 │ ├── constants.py - Defines the constants for the endpoints and port
-│ ├── sampleData.py - Contains all sample text data for generate pages
-│ └── server.py - Configures Port and HTTP Server and provides API routes
+│ ├── fantasyData.py - Contains all static football data, such as seasons and teams
+│ |── server.py - Configures Port and HTTP Server and provides API routes
+│ |── mongo.py - Creating a  MongoClient instance
+│ └── More locic directories
 └── README.md
 ```
 
-## Additional Documentation
+## Built with
 
-
-- React - https://reactjs.org/
-- React Router - https://reacttraining.com/react-router/
-
-- Bootstrap CSS - https://getbootstrap.com/
-- Flask - http://flask.pocoo.org/
-
+- [React](https://reactjs.org/) - A JavaScript library for building user interfaces
+- [React Router](https://reacttraining.com/react-router/) - A standard routing library for React, with powerful features like lazy code loading and dynamic route matching
+- [Python](https://www.python.org/) - Python is an interpreted, high-level, general-purpose programming language
+- [Flask](http://flask.pocoo.org/) - Lightweight WSGI web application framework
+- [MongoDB](https://www.mongodb.com/) - A document-based, distributed NoSQL database, built for modern application developers
+- [Material-UI](https://material-ui.com/) - A popular React UI framework
 
   This project was created using [Microsoft Web Template Studio](https://github.com/Microsoft/WebTemplateStudio).
