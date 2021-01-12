@@ -4,12 +4,16 @@
 
 Fantaze supports football fantasy gamblers around the world in the field of UEFA Champions League. By analyzing the players' performances (such as goals, assists, steals and fouls) and making conclusions based on them, we provide you with the ultimate team that will produce the most points possible, thus allow you to gamble smartly.
 
-In addition, we take into account your football preferences. You can choose a desired football lineup or pick some of your favorite players who would not necessarily have been selected by the algorithm.
+In addition, we take into account your football preferences. You can choose a desired football formation or pick some of your favorite players who would not necessarily have been selected by the algorithm.
 
-Our football performances data was collected from API-Footabll (powered by rapid-API) and is stored using mongoDB database.
-The application was developed using Python, React js and Java Script.
-The client-server communication is done by a Flask based HTTP server.
- 
+##### Our football performances data was collected from API-Footabll (powered by rapid-API) and is stored using mongoDB.
+
+##### The single page application UI was developed with React js and Java Script.
+
+##### The server-side API was developed with Python.
+
+##### The client-server communication is done by a Flask based HTTP server.
+
 ## Screenshots
 
 ### Getting started page
@@ -38,8 +42,6 @@ The front-end is based on [create-react-app](https://github.com/facebook/create-
 
 The back-end is based on [Flask](https://github.com/pallets/flask).
 
-The front-end is served on http://localhost:3000/ and the back-end on http://localhost:3001/.
-
 ```
 .
 ├── src/ - React front-end
@@ -65,5 +67,4 @@ The front-end is served on http://localhost:3000/ and the back-end on http://loc
 - [Flask](http://flask.pocoo.org/) - Lightweight WSGI web application framework
 - [MongoDB](https://www.mongodb.com/) - A document-based, distributed NoSQL database, built for modern application developers
 - [Material-UI](https://material-ui.com/) - A popular React UI framework
-
-  This project was created using [Microsoft Web Template Studio](https://github.com/Microsoft/WebTemplateStudio).
+- This project was created using [Microsoft Web Template Studio](https://github.com/Microsoft/WebTemplateStudio).
