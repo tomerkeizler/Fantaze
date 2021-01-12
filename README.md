@@ -6,13 +6,13 @@ Fantaze supports football fantasy gamblers around the world in the field of UEFA
 
 In addition, we take into account your football preferences. You can choose a desired football formation or pick some of your favorite players who would not necessarily have been selected by the algorithm.
 
-##### Our football performances data was collected from API-Footabll (powered by rapid-API) and is stored using mongoDB.
+#### Our football performances data was collected from API-Footabll (powered by rapid-API) and is stored using mongoDB.
 
-##### The single page application UI was developed with React js and Java Script.
+#### The single page application UI was developed with React js and Java Script.
 
-##### The server-side API was developed with Python.
+#### The server-side API was developed with Python.
 
-##### The client-server communication is done by a Flask based HTTP server.
+#### The client-server communication is done by a Flask based HTTP server.
 
 ## Screenshots
 
