@@ -14,7 +14,7 @@ idna==2.10
 importlib-metadata==1.7.0
 isort==4.3.21
 itsdangerous==1.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 jsonpickle==1.4.1
 kiwisolver==1.2.0
 lab==6.0
