@@ -25,7 +25,7 @@ mccabe==0.6.1
 numpy==1.19.1
 ortools==7.7.7810
 Pillow==7.2.0
-protobuf==3.12.4
+protobuf==3.15.0
 pylint==2.5.3
 pymongo==3.11.0
 pyparsing==2.4.7
