@@ -22,7 +22,7 @@ lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
 matplotlib==3.3.1
 mccabe==0.6.1
-numpy==1.19.1
+numpy==1.22.0
 ortools==7.7.7810
 Pillow==7.2.0
 protobuf==3.12.4
